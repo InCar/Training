@@ -27,14 +27,17 @@ GitHub的核心是一个称为Git的开源版本控制系统（VCS），它负�
 ![Image of BootGitBash](https://github.s3.amazonaws.com/docs/bootcamp_1_win_gitbash.jpg)
 
 以“$”开头的行表明你需要键入一行Bash脚本。在“$”后键入文本，并在每行末尾敲击回车键。将鼠标悬停在每行上时可以了解到脚本正在做什么。
+
 ![Image of Input](http://img4.douban.com/view/photo/photo/4BcbnsZjO44WMYQf0Tjlfw/135989898/x2274459548.jpg)
 
 ##输出：
 
 未以“$”开头的行是输出行，是用来告知信息或让你知道下一步将做什么的，我们0已经在训练营教程中将输出文本标为了绿色。
+
 ![image of Output](http://img4.douban.com/view/photo/photo/4BcbnsZjO44WMYQf0Tjlfw/135989898/x2274459548.jpg)
 
 ##用户特定输入：
+
 ![image of UserInput](http://img4.douban.com/view/photo/photo/LKKV7A66nvlsrb7iGIENlQ/135989898/x2274462388.jpg)
 
 黄色文本区表明你自己的个人信息，代码库等。如果它位于输入行（“$”行后）中，则需要你用自己的信息将此处替换掉。如果它出现在输出行，那么只是用做参考，在Git Bash中，个人信息将自动显示出来。
@@ -49,9 +52,11 @@ GitHub的核心是一个称为Git的开源版本控制系统（VCS），它负�
 2. 打开Git Shell应用程序。
 
 3. 输入你的姓名以便你的提交被正确标注。注意以$开头。
-![image of Username](http://img3.douban.com/view/photo/photo/public/p2274462385.jpg)
+
+ ![image of Username](http://img3.douban.com/view/photo/photo/public/p2274462385.jpg)
  
 4. 输入你提交代码时需要关联的邮箱地址。该邮箱需与邮箱设置中的地址保持一致。如需隐藏邮箱地址，请参阅“如何设置邮箱地址为私密”。
+
 ![image of UserEmail](http://img4.douban.com/view/photo/photo/public/p2274462386.jpg)
 
 ##下一步：从Git使GitHub生效
