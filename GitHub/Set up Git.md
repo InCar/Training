@@ -22,7 +22,7 @@ GitHub的核心是一个称为Git的开源版本控制系统（VCS），它负�
 ##输入：
 
 出现在本页上的这些代码块是一种叫做Bash的脚本语言的某部分，
-想要使用Bash脚本，我们需要用到与Git一同安装的名为Git Bash的应用程序，Git Bash可在开始目录“Git”下找到。
+想要使用Bash脚本，我们需要用到与Git一同安装的名为Git Bash的应用程序，Git Bash可在系统开始目录“Git”下找到。
 
 ![Image of BootGitBash](https://github.s3.amazonaws.com/docs/bootcamp_1_win_gitbash.jpg)
 
