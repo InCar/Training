@@ -31,7 +31,7 @@
 
 ![image of Creat6](http://img3.douban.com/view/photo/photo/public/p2274472014.jpg)
 
-######恭喜！你已经成功创建你的第一个代码库，现在我们来学习使用README文件将其初始化。
+######恭喜！你已经成功创建你的第一个代码库，现在我们来学习如何用README文件使其初始化。
 
 ##提交初次修改
 
