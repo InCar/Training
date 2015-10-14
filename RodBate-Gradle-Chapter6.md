@@ -19,7 +19,7 @@ Gradle中的所有内容都是基于**工程**和**任务**这两个基本概念之上的。
 **例 6.1. 你的第一个构建脚本**
 
 **build.gradle**
-```javascript
+```groovy
 task hello {
     doLast {
         println 'Hello world!'
@@ -32,7 +32,7 @@ task hello {
 **例 6.2. 执行一个构建脚本**
 
 命令 **`gradle -q hello`** 的输出如下所示：
-```javascript
+```groovy
 > gradle -q hello
 Hello world!
 ```
@@ -57,7 +57,7 @@ Gradle 命令中 -q 意义为何？
 **例 6.3. 定义简洁任务**
 
 **build.gradle**
-```
+```groovy
 task hello << {
     println 'Hello world!'
 }
@@ -72,7 +72,7 @@ Gradle构建脚本使你能够充分使用Groovy语言。作为一道开胃小菜，一起先来看看下面的例
 **例 6.4. 在Gradle的任务中使用Groovy语言**
 
 **build.gradle**
-```
+```groovy
 task upper << {
     String someString = 'mY_nAmE'
     println "Original: " + someString 
@@ -90,7 +90,7 @@ Upper case: MY_NAME
 **例 6.5. 在Gradle的任务中使用Groovy语言**
 
 **build.gradle**
-```
+```groovy
 task count << {
     4.times { print "$it " }
 }
@@ -109,7 +109,7 @@ task count << {
 **例 6.6. 依赖任务的声明**
 
 **build.gradle**
-```
+```groovy
 task hello << {
     println 'Hello world!'
 }
@@ -130,7 +130,7 @@ I'm Gradle
 **例 6.7. 懒依赖 —— 依赖任务可以不必是已存在的**
 
 **build.gradle**
-```
+```groovy
 task taskX(dependsOn: 'taskY') << {
     println 'taskX'
 }
@@ -157,7 +157,7 @@ taskX
 **例 6.8. 任务的动态创建**
 
 **build.gradle**
-```
+```groovy
 4.times { counter ->
     task "task$counter" << {
         println "I'm task number $counter"
@@ -178,7 +178,7 @@ I'm task number 1
 **例 6.9. 通过API来访问调用一个任务 —— 添加依赖**
 
 **build.gradle**
-```
+```groovy
 4.times { counter ->
     task "task$counter" << {
         println "I'm task number $counter"
@@ -200,7 +200,7 @@ I'm task number 0
 **例 6.10. 通过API来访问调用一个任务 —— 添加行为**
 
 **build.gradle**
-```
+```groovy
 task hello << {
     println 'Hello Earth'
 }
@@ -233,7 +233,7 @@ Hello Jupiter
 **例 6.11. 访问调用作为构建脚本属性的任务**
 
 **build.gradle**
-```
+```groovy
 task hello << {
     println 'Hello world!'
 }
@@ -258,7 +258,7 @@ Greetings from the hello task.
 **例 6.12. 添加任务自定义属性**
 
 **build.gradle**
-```
+```groovy
 task myTask {
     ext.myProperty = "myValue"
 }
@@ -283,7 +283,7 @@ myValue
 **例 6.13. 使用AntBuilder执行ant.loadfile文件**
 
 **build.gradle**
-```
+```groovy
 task loadfile << {
     def files = file('../antLoadfileResources').listFiles().sort()
     files.each { File file ->
@@ -318,7 +318,7 @@ Gradle在如何组织构建的逻辑方面有自己的衡量标准。上面的例子的构建逻辑的第一个水平
 **例 6.14. 使用方法组织构建逻辑**
 
 **build.gradle**
-```
+```groovy
 task checksum << {
     fileList('../antLoadfileResources').each {File file ->
         ant.checksum(file: file, property: "cs_$file.name")
@@ -354,7 +354,7 @@ Gradle允许你定义一个或多个默认任务，这些任务会在没有指定执行其他任务时执行。
 **例 6.15. 定义一个默认任务**
 
 **build.gradle**
-```
+```groovy
 defaultTasks 'clean', 'run'
 
 task clean << {
@@ -388,7 +388,7 @@ Default Running!
 **例 6.16. 根据选择任务的不同执行的结果亦不同**
 
 **build.gradle**
-```
+```groovy
 task distribution << {
     println "We build the zip with version=$version"
 }
