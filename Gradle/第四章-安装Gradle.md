@@ -1,7 +1,7 @@
-# 第四章 Gradle安装
+# 第四章 Gradle安装[Chapter 4. Installing Gradle](https://docs.gradle.org/current/userguide/installation.html)
 ## 4.1 先决条件
 
-安装 `JDK`或者`JRE`，版本不要1.6，并配置`JAVA_HOME`环境变量。因为`Gradle`是用`Groovy`编写的，而`Groovy`基于`JAVA`。
+安装 `JDK`或者`JRE`，版本不要小于1.6，并配置`JAVA_HOME`环境变量。因为`Gradle`是用`Groovy`编写的，而`Groovy`基于`JAVA`。
 
 ## 4.2 下载
 
