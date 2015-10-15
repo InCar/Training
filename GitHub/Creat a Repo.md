@@ -72,3 +72,7 @@
 ![image of Creat13](http://img3.douban.com/view/photo/photo/public/p2274472040.jpg)
 
 ######恭喜！你已经了解如何创建新的代码库及README文件，并尝试初次提交，接下来你可以学习如何拷贝代码库。
+* [配置Git](https://github.com/HP-Enterprise/Training/blob/master/GitHub/Set%20up%20Git.md)
+* **创建代码仓库**
+* [Fork A Repository](https://help.github.com/articles/fork-a-repo)
+* [Be Social](https://help.github.com/articles/be-social)
