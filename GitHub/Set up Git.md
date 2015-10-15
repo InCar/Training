@@ -72,3 +72,7 @@ GitHub的核心是一个称为Git的开源版本控制系统（VCS），它负�
 如果通过[SSH克隆库](https://help.github.com/articles/which-remote-url-should-i-use#cloning-with-ssh)，必须在每台计算机安装[SSH公钥](https://help.github.com/articles/generating-ssh-keys)，以便从GitHub 进行push或pull操作。
 
 #####恭喜，你已经对Git基本入门了，接下来我们来学习[如何创建一个代码库](https://github.com/HP-Enterprise/Training/blob/master/GitHub/Creat%20a%20Repo.md)
+* **配置Git**
+* [创建代码仓库](https://github.com/HP-Enterprise/Training/blob/master/GitHub/Creat%20a%20Repo.md)
+* [Fork A Repository](https://help.github.com/articles/fork-a-repo)
+* [Be Social](https://help.github.com/articles/be-social)
