@@ -1,9 +1,9 @@
-#Github训练营•创建代码库
+#Github训练营•创建代码仓库（原文请参考 [Creat a Repo](https://help.github.com/articles/create-a-repo)
 
-递交工程到GitHub之前要先创建一个代码库。在GitHub上，各种工程都可放到不同仓库中。个人代码库位于用户账号下，注册GitHub后，即可开始创建代码库。
+递交工程到GitHub之前要先创建一个代码库。在GitHub上，各种工程都可放到不同[*仓库*](https://help.github.com/articles/github-glossary#repository)中。个人代码库位于用户账号下，[注册GitHub](https://help.github.com/articles/signing-up-for-a-new-github-account)后，即可开始创建代码库。
 
 ##在GitHub上创建一个新的代码库
-1.点击任意页面右上角的“+”按钮，选择“New repository”。
+1.点击任意页面右上角的“+”按钮，选择“New repository”。**
 
 ![image of Creat1](http://img4.douban.com/view/photo/photo/public/p2274471996.jpg)
  
