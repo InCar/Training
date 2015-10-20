@@ -21,4 +21,27 @@
 ###### 里程碑是一组一组的issues，相当于一个项目阶段，一个功能或者一个周期。人们用许多不同的方法来使用他们进行软件开发。GitHub上的一些里程碑例子包括：
 * **测试版发行**——BUG文件，在你发行项目测试版之前必须先解决的文件BUG。这是一个很棒的方法没来确保你不会漏掉任何东西。
 * **十月冲刺**——issues文件，会在10月影响到你。一个很伟大的方式让你在有很多事情要做的时候集中注意力。
+* **设计**——文件issues，有关重新设计你的issues，是一种在工作中收集思路意见的有效途径
+
+### **标签**
+###### 标签是一种高效的用来组织不同类型的issues的方法。issues可以有很多标签，只要你需要的情况，而且你可以一次过滤一个或多个标签。
+![Image of Yaktocat](https://guides.github.com/features/issues/labels-listing.png)
+### **委托人**
+###### 每一个isssues都会有一个委托人——一个负责处理issues的人。委托人的选择跟里程碑是一样的，是通过issues顶部的那个灰色的一栏。
+## **通知，@提到（某某），与参考文献**
+###### 通过使用@提到（某某）和内部issues的参考，你可以通知其他GitHub的用户和组，来相互交叉连接issues。它们提供了一个灵活的方式来找到合适的人参与，从而高效地处理issues，而且很容易学习使用。他们可以在GitHub上贯穿所有的文本域来开展工作——它们是我们文本格式化语法的一部分，叫做GitHub Flavored Markdown。
+![Image of Yaktocat](https://guides.github.com/features/issues/markdown-example.png)
+###### 如果你想了解更多，可以看看 Mastering Markdown。
+### **通知**
+###### 通知是GitHub上跟上你的issues的方式，你可以用他们来了解库里的新issues，或者只是取了解到他们何时需要你去推进某个issues。
+###### 有2种接收通知的方式：通过邮件和通过网络。你可以在你的设置里面配置如何接收通知。如果你打算接收大量的通知，我们倾向于建议你这样，你接收网络+电子邮件通知时设置为Participating（参与），而网络通知设置为Watching（观看）。
+![Image of Yaktocat](https://guides.github.com/features/issues/notifications.png)
+###### 这样设置，当有人特别提到你时你会接收到通知，然后紧跟上你感兴趣的网络接口。
+###### 你可以通过那个通知屏幕来访问你的通知。这个屏幕可以很好地立即看到很多通知，并立即标记他们为已读或者屏蔽。试着用键盘快捷键来加快你的工作流程——点击页面上的“？”来查看哪些快捷键是可用的。
+![Image of Yaktocat](https://guides.github.com/features/issues/notification.png)
+###### Muted threads不会在显示未读，直到你再次特别@提到了（某某）。这使得你很少感兴趣的主题得到有效的抑制（可能是一个你不了解的子系统）。如果你将一个issues标记为已读，那么它将这一一直保持下去，直到有人再次提到这个主题。
+### **@提到（某某）**
+###### @提到（某某）是在GitHub issues中提到某某的方式。
+
+
 
