@@ -157,13 +157,9 @@ GitHub是一个用来托管项目、协同工作的平台；使用GitHub，你将再无需担心你的硬盘中的
 Step | Screenshot
 ------------ | -------------
 点击侧边栏的拉取请求图标, 然后点击拉取请求页面的绿色**New pull request**按钮|![](https://cloud.githubusercontent.com/assets/1305617/2543808/73059f0a-b5f7-11e3-928e-745e9f9a5c75.gif)
-
 选择您所做的分支``readme-edits``与原始分支``master``作比较|![](https://guides.github.com/activities/hello-world/pick-branch.png)
-
 在差异比较页面浏览你的修改，确保这是你想要的提交|![](https://guides.github.com/activities/hello-world/diff.png)
-
 当你确信这些是你所想要提交的，点击绿色大按钮**Create Pull Request**|![](https://guides.github.com/activities/hello-world/create-pr.png)
-
 给你的拉取请求写一个标题，如果它直接关联到一个开放的问题，标题中包括“fixes #”标记和问题编号。写一个简短的说明描述你的修改|![](https://guides.github.com/activities/hello-world/pr-form.png)
 
 当你写好了这些信息，点击**Create pull request** ！
