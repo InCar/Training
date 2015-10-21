@@ -53,7 +53,7 @@
 ###### 这将会给browser-bugs组里的每一个成员发送通知。
 ### 参考文献
 ###### 通常，issues都会依赖于其他的issues，或者至少有些联系，你想把他们关联起来。你可以通过在标签中加入issue号来提及此issues。
-> 嗨， @kneath，我觉得问题的开始在#42
+> 嗨， @kneath，我觉得问题是从#42开始的
 
 ###### 当你这样做时，我们将在issue #42中创建一个事件，就像这样：
 ![Image of Yaktocat](https://guides.github.com/features/issues/reference.png)
