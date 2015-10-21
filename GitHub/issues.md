@@ -11,7 +11,7 @@
 * 一个接收到任务的人负责在任何给定的时间里完成issues。
 * Comments允许任何人访问并提供反馈
 
-## **里程碑、标签还和委托人**
+## **里程碑(Milestone,以下均称为里程碑)、标签（Labels，以下均称为标签）和委托人（Assignee，以下均称为委托人）**
 ###### 一旦你聚集了很多issues，你可能很难找到哪些是需要特别注意的。里程碑、标签和委托人对于筛选分类issues来说都是很给力的。
 ###### 你可以通过点击右边边上相应的齿轮来修改或者添加时间表、委托人和标签。
 ![Image of Yaktocat](https://guides.github.com/features/issues/labels.png)
@@ -28,7 +28,7 @@
 ![Image of Yaktocat](https://guides.github.com/features/issues/labels-listing.png)
 ### **委托人**
 ###### 每一个isssues都会有一个委托人——一个负责处理issues的人。委托人的选择跟里程碑是一样的，是通过issues顶部的那个灰色的一栏。
-## **通知，@提到（某某），与参考文献**
+## **通知（Notifications，以下均称为通知），@提到（某某）（@Mentions，以下均称为@提到（某某）），与参考文献（References，以下均称为参考文献）**
 ###### 通过使用@提到（某某）和内部issues的参考，你可以通知其他GitHub的用户和组，来相互交叉连接issues。它们提供了一个灵活的方式来找到合适的人参与，从而高效地处理issues，而且很容易学习使用。他们可以在GitHub上贯穿所有的文本域来开展工作——它们是我们文本格式化语法的一部分，叫做GitHub Flavored Markdown。
 ![Image of Yaktocat](https://guides.github.com/features/issues/markdown-example.png)
 ###### 如果你想了解更多，可以看看 Mastering Markdown。
@@ -41,7 +41,21 @@
 ![Image of Yaktocat](https://guides.github.com/features/issues/notification.png)
 ###### Muted threads不会在显示未读，直到你再次特别@提到了（某某）。这使得你很少感兴趣的主题得到有效的抑制（可能是一个你不了解的子系统）。如果你将一个issues标记为已读，那么它将这一一直保持下去，直到有人再次提到这个主题。
 ### **@提到（某某）**
-###### @提到（某某）是在GitHub issues中提到某某的方式。
+###### @提到（某某）是在GitHub issues中提到某某的方式。在这个issue的描述或者任何评论中，把@另一个GitHub的用户名列入其中，就会给那个人发送一个通知。这很类似于推特上使用的@提到（某某）。
+###### 我们喜欢用“/cc”的语法（副本抄送的简称）来把某人列入issues中：
+> 它看起来就像Safari上破碎的插件形式。当我试着创建此控件，Safari就崩溃了。这是可再生的10.8，而并不是10.9.难道是浏览器的BUG？
 
+> /cc @kneath @jresig
+###### 如果你能知道明确的用户并列入其中，那么就棒极了，然而，大多数情况，在整个团队里，我们并不真正的了解谁能帮到我们
+###### @提到（某某）也可以用于你们GitHub里的各种组。如果你在@acmeinc团队下创建一个组叫做browser-bugs，你可以这样@提到（某某）来提及那个组：
+> /cc @acmeinc/browser-bugs
 
+###### 这将会给browser-bugs组里的每一个成员发送通知。
+### 参考文献
+###### 通常，issues都会依赖于其他的issues，或者至少有些联系，你想把他们关联起来。你可以通过在标签中加入issue号来提及此issues。
+> 嗨， @kneath，我觉得问题的开始在#42
+
+###### 当你这样做时，我们将在issue #42中创建一个事件，就像这样：
+![Image of Yaktocat](https://guides.github.com/features/issues/reference.png)
+###### 如果issues在另外一个库里时呢？
 
