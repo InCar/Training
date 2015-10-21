@@ -2,6 +2,7 @@
 ## 4.1 先决条件
 
 `Gradle`需要安装`JDK`或者`JRE`，版本不低于1.6（使用`java -version`查看）。`Gradle`搭载自己的`Groovy`库,因此不需要安装，已经存在的`Groovy`的安装会被`Gradle`忽视。
+
 `Gradle`会使用你本来的路径下的`JDK` 。或者，你可以把`JAVA_HOME`环境变量指向你所需的`JDK`安装目录。
 
 ## 4.2 下载
