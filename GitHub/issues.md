@@ -61,4 +61,14 @@
 ###### 一个使用GitHub更有趣的方式是，在评论中直接提及某个issues。在评论信息里加入该issue号。
 ![Image of Yaktocat](https://guides.github.com/features/issues/commit.png)
 ###### 当你把评论合并到主分支时，通过在评论的前缀加上“Fixes”， “Fixed”， “Fix”， “Closes”， “Closed”， 或者 “Close”，它也将自动关闭issue。
+###### 参考文祥能够实现所做的工作与要跟踪的BUG的紧密相连，并且还是一个很棒的方式，给你的项目的历史添加可见性。
+## **搜索**
+###### 在每一页的顶部有一个搜索框，能让你在所有的issues中进行搜索。
+![Image of Yaktocat](https://guides.github.com/features/issues/search.png)
+###### 你可以通过以下方式审视搜索结果：
+* 键盘，例如，所有提到了侧边栏的issues
+* 状态，例如，所有提到了侧边栏的关闭的issues
+* 委托人，例如，所有提到了侧边栏的委托给了@mdo的issues
+######　
+
 
