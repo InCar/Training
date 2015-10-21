@@ -57,5 +57,8 @@
 
 ###### 当你这样做时，我们将在issue #42中创建一个事件，就像这样：
 ![Image of Yaktocat](https://guides.github.com/features/issues/reference.png)
-###### 如果issues在另外一个库里时呢？
+###### 如果issues在另外一个库里时呢？那么就在名字前加上库的名字，就像这样：“kneath/example-project#42”。
+###### 一个使用GitHub更有趣的方式是，在评论中直接提及某个issues。在评论信息里加入该issue号。
+![Image of Yaktocat](https://guides.github.com/features/issues/commit.png)
+###### 当你把评论合并到主分支时，通过在评论的前缀加上“Fixes”， “Fixed”， “Fix”， “Closes”， “Closed”， 或者 “Close”，它也将自动关闭issue。
 
