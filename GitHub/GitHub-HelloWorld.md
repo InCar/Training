@@ -6,7 +6,7 @@ GitHub是一个用来托管项目、协同工作的平台；使用GitHub，你将再无需担心你的硬盘中的
 
 本指南通过GitHub的五个要点：**Repositories**，**Branches**，**Commits**，**Issues**及**Pull Requests**，来指导你。
 
-当你理解了GitHub的这五项要点，你将可以学得更多的东西，在GitHub上走的更远。 同时，在此`hello-world`知识库(如：[holman/feedback](https://github.com/holman/ama),将来的资料库：[jlord/hello-world](https://github.com/jlord/hello-world))，你可以存储此项目相关的想法、资源、笔记及讨论或者其他相关的事情。
+当你理解了GitHub的这五项要点，你将可以学得更多的东西，走的更远。 而且，在此`hello-world`仓库中，你可以存储想法(或未来创建的仓库,如：[jlord/hello-world](https://github.com/jlord/hello-world))、资源或一般性的笔记甚至和其它人讨论事情(如：[holman/feedback](https://github.com/holman/ama))。
 
 **安装&零代码编写**
 
@@ -16,7 +16,7 @@ GitHub是一个用来托管项目、协同工作的平台；使用GitHub，你将再无需担心你的硬盘中的
 
 ##创建一个版本库（Repository）
 
-**版本库**是通常情况下GitHub中一个项目的基本单位。版本库中可以包含文件夹、文件、图片以及你的项目所需的任何东西。我们推荐在每一个版本库中包含一个**README**文件，或者一个描述此项目的文件。GitHub能够让你在创建新的版本库的时候很容易的增加一个这种文件。*GitHub还提供了其它常见的选项，比如许可文件，并且你也可以跳过这些*。
+**版本库**是通常情况下GitHub中一个项目的基本单位。版本库中可以包含文件夹、文件、图片以及你的项目所需的任何东西。我们推荐在每一个版本库中包含一个**README**文件，或者一个描述此项目的文件。GitHub能够让你在创建新的版本库的时候很容易的增加一个这种文件。*GitHub还提供了其它常见的选项，比如许可文件，但现在我们可以忽略这个*。
 
 **去新建一个版本库**
 
@@ -62,6 +62,7 @@ GitHub是一个用来托管项目、协同工作的平台；使用GitHub，你将再无需担心你的硬盘中的
 
 完成了之后点击**Submit new Issue**按钮。那么，这个Issue就有了一个可以供你引用的永久URL，即使这个Issue被关闭了。
 
+接下来，编辑你的README然后关闭这个Issue。
 
 
 ##创建一个分支

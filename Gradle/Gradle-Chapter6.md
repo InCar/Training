@@ -1,4 +1,4 @@
-#第六章  创建脚本基础知识（原文请参考 [Chapter 6. Build Script Basics](https://docs.gradle.org/current/userguide/tutorial_using_tasks.html)）
+#第六章  构建脚本基础知识（原文请参考 [Chapter 6. Build Script Basics](https://docs.gradle.org/current/userguide/tutorial_using_tasks.html)）
 
 ##6.1 工程和任务
 
