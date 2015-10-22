@@ -1,10 +1,10 @@
 # :bell: 近期活动
-### :boom:[大师面对面 | TypeScript之父](https://github.com/HP-Enterprise/Training/issues/11)
-Anders Hejlsberg 将来到北京，与广大TypeScript开发者和编程爱好者见面，分享最新的技术动态并与您进行巅峰对话。您将有机会与Anders零距离沟通，一睹大师风采，并享用一场关于TypeScript编程之美的饕餮盛宴！
+###  大师面对面 | TypeScript之父 :boom:
+[Anders Hejlsberg 将来到北京，与广大TypeScript开发者和编程爱好者见面，分享最新的技术动态并与您进行巅峰对话。您将有机会与Anders零距离沟通，一睹大师风采，并享用一场关于TypeScript编程之美的饕餮盛宴！](https://github.com/HP-Enterprise/Training/issues/11)
 
 :clock2: 2015年10月24日 | :earth_asia: 北京市朝阳区望京街8号利星行广场C座微软大厦3层
 ---|---
-[![Anders Hejlsberg](https://avatars2.githubusercontent.com/u/4226954?v=3&s=120)](https://github.com/ahejlsberg) | [![TeemolSparrow](https://avatars3.githubusercontent.com/u/13936823?v=3&s=80)](https://github.com/TeemolSparrow) [![Septemberwh](https://avatars1.githubusercontent.com/u/9412495?v=3&s=80)](https://github.com/Septemberwh) [![jiangli0509](https://avatars3.githubusercontent.com/u/5874912?v=3&s=80)](https://github.com/jiangli0509) [![any0921](https://avatars2.githubusercontent.com/u/14539598?v=3&s=80)](https://github.com/any0921)
+[![Anders Hejlsberg](https://avatars2.githubusercontent.com/u/4226954?v=3&s=128)](https://github.com/ahejlsberg) | [![TeemolSparrow](https://avatars3.githubusercontent.com/u/13936823?v=3&s=80)](https://github.com/TeemolSparrow) [![Septemberwh](https://avatars1.githubusercontent.com/u/9412495?v=3&s=80)](https://github.com/Septemberwh) [![jiangli0509](https://avatars3.githubusercontent.com/u/5874912?v=3&s=80)](https://github.com/jiangli0509) [![any0921](https://avatars2.githubusercontent.com/u/14539598?v=3&s=80)](https://github.com/any0921)
 
 # :book: 训练教程
 
