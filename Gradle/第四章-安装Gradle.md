@@ -1,35 +1,35 @@
-# µÚËÄÕÂ Gradle°²×°[Chapter 4. Installing Gradle](https://docs.gradle.org/current/userguide/installation.html)
-## 4.1 ÏÈ¾öÌõ¼þ
+# ç¬¬å››ç«  Gradleå®‰è£…[Chapter 4. Installing Gradle](https://docs.gradle.org/current/userguide/installation.html)
+## 4.1 å…ˆå†³æ¡ä»¶
 
-`Gradle`ÐèÒª°²×°`JDK`»òÕß`JRE`£¬°æ±¾²»µÍÓÚ1.6£¨Ê¹ÓÃ`java -version`²é¿´£©¡£`Gradle`´îÔØ×Ô¼ºµÄ`Groovy`¿â,Òò´Ë²»ÐèÒª°²×°£¬ÒÑ¾­´æÔÚµÄ`Groovy`µÄ°²×°»á±»`Gradle`ºöÊÓ¡£
+`Gradle`éœ€è¦å®‰è£…`JDK`æˆ–è€…`JRE`ï¼Œç‰ˆæœ¬ä¸ä½ŽäºŽ1.6ï¼ˆä½¿ç”¨`java -version`æŸ¥çœ‹ï¼‰ã€‚`Gradle`æ­è½½è‡ªå·±çš„`Groovy`åº“,å› æ­¤ä¸éœ€è¦å®‰è£…ï¼Œå·²ç»å­˜åœ¨çš„`Groovy`çš„å®‰è£…ä¼šè¢«`Gradle`å¿½è§†ã€‚
 
-`Gradle`»áÊ¹ÓÃÄã±¾À´µÄÂ·¾¶ÏÂµÄ`JDK` ¡£»òÕß£¬Äã¿ÉÒÔ°Ñ`JAVA_HOME`»·¾³±äÁ¿Ö¸ÏòÄãËùÐèµÄ`JDK`°²×°Ä¿Â¼¡£
+`Gradle`ä¼šä½¿ç”¨ä½ æœ¬æ¥çš„è·¯å¾„ä¸‹çš„`JDK` ã€‚æˆ–è€…ï¼Œä½ å¯ä»¥æŠŠ`JAVA_HOME`çŽ¯å¢ƒå˜é‡æŒ‡å‘ä½ æ‰€éœ€çš„`JDK`å®‰è£…ç›®å½•ã€‚
 
-## 4.2 ÏÂÔØ
+## 4.2 ä¸‹è½½
 
-ÎÒÃÇ¿ÉÒÔ´Ó[Gradle web site](http://gradle.org/gradle-download/)ÏÂÔØ`Gradle`·¢ÐÐ°ü
+æˆ‘ä»¬å¯ä»¥ä»Ž[Gradle web site](http://gradle.org/gradle-download/)ä¸‹è½½`Gradle`å‘è¡ŒåŒ…
 
-## 4.3 ½âÑ¹
+## 4.3 è§£åŽ‹
 
-`Gradle`°²×°ÎÄ¼þÊÇÒ»¸öZIPÑ¹ËõÎÄ¼þ¡£ÍêÕûµÄÎÄ¼þ°üº¬£º
+`Gradle`å®‰è£…æ–‡ä»¶æ˜¯ä¸€ä¸ªZIPåŽ‹ç¼©æ–‡ä»¶ã€‚å®Œæ•´çš„æ–‡ä»¶åŒ…å«ï¼š
 
-* Ö´ÐÐ³ÌÐò
-* ÓÃ»§ÊÖ²á£¨°üÀ¨`HTML`ºÍ`PDF`Á½ÖÖ°æ±¾£©
-* `DSL`²Î¿¼Ö¸ÄÏ
-* APIÊÖ²á£¨°üÀ¨`Javadoc`ºÍ`Groovydoc`£©
-* ´óÁ¿µÄÑùÀý¡£°üº¬ÓÃ»§Ö¸ÄÏÖÐÌáµ½µÄÑùÀý£¬ÓÐÒ»Ð©ÒÑ¾­Íê³ÉºÍ¸ü¸´ÔÓµÄ¹¹½¨¿ÉÒÔ×÷ÎªÎÒÃÇ½¨Á¢Ò»¸ö×Ô¼º`Gradle`¹¹½¨µÄÆðµã
-* Ö´ÐÐ³ÌÐòÔ´´úÂë¡£Ö»ÊÇÓÃÀ´²Î¿¼µÄ£¬Èç¹ûÄãÏë¹¹½¨`Gradle`µÄ»°ÐèÒªÏÂÔØÔ´Âë¿â£¬ÏêÇéÇë¼û[Gradle web site](http://gradle.org/gradle-download/)
+* æ‰§è¡Œç¨‹åº
+* ç”¨æˆ·æ‰‹å†Œï¼ˆåŒ…æ‹¬`HTML`å’Œ`PDF`ä¸¤ç§ç‰ˆæœ¬ï¼‰
+* `DSL`å‚è€ƒæŒ‡å—
+* APIæ‰‹å†Œï¼ˆåŒ…æ‹¬`Javadoc`å’Œ`Groovydoc`ï¼‰
+* å¤§é‡çš„æ ·ä¾‹ã€‚åŒ…å«ç”¨æˆ·æŒ‡å—ä¸­æåˆ°çš„æ ·ä¾‹ï¼Œæœ‰ä¸€äº›å·²ç»å®Œæˆå’Œæ›´å¤æ‚çš„æž„å»ºå¯ä»¥ä½œä¸ºæˆ‘ä»¬å»ºç«‹ä¸€ä¸ªè‡ªå·±`Gradle`æž„å»ºçš„èµ·ç‚¹
+* æ‰§è¡Œç¨‹åºæºä»£ç ã€‚åªæ˜¯ç”¨æ¥å‚è€ƒçš„ï¼Œå¦‚æžœä½ æƒ³æž„å»º`Gradle`çš„è¯éœ€è¦ä¸‹è½½æºä»£ç ï¼Œæˆ–è€…ä»Žæºä»£ç åº“è¿å‡ºåˆ†æ”¯ï¼Œè¯¦æƒ…è¯·è§[Gradle web site](http://gradle.org/gradle-download/)
 
-## 4.4 »·¾³±äÁ¿
+## 4.4 çŽ¯å¢ƒå˜é‡
 
-ÎªÁËÔËÐÐ`Gradle`,ÐèÒªÌí¼Ó *GRADLE_HOME*/binµ½PATHµÄ»·¾³±äÁ¿ÀïÈ¥¡£Í¨³££¬ÕâÑù¾Í×ã¹»À´ÔËÐÐ`Gradle`ÁË¡£
+ä¸ºäº†è¿è¡Œ`Gradle`,éœ€è¦æ·»åŠ  *GRADLE_HOME*/binåˆ°PATHçš„çŽ¯å¢ƒå˜é‡é‡ŒåŽ»ã€‚é€šå¸¸ï¼Œè¿™æ ·å°±è¶³å¤Ÿæ¥è¿è¡Œ`Gradle`äº†ã€‚
 
-## 4.5 ÔËÐÐ²¢²âÊÔÊÇ·ñ¹¤×÷Õý³£
+## 4.5 è¿è¡Œå¹¶æµ‹è¯•æ˜¯å¦å·¥ä½œæ­£å¸¸
 
-ÅäÖÃÍê³ÉÖ®ºó£¬ÔËÐÐ`gradle -v`£¬¼ì²éÒ»ÏÂÊÇ·ñ°²×°ÎÞÎó¡£Èç¹û°²×°ÕýÈ·£¬Ëü»á´òÓ¡³ö`Gradle`µÄ°æ±¾ÐÅÏ¢£¬ºÍÒ»Ð©±¾µØ»·¾³ÅäÖÃ£¨`Groovy`, `JVM version`, `OS`µÈ...)¡£ÕâÀïµÄ`Gradle`°æ±¾ÐÅÏ¢½«»áÆ¥ÅäÄãÏÂÔØµÄ°æ±¾¡£
+é…ç½®å®Œæˆä¹‹åŽï¼Œè¿è¡Œ`gradle -v`ï¼Œæ£€æŸ¥ä¸€ä¸‹æ˜¯å¦å®‰è£…æ— è¯¯ã€‚å¦‚æžœå®‰è£…æ­£ç¡®ï¼Œå®ƒä¼šæ‰“å°å‡º`Gradle`çš„ç‰ˆæœ¬ä¿¡æ¯ï¼Œå’Œä¸€äº›æœ¬åœ°çŽ¯å¢ƒé…ç½®ï¼ˆ`Groovy`, `JVM version`, `OS`ç­‰...)ã€‚è¿™é‡Œçš„`Gradle`ç‰ˆæœ¬ä¿¡æ¯å°†ä¼šåŒ¹é…ä½ ä¸‹è½½çš„ç‰ˆæœ¬ã€‚
 
-## 4.6 JVM£¨JavaÐéÄâ»ú£©²ÎÊý
+## 4.6 JVMï¼ˆJavaè™šæ‹Ÿæœºï¼‰å‚æ•°
 
-ÔËÐÐ`Gradle`ÐèÒªµÄ`JVM`²ÎÊý¿ÉÒÔÍ¨¹ý»·¾³±äÁ¿ÉèÖÃ¡£ÎÒÃÇ¿ÉÒÔÊ¹ÓÃ`GRADLE_OPTS`»ò`JAVA_OPTS`À´ÅäÖÃ£¬»òÕßÁ½¸öÒ»Æð¡£`JAVA_OPTS`ÉèÖÃµÄ²ÎÊýÒ²»áÓ°Ïìµ½ÆäËûµÄ`JAVA`Ó¦ÓÃ³ÌÐò¡£µäÐÍµÄ¾ÍÊÇÔÚ`JAVA_OPTS`ÀïÉèÖÃ`HTTP`´úÀí¶øÔÚ`GRADLE_OPTS`ÀïÉèÖÃÄÚ´æ²ÎÊý¡£ÕâÐ©±äÁ¿Í¬Ñù¿ÉÒÔÉèÖÃÔÚ`gradle`»òÕß`gradlew`½Å±¾µÄ¿ªÍ·¡£
+è¿è¡Œ`Gradle`éœ€è¦çš„`JVM`å‚æ•°å¯ä»¥é€šè¿‡çŽ¯å¢ƒå˜é‡è®¾ç½®ã€‚æˆ‘ä»¬å¯ä»¥ä½¿ç”¨`GRADLE_OPTS`æˆ–`JAVA_OPTS`æ¥é…ç½®ï¼Œæˆ–è€…ä¸¤ä¸ªä¸€èµ·ã€‚`JAVA_OPTS`è®¾ç½®çš„å‚æ•°ä¹Ÿä¼šå½±å“åˆ°å…¶ä»–çš„`JAVA`åº”ç”¨ç¨‹åºã€‚å…¸åž‹çš„å°±æ˜¯åœ¨`JAVA_OPTS`é‡Œè®¾ç½®`HTTP`ä»£ç†è€Œåœ¨`GRADLE_OPTS`é‡Œè®¾ç½®å†…å­˜å‚æ•°ã€‚è¿™äº›å˜é‡åŒæ ·å¯ä»¥è®¾ç½®åœ¨`gradle`æˆ–è€…`gradlew`è„šæœ¬çš„å¼€å¤´ã€‚
 
-×¢Òâ£¬Ä¿Ç°ÎÒÃÇ»¹²»ÄÜÍ¨¹ýÃüÁîÐÐÀ´ÉèÖÃ`Gradle`ÐèÒªµÄ`JVM`²ÎÊý¡£
+æ³¨æ„ï¼Œç›®å‰æˆ‘ä»¬è¿˜ä¸èƒ½é€šè¿‡å‘½ä»¤è¡Œæ¥è®¾ç½®`Gradle`éœ€è¦çš„`JVM`å‚æ•°ã€‚
