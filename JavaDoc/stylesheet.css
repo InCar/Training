@@ -1,0 +1,10 @@
+/* 适用于 javadoc 的样式表 */
+@import url('https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/API_Documentation/files/javadoc/stylesheet.css');
+
+.overviewSummary caption span, .packageSummary caption span, .contentContainer ul.blockList li.blockList caption span, .summary caption span, .classUseContainer caption span, .constantValuesContainer caption span {
+    margin-top: -4px;
+    margin-left: -4px;
+    margin-right: -4px;
+
+    padding-bottom: 4px;
+}
