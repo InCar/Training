@@ -1,13 +1,13 @@
-# 精通Issues
+# 精通Issues（原文：[Master Issues](https://guides.github.com/features/issues/)）
 Issues是一种很强大的方法，能给你的项目记录跟踪任务，功能和漏洞。他们就好像是电子邮件——只不过他们可以共享，可以与您的团队其他成员进行讨论。大多数软件项目都会有这样那样的bug跟踪系统。GitHub的这个跟踪系统被称为Issues，并且他在每一个库里都有自己的部分。
 ![Image of Yaktocat](https://guides.github.com/features/issues/navigation-highlight.png)
 例如，让我们看一看 Bootstrap的issues部分：
 ![Image of Yaktocat](https://guides.github.com/features/issues/listing-screen.png)
 GitHub的issues记录跟踪特殊就特殊在我们专注于协作、参考和优秀的文本格式。一个GitHub上典型的issues看起来有点像这个：
 ![Image of Yaktocat](https://guides.github.com/features/issues/example-issue.png)
-* 用一个标题和描述来描述issues的全部
+* 用一个标题和描述来描述这个issue是关于什么的
 * 彩色的编码标签帮你分类和过滤你的issues（就像电子邮件里的标签一样）
-* 一个里程碑的作用就是它能像issues的容器一样。这对于关联项目的具体特征或者项目阶段来说是非常重要的（例如，每周Sprint9/5-9/16或运行1.0）。
+* 一个里程碑的作用就是它能像issues的容器一样。这对于关联项目的具体特征或者项目阶段来说是非常重要的（例如，每周Sprint9/5-9/16或发布1.0）。
 * 一个接收到任务的人负责在任何给定的时间里完成issues。
 * Comments允许任何人访问并提供反馈
 
@@ -47,20 +47,24 @@ GitHub的issues记录跟踪特殊就特殊在我们专注于协作、参考和�
 ![Image of Yaktocat](https://guides.github.com/features/issues/notification.png)
 
 Muted threads不会在显示未读，直到你再次特别@提到了（某某）。这使得你很少感兴趣的主题得到有效的抑制（可能是一个你不了解的子系统）。如果你将一个issues标记为已读，那么它将这一一直保持下去，直到有人再次提到这个主题。
+
+GitHub还能够同步你电子邮件通知的读/未读的状态——如果你在你的邮箱里读了某个通知，它将在网络端呗标记为已读（如果喜欢的话，确保你的邮箱能显示图片）。
 ### **@提到（某某）**
 @提到（某某）是在GitHub issues中提到某某的方式。在这个issue的描述或者任何评论中，把@另一个GitHub的用户名列入其中，就会给那个人发送一个通知。这很类似于推特上使用的@提到（某某）。
 
 我们喜欢用“/cc”的语法（副本抄送的简称）来把某人列入issues中：
-> 它看起来就像Safari上破碎的插件形式。当我试着创建此控件，Safari就崩溃了。这是可再生的10.8，而并不是10.9.难道是浏览器的BUG？
+> 在Safari浏览器上,新的小插件表单似乎坏掉了.当我尝试创建这个小插件时,Safari崩溃了.在10.8中这个可以再现,但在10.9中则不能.难道是浏览器的BUG？
 
 > /cc @kneath @jresig
+
 如果你能知道明确的用户并列入其中，那么就棒极了，然而，大多数情况，在整个团队里，我们并不真正的了解谁能帮到我们
+
  @提到（某某）也可以用于你们GitHub里的各种组。如果你在@acmeinc团队下创建一个组叫做browser-bugs，你可以这样@提到（某某）来提及那个组：
 > /cc @acmeinc/browser-bugs
 
 这将会给browser-bugs组里的每一个成员发送通知。
-### 参考文献
-通常，issues都会依赖于其他的issues，或者至少有些联系，你想把他们关联起来。你可以通过在标签中加入issue号来提及此issues。
+### 引用
+通常，issues都会依赖于其他的issues，或者至少有些联系，你想把他们关联起来。你可以在#号后接上issue编号来引用issue。
 > 嗨， @kneath，我觉得问题是从#42开始的
 
 当你这样做时，我们将在issue #42中创建一个事件，就像这样：
@@ -73,17 +77,17 @@ Muted threads不会在显示未读，直到你再次特别@提到了（某某）
 
 当你把评论合并到主分支时，通过在评论的前缀加上“Fixes”， “Fixed”， “Fix”， “Closes”， “Closed”， 或者 “Close”，它也将自动关闭issue。
 
-参考文祥能够实现所做的工作与要跟踪的BUG的紧密相连，并且还是一个很棒的方式，给你的项目的历史添加可见性。
+引用，能够实现所做的工作与要跟踪的BUG的紧密相连，并且还是一个很棒的方式，给你的项目的历史添加可见性。
 ## **搜索**
 在每一页的顶部有一个搜索框，能让你在所有的issues中进行搜索。
 ![Image of Yaktocat](https://guides.github.com/features/issues/search.png)
 
 你可以通过以下方式审视搜索结果：
-* 键盘，例如，所有提到了侧边栏的issues
-* 状态，例如，所有提到了侧边栏的关闭的issues
-* 委托人，例如，所有提到了侧边栏的委托给了@mdo的issues
+* 键盘，例如，[所有提到了侧边栏的issues](https://github.com/twbs/bootstrap/issues?q=sidebar)
+* 状态，例如，[所有提到了侧边栏的关闭的issues](https://github.com/twbs/bootstrap/issues?q=sidebar+is%3Aclosed)
+* 委托人，例如，[所有提到了侧边栏的委托给了@mdo的issues](https://github.com/twbs/bootstrap/issues?q=sidebar+is%3Aclosed+assignee%3Amdo)
 
-我们的有关搜索issues的帮助文档会给你展示其他的搜索方式：使用创建/修改日期，标签，作者，评论次数，代码库的所有者，等等。
+[我们的有关搜索issues的帮助文档](https://help.github.com/articles/using-search-to-filter-issues-and-pull-requests/)会给你展示其他的搜索方式：使用创建/修改日期，标签，作者，评论次数，代码库的所有者，等等。
 ## **概述&报告**
 在issues的部分之外，还有其他两个页面，帮你概述你的所有代码库里的issues发生了什么。
 ### 指示板issue
@@ -93,17 +97,17 @@ Muted threads不会在显示未读，直到你再次特别@提到了（某某）
 * 你创建的issues
 
 如果你使用的组织，每个都有自己的issues，指示板将会从组织中把这些issues分离出来。
-### **脉冲**
-在每个库的底部，是一个叫做脉冲的部分——脉冲就相当于过去一周（或是一天，或者过去的三个月，等等）在代码库里发生的所有的事情。
+### **脉动**
+在每个库的底部，是一个叫做脉动的部分——脉动就相当于过去一周（或是一天，或者过去的三个月，等等）在代码库里发生的所有的事情。
 ![Image of Yaktocat](https://guides.github.com/features/issues/pulse.png)
 
 它是一个有效的途径，然你在离开的时候紧跟代码库，并且不想查看库里提供的小通知。
 ## **issues的其他用途**
 issues是用来跟踪所有事情的有效方式——GitHub是一个很棒的平台，能让你轻松分享并在issues上进行协作。这里有一些让我们爱不释手的东西：
-* BUG跟踪系统服务于你的机构，包括宝石，就相当于门被挂错了
+* 你房屋装修的差错跟踪,比如类似这种事情大门装错了
 * 你的开源项目的BUG跟踪系统
 * 关于食谱的请求（或许你有一个不错的面筋披萨面团配方？）
 
 ## 结束
-现在，祝贺你自己——这是一个很伟大的阅读！issues管理器是任何开发人员在开发过程中的一个有力工具之一。我想，现在所有的从这离开的人都是去正确地修复BUG了。
+现在，祝贺你自己——阅读了相当大一段内容！issues管理器是任何开发人员在开发过程中的一个有力工具之一。我想，现在所有剩下的工作就是去真正修复BUG了。
 
