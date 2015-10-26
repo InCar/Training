@@ -20,5 +20,5 @@
         + [第1章 配置Git[简体中文]](https://github.com/HP-Enterprise/Training/blob/master/GitHub/Set%20up%20Git.md)
         + [第2章 创建代码仓库[简体中文]](https://github.com/HP-Enterprise/Training/blob/master/GitHub/Creat%20a%20Repo.md)
     + [*《GitHub Hello-World》*[简体中文]](https://github.com/HP-Enterprise/Training/blob/master/GitHub/GitHub-HelloWorld.md)
-    + [*《精通 Issues》*[English]](https://guides.github.com/features/issues)
+    + [*《精通 Issues》*[简体中文]](https://github.com/HP-Enterprise/Training/blob/master/GitHub/issues.md)
     + [*《精通 Markdown》*[English]](https://guides.github.com/features/mastering-markdown)
