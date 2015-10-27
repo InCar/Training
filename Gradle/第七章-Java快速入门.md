@@ -317,4 +317,4 @@ Build layout（构建结构）
 
 在本章，你已经知道了构建一个基础的Java基本项目普遍要做的事情，这个章节还不够详尽，针对Java项目在Gradle里面还可以做很多事情的。你可以找到更多关于Java插件的知识在第二十三章 Java插件[Chapter 23, The Java Plugin](https://docs.gradle.org/current/userguide/java_plugin.html),而且你可以在Gradle安装目录 *samples/java*下找到更多java项目的例子。
 
-另外，让我们继续学习第八章，依赖管理基础。[Chapter 8, Dependency Management Basics](https://docs.gradle.org/current/userguide/artifact_dependencies_tutorial.html)
+另外，让我们继续学习[第八章，依赖管理基础](https://docs.gradle.org/current/userguide/artifact_dependencies_tutorial.html)。
