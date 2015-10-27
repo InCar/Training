@@ -26,6 +26,10 @@ Java插件是基于约定的。这意味着在项目的许多方面该插件都定了默认值，比如Java源码应
 
 Gradle会期望在src/main/java目录下找到你的项目源码，在src/test/java目录下找到测试源码。另外，在src/main/resources目录下的任何文件都会被作为资源文件添加到JAR文件里，在src/test/resources目录下的任何文件都会被添加到classpath中用于运行测试。所有的输出文件都被创建在build目录里，其中JAR文件在build/libs目录里。
 
+都有哪些task可以用？
+
+你可以使用gradle task来列出项目的所有task。这将会让你看到Java插件在你的项目中添加的task。
+
 ###7.2.1 构建项目
 
 Java插件可以添加相当多的task到你们项目。然而，你构建项目的时候只需要少数的task。用的最普遍得task就是build task，它可以用来构建完整的项目。当你运行 **gradle build**，Greadle将会编译和测试你的代码，创建一个JAR文件包含你的主要class和资源文件：
@@ -97,7 +101,7 @@ Java插件可以添加相当多的task到你们项目。然而，你构建项目的时候只需要少数的task。
     }
 ```
 
-你可以找到更多资料在第八章，依赖管理基础。[Chapter 8, Dependency Management Basics](https://docs.gradle.org/current/userguide/artifact_dependencies_tutorial.html)
+你可以找到更多资料在[第八章，依赖管理基础](https://docs.gradle.org/current/userguide/artifact_dependencies_tutorial.html)。
 
 ###7.2.3 定制项目
 
