@@ -1,10 +1,10 @@
 # 精通Markdown（原文请参考[Mastering Markdown](https://guides.github.com/features/mastering-markdown))
 
-Markdown是一种在GitHub上可以用来设计各种形式写作的轻量级且易于使用的语法
+Markdown是一种在GitHub上可以用来样式化各种形式写作的轻量级且易于使用的语法
 
 ##### 你将会学到： #####
 
-* Markdown格式如何使得协作设计变得容易
+* Markdown格式如何使样式化的协同合作变得容易
 
 * Markdown与传统格式化方法的区别
 
@@ -12,11 +12,11 @@ Markdown是一种在GitHub上可以用来设计各种形式写作的轻量级且
 
 * 如何利用GitHub的Markdown自动渲染
 
-* 如何使用GitHub独有的Markdown扩展功能
+* 如何使用GitHub独有的Markdown扩展名文件
 
 ## Markdown是什么？
 
-[Markdown](http://daringfireball.net/projects/markdown)能在网络上设计文本。你可以分分钟用Markdow管理文档的显示，以粗体或者斜体排版，插图，创建列表~Markdown主要是些常规文本，只加入了非常少量的非字母字符，比如`#`或`*`。
+[Markdown](http://daringfireball.net/projects/markdown)能在网络上样式化文本。你可以分分钟用Markdow管理文档的显示，以粗体或者斜体排版，插图，创建列表~Markdown主要是些常规文本，只加入了非常少量的非字母字符，比如`#`或`*`。
 
 你能在GitHub的大部分场景使用Markdown：
 
@@ -24,7 +24,7 @@ Markdown是一种在GitHub上可以用来设计各种形式写作的轻量级且
 
 * 在Issue中评释或是Pull Requests时
 
-* `.md`或`.markdown`文件的延伸
+* `.md`或`.markdown`作为扩展名的文件
 
 ## 举例 ##
 
@@ -43,15 +43,12 @@ It's very easy to make some words **bold** and other words *italic* with Markdow
 有时你想要有序的列表：
 
 1. 1
-
 2. 2
-
 3. 3
 
 有时你会想要点状列表:
 
 * 以星号符开头Start a line with a star
-
 * 搞定！
 
 又或者,
@@ -65,15 +62,12 @@ It's very easy to make some words **bold** and other words *italic* with Markdow
 有时你想要有序的列表：
 
 1. 1
-
 2. 2
-
 3. 3
 
 有时你会想要点状列表:
 
 * 以星号符开头Start a line with a star
-
 * 搞定！
 
 又或者,
@@ -125,43 +119,7 @@ It's very easy to make some words **bold** and other words *italic* with Markdow
 > 咖啡，被发明出来最好的有机悬浮液。。。我用它击败了博格。
 > -舰长詹妮弗
 
-### 代码 ###
 
-```
-GitHub上的Markdown提供多种设计代码的方式。如果是行内代码，将其放在反引号内：`var example = true`。更长的代码块，则可以用缩进四个空格的方式处理：
-    if (isAwesome){
-    return true
-    }
-    
-GitHub也支持不需要缩进就能实现多行代码设计的代码围栏：                                                              ```if (isAwesome){
-  return true
-}                                                                                                                     ```
-还可以加入语言来实现语法高亮：                                                                                        ```javascript
-if (isAwesome){
-  return true
-}
-```
-
-GitHub上的Markdown提供多种设计代码的方式。如果是行内代码，将其放在反引号内：`var example = true`。更长的代码块，则可以用缩进四个空格的方式处理：
-    if (isAwesome){
-    return true
-    }
-    
-GitHub也支持不需要缩进就能实现多行代码设计的代码围栏：
-
-```
-if (isAwesome){
-  return true
-}
-```
-
-还可以加入语言来实现语法高亮：
-
-```javascript
-if (isAwesome){
-  return true
-}
-```
 
 ### 其他 ###
 
@@ -242,7 +200,7 @@ O(∩_∩)O, 不过我得承认，任务清单是我的最爱~
 ### 行内代码 ###
 
     我认为你在这里应该使用一个
-    `<addr>  元素。
+    `<addr>`  元素。
 
 ## GitHub Flavored Markdown(GFM) ##
 
