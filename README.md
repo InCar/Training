@@ -9,16 +9,16 @@
 # :book: 训练教程
 
 + Git 源代码管理工具
-    + [*《Pro Git》* 第1章 起步,第2章 Git基础,第3章 Git分支[简体中文]](http://git-scm.com/book/zh/v2)
+    + [*《Pro Git》* 第1章 起步,第2章 Git基础,第3章 Git分支](http://git-scm.com/book/zh/v2)
 + Gradle 构建工具
     + *《Gradle教程》* 
-        + [第4章 安装Gradle[简体中文]](https://github.com/HP-Enterprise/Training/blob/master/Gradle/第四章-Gradle安装.md)
-        + [第6章 构建脚本基础[简体中文]](https://github.com/HP-Enterprise/Training/blob/master/Gradle/Gradle-Chapter6.md)
-        + [第7章 Java快速入门[简体中文]](https://github.com/HP-Enterprise/Training/blob/master/Gradle/第七章-Java快速入门.md):boom:
+        + [第4章 安装Gradle](https://github.com/HP-Enterprise/Training/blob/master/Gradle/第四章-Gradle安装.md)
+        + [第6章 构建脚本基础](https://github.com/HP-Enterprise/Training/blob/master/Gradle/Gradle-Chapter6.md)
+        + [第7章 Java快速入门](https://github.com/HP-Enterprise/Training/blob/master/Gradle/第七章-Java快速入门.md)
 + GitHub 协调沟通工具
     + [*《GitHub训练营》*](https://help.github.com/categories/bootcamp)
-        + [第1章 配置Git[简体中文]](https://github.com/HP-Enterprise/Training/blob/master/GitHub/Set%20up%20Git.md)
-        + [第2章 创建代码仓库[简体中文]](https://github.com/HP-Enterprise/Training/blob/master/GitHub/Creat%20a%20Repo.md)
-    + [*《GitHub Hello-World》*[简体中文]](https://github.com/HP-Enterprise/Training/blob/master/GitHub/GitHub-HelloWorld.md)
-    + [*《精通 Issues》*[简体中文]](https://github.com/HP-Enterprise/Training/blob/master/GitHub/issues.md):boom:
-    + [*《精通 Markdown》*[English]](https://guides.github.com/features/mastering-markdown)
+        + [第1章 配置Git](https://github.com/HP-Enterprise/Training/blob/master/GitHub/Set%20up%20Git.md)
+        + [第2章 创建代码仓库](https://github.com/HP-Enterprise/Training/blob/master/GitHub/Creat%20a%20Repo.md)
+    + [*《GitHub Hello-World》*](https://github.com/HP-Enterprise/Training/blob/master/GitHub/GitHub-HelloWorld.md)
+    + [*《精通 Issues》*](https://github.com/HP-Enterprise/Training/blob/master/GitHub/issues.md)
+    + [*《精通 Markdown》*](https://github.com/HP-Enterprise/Training/blob/master/GitHub/精通Markdown.md):boom:
