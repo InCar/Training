@@ -13,7 +13,7 @@
  
 > 3.可以对代码库添加描述（可填可不填），例如，“My first repository on GitHub.”
 
-![image of Creat3](http://img4.douban.com/view/photo/photo/public/p2274472009.jpg)
+![image of Creat3](http://img4.doubanio.com/view/photo/photo/public/p2274472009.jpg)
 
 > 4.选择创建公共库或私密库。
 
