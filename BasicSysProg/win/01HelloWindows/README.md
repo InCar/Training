@@ -1,5 +1,10 @@
 # 01 Hello Windows
 
+![VS2015](https://assets.windowsphone.com/db658987-b7ca-43aa-885c-fd4426fb6962/Downloads-VS_InvariantCulture_Default.png)
+
+## Prerequisite
+[Windows SDK](https://dev.windows.com/en-us/downloads)
+
 ## Build
 You can build with anyone of the 3 ways listed below.
 
