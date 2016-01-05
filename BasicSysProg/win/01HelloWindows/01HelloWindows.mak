@@ -3,10 +3,11 @@ OutputPath=Debug
 all : $(OutputPath)/HelloWindows.obj $(OutputPath)/HelloWindows.exe
 
 $(OutputPath)/HelloWindows.obj : HelloWindows.c
-    cl /D UNICODE /D _UNICODE /c HelloWindows.c /Fo:$(OutputPath)/HelloWindows.obj
+    - if NOT EXIST $(OutputPath) mkdir $(OutputPath)
+	- cl /D UNICODE /D _UNICODE /c /Fo:$(OutputPath)/HelloWindows.obj HelloWindows.c
 
-$(OutputPath)/HelloWindows.exe : HelloWindows.obj
-    link $(OutputPath)/HelloWindows.obj user32.lib /OUT:$(OutputPath)/HelloWindows.exe
+$(OutputPath)/HelloWindows.exe : $(OutputPath)/HelloWindows.obj
+    - link $(OutputPath)/HelloWindows.obj user32.lib /OUT:$(OutputPath)/HelloWindows.exe
 
 clean :
-    del "$(OutputPath)\HelloWindows.obj" "$(OutputPath)\HelloWindows.exe"
+    - del "$(OutputPath)\HelloWindows.obj" "$(OutputPath)\HelloWindows.exe"
