@@ -21,25 +21,25 @@
         + [第2章 创建代码仓库](https://github.com/HP-Enterprise/Training/blob/master/GitHub/Creat%20a%20Repo.md)
     + [*《GitHub Hello-World》*](https://github.com/HP-Enterprise/Training/blob/master/GitHub/GitHub-HelloWorld.md)
     + [*《精通 Issues》*](https://github.com/HP-Enterprise/Training/blob/master/GitHub/issues.md)
-    + [*《精通 Markdown》*](https://github.com/HP-Enterprise/Training/blob/master/GitHub/精通Markdown.md):boom:
+    + [*《精通 Markdown》*](https://github.com/HP-Enterprise/Training/blob/master/GitHub/精通Markdown.md)
 + 系统性编程课程-Basic System Programming
-    1. 第一个Windows程序
-    2. Windows消息循环
-    3. 文本输出&滚动条
-    4. 基本图形绘制:点,线和矩形
-    5. 键盘与光标位置
-    6. 鼠标
-    7. 定时器
-    8. 子窗口与控件
-    9. 菜单
-    10. 对话框
-    11. 剪贴板
-    12. 打印机
-    13. 位图
-    14. 字体
-    15. 文件
-    16. 多线程
-    17. 动态链接库
-    18. 网络
-    19. 音频&视频
-    20. 3D图形
+    + 第一个Windows程序 [windows](https://github.com/HP-Enterprise/Training/tree/master/BasicSysProg/win/01HelloWindows) :boom:
+    + Windows消息循环
+    + 文本输出&滚动条
+    + 基本图形绘制:点,线和矩形
+    + 键盘与光标位置
+    + 鼠标
+    + 定时器
+    + 子窗口与控件
+    + 菜单
+    + 对话框
+    + 剪贴板
+    + 打印机
+    + 位图
+    + 字体
+    + 文件
+    + 多线程
+    + 动态链接库
+    + 网络
+    + 音频&视频
+    + 3D图形
