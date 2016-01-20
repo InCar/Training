@@ -1,6 +1,7 @@
 *.suo
 *.opensdf
 *.sdf
+*.opendb
 *.user
 *.filters
 

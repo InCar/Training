@@ -30,9 +30,20 @@ HelloWindows.exe
 ```
 
 ## Reference
-
 + [WinMain](https://msdn.microsoft.com/en-us/library/windows/desktop/ms633559.aspx)
 + [MessageBox](https://msdn.microsoft.com/en-us/library/windows/desktop/ms645505.aspx)
 + [cl.exe](https://msdn.microsoft.com/en-us/library/19z1t1wy.aspx)
 + [link.exe](https://msdn.microsoft.com/en-us/library/y0zzbyt4.aspx)
 + [nmake.exe](https://msdn.microsoft.com/en-us/library/dd9y37ha.aspx)
++ [depends.exe](http://dependencywalker.com/)
+
+## Outline
++ History
+    - Turing & Von Neumann
+    - Fairchild => Intel, AMD => Microsoft, Apple, Oracle(Sun), Google
+    - ASM => C => C++,Objective-C => Java(JVM), C#(CLR) | Javascript(Browser|nodejs)
+    - MS-DOS => Win3.1 => Windows9X => WindowsNT
++ Hello Windows
++ Dependencies
++ Image vs. Process
++ Memory
