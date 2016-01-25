@@ -1,4 +1,4 @@
-#include <Windows.h>
+﻿#include <Windows.h>
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nCmdShow)
 {
