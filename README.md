@@ -24,7 +24,7 @@
     + [*《精通 Markdown》*](https://github.com/HP-Enterprise/Training/blob/master/GitHub/精通Markdown.md)
 + 系统性编程课程-Basic System Programming
     + 第一个Windows程序 [windows](https://github.com/HP-Enterprise/Training/tree/master/BasicSysProg/win/01HelloWindows) :boom:
-    + Windows消息循环
+    + Windows消息循环 [windows](https://github.com/HP-Enterprise/Training/tree/master/BasicSysProg/win/02MessageLoop) :boom:
     + 文本输出&滚动条
     + 基本图形绘制:点,线和矩形
     + 键盘与光标位置
