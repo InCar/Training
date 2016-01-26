@@ -8,7 +8,7 @@
 ## Build
 You can build with anyone of the 3 ways listed below.
 
-### A. build one by one
+### A. build step by step
 ```SHELL
 cl /c /D UNICODE /D _UNICODE HelloWindows.c
 link HelloWindows.obj user32.lib
