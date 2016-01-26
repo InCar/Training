@@ -23,7 +23,7 @@
     + [*《精通 Issues》*](GitHub/issues.md)
     + [*《精通 Markdown》*](GitHub/精通Markdown.md)
 + 系统性编程课程-Basic System Programming
-    + 第一个Windows程序 [windows](BasicSysProg/win/01HelloWindows) [.net](BasicSysProg/dotNet/01HelloDotNet) :boom:
+    + 第一个Windows程序 [windows](BasicSysProg/win/01HelloWindows) [.net](BasicSysProg/dotNet/01HelloDotNet) [linux](BasicSysProg/linux/01HelloWorld) :boom:
     + Windows消息循环 [windows](BasicSysProg/win/02MessageLoop) :boom:
     + 文本输出&滚动条
     + 基本图形绘制:点,线和矩形
