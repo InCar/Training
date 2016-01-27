@@ -4,6 +4,9 @@
 
 
 ## Prerequisite
+
+Linux  Windows MacOS Solaris
+
 + Oracle Java Platform (JDK include JRE) (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 + Oracle Java RunTime environment(only for run)(http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
 
@@ -17,6 +20,8 @@ javac hello.java
 ## Run
 ```SHELL
 java hello
+```
 or with a parameter
+```SHELL
 java hello jack
 ```
