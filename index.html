@@ -1,13 +1,60 @@
 <!DOCTYPE HTML>
 <html lang="zh-Hans">
+
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Training</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
-    <h1>Training</h1>
-    <ol>
-        <li>Hello World!</li>
-    </ul>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Training</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container-fluid">
+        <ol>
+            <li><a href="BasicSysProg/browser/01HelloWorld/hello.html">Hello World</a></li>
+        </ol>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>
+    <script type="text/javascript">
+        requirejs.config({
+            paths:{
+                jquery: "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min",
+                bootstrap: "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min",
+                ko: "https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min"
+            },
+            shim:{
+                jquery:{exports:"$"},
+                bootstrap:["jquery"]
+            }
+        });
+        requirejs(["bootstrap", "ko"], function(bs, ko){
+            
+        });
+    </script>
 </body>
 </html>
