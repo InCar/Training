@@ -4,6 +4,6 @@ public class Hello{
         if(args.length>0){
             who=args[0];
         }
-		System.out.println("Hello "+who);
+	System.out.println("Hello "+who);
     }
 }
