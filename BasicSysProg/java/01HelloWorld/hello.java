@@ -1,8 +1,9 @@
-public class hello{
+public class Hello{
     public static void main(String[] args){
-        String who="world";
+        String who="World";
         if(args.length>0){
             who=args[0];
-        }System.out.println("Hello "+who);
+        }
+		System.out.println("Hello "+who);
     }
 }

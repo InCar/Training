@@ -14,14 +14,16 @@ Linux  Windows MacOS Solaris
 
 ### . Build in one step
 ```SHELL
-javac hello.java
+javac Hello.java
 ```
 
 ## Run
 ```SHELL
-java hello
+java Hello
 ```
 or with a parameter
+
 ```SHELL
-java hello jack
+java Hello jack
 ```
+
