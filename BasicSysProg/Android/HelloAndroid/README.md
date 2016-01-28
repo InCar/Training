@@ -5,3 +5,5 @@
 * android开发环境
   * 下载安装Android SDK（http://developer.android.com/sdk/index.html）
   * 开发工具可使用eclipse（android官网的ADT中已经集成了eclipse需要的ADT插件，可直接使用）或Android Studio
+##构建与运行
+   选中项目->右键->Run As->Android Application(会让你选择在那个机器上运行，可使用模拟器或连接电脑的真机)
