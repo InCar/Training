@@ -12,7 +12,11 @@
 ### . Build in one step
 
 ```SHELL
- NSLog(@"Hello, World!");
+
+int main(int argc, const char * argv[]) {
+NSLog(@"Hello, World!");
+
+}
 
 ```
 
