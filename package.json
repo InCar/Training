@@ -1,0 +1,21 @@
+{
+  "name": "training",
+  "version": "1.0.0",
+  "description": "Training github pages.",
+  "private": "true",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HP-Enterprise/Training.git"
+  },
+  "author": "guang-hua.xiong@hpe.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HP-Enterprise/Training/issues"
+  },
+  "homepage": "http://hp-enterprise.github.io/Training",
+  "devDependencies": {
+    "moment": "^2.11.1",
+    "node-static": "^0.7.7"
+  }
+}
