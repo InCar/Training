@@ -7,7 +7,9 @@
     <title>Training</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
-        body{ padding-top: 70px }
+        body {
+            padding-top: 70px
+        }
     </style>
 </head>
 
@@ -23,44 +25,75 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Training</a>
+                <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-book"></span>&nbsp;Training</a>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Home</a></li>
+                    <li data-bind="css:{ active: active() === 'main'}"><a href="#"><span class="glyphicon glyphicon-home"></span>&nbsp;Home</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#about">About</a></li>
+                    <li data-bind="css:{ active: active() === 'about'}"><a href="#about"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;About</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-xs-12">
-                <ol>
-                    <li><a href="BasicSysProg/browser/01HelloWorld/hello.html" target="_blank">Hello World</a></li>
-                </ol>
-            </div>
-        </div>
-    </div>
+    <div class="container-fluid" data-bind="component: active"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>
     <script type="text/javascript">
         requirejs.config({
             paths:{
+                text: "https://cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text.min",
                 jquery: "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min",
                 bootstrap: "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min",
-                ko: "https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min"
+                sammy: "https://cdnjs.cloudflare.com/ajax/libs/sammy.js/0.7.6/sammy.min",
+                knockout: "https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min",
+                komapping: "https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min"
             },
             shim:{
                 jquery:{exports:"$"},
-                bootstrap:["jquery"]
+                bootstrap:["jquery"],
+                sammy:["jquery"]
             }
         });
-        requirejs(["bootstrap", "ko"], function(bs, ko){
+        requirejs(["bootstrap", "sammy", "knockout", "komapping"], function(bs, Sammy, ko, kom){
+            // http://knockoutjs.com/documentation/plugins-mapping.html
+            ko.mapping = kom;
             
+            // http://sammyjs.org/
+            var app = Sammy(function(){
+                this.get("/", function(ctx){
+                    app.vm.active("main");
+                });
+                
+                this.get("#about", function(ctx){
+                    app.vm.active("about");
+                });
+                
+                // http://knockoutjs.com/
+                this.vm = ko.mapping.fromJS({
+                    active: "main"
+                });
+                
+                var components = {
+                    main: {
+                        template: { require: 'text!view/main.html'}
+                    },
+                    about: {
+                        template: { require: 'text!view/about.html'},
+                        viewModel: { require: 'view/about' }
+                    }
+                };
+                
+                for(var k in components){
+                    ko.components.register(k, components[k]);
+                }
+                
+                ko.applyBindings(this.vm);
+            });
+            
+            app.run("/");
         });
     </script>
 </body>
