@@ -22,7 +22,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
 		return GetLastError();
 	}
 
-	HWND hWndMain = CreateWindow(wszTitle, wszTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
+	HWND hWndMain = CreateWindow(wszTitle, wszTitle, WS_OVERLAPPEDWINDOW|WS_VSCROLL, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
 	if (!hWndMain) {
 		MessageBox(NULL, L"Create window failed", L"Error", MB_OK);
 		return GetLastError();
@@ -43,6 +43,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static int s_nMargin = 4;
 
 	static int s_cxScreen = 0, s_cyScreen = 0, s_cxVScroll = 0;
+
+	SCROLLINFO si;
 
 	switch (uMsg) {
 	case WM_CREATE:
@@ -68,6 +70,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		RECT rect;
 		HDC hdc;
 
+		int nYPos = GetScrollPos(hWnd, SB_VERT);
+
 		hdc = BeginPaint(hWnd, &ps);
 		GetClientRect(hWnd, &rect);
 		HFONT hFont = GetStockObject(OEM_FIXED_FONT);
@@ -77,18 +81,18 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		SetBkMode(hdc, OPAQUE);
 		
 		wchar_t wszText[] = L"文本输出示例!";
-		TextOut(hdc, s_nMargin, s_nMargin, wszText, (int)wcslen(wszText));
-		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY, wszText, (int)wcslen(wszText));
+		TextOut(hdc, s_nMargin, s_nMargin - nYPos, wszText, (int)wcslen(wszText));
+		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY - nYPos, wszText, (int)wcslen(wszText));
 
 		wchar_t wszBuf[128];
 		wsprintf(wszBuf, L"屏幕宽度:%8d", s_cxScreen);
-		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 2, wszBuf, lstrlen(wszBuf));
+		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 2 - nYPos, wszBuf, lstrlen(wszBuf));
 		wsprintf(wszBuf, L"屏幕高度:%8d", s_cyScreen);
-		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 3, wszBuf, lstrlen(wszBuf));
-
+		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 3 - nYPos, wszBuf, lstrlen(wszBuf));
+		
 		wsprintf(wszBuf, L"垂直滚动条宽度:%8d", s_cxVScroll);
-		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 5, wszBuf, lstrlen(wszBuf));
-
+		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 5 - nYPos, wszBuf, lstrlen(wszBuf));
+		
 		RECT rcClient;
 		GetClientRect(hWnd, &rcClient);
 		wsprintf(wszBuf, L"我是最底部的一行");
@@ -110,6 +114,38 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		HDC hdc = GetDC(hWnd);
 		TextOut(hdc, cx- s_nCharAvg * 11, cy - s_nDeltaY, wszBuf, lstrlen(wszBuf));
 		ReleaseDC(hWnd, hdc);
+
+		ZeroMemory(&si, sizeof(SCROLLINFO));
+		si.cbSize = sizeof(SCROLLBARINFO);
+		si.fMask = SIF_RANGE | SIF_PAGE;
+		si.nMin = 0;
+		si.nMax = 1000;
+		si.nPage = cy;
+		SetScrollInfo(hWnd, SB_VERT, &si, TRUE);
+
+		return 0;
+	}
+	case WM_VSCROLL:
+	{
+		ZeroMemory(&si, sizeof(SCROLLINFO));
+		si.cbSize = sizeof(SCROLLBARINFO);
+		si.fMask = SIF_ALL;
+		GetScrollInfo(hWnd, SB_VERT, &si);
+
+		int nYPos = si.nPos;
+
+		SetScrollPos(hWnd, SB_VERT, si.nTrackPos, TRUE);
+
+		RECT rcClient;
+		GetClientRect(hWnd, &rcClient);
+		rcClient.bottom -= s_nDeltaY;
+		ScrollWindowEx(hWnd, 0, nYPos-si.nTrackPos, &rcClient, NULL, NULL, NULL, SW_INVALIDATE| SW_ERASE);
+		
+		GetClientRect(hWnd, &rcClient);
+		rcClient.top = rcClient.bottom - s_nDeltaY;
+		InvalidateRect(hWnd, &rcClient, FALSE);
+
+		UpdateWindow(hWnd);
 
 		return 0;
 	}

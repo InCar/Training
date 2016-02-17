@@ -21,6 +21,9 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CEF36DD5-0232-420B-B943-11CB3CBB1591}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
