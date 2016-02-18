@@ -139,11 +139,11 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		RECT rcClient;
 		GetClientRect(hWnd, &rcClient);
 		rcClient.bottom -= s_nDeltaY;
-		ScrollWindowEx(hWnd, 0, nYPos-si.nTrackPos, &rcClient, NULL, NULL, NULL, SW_INVALIDATE| SW_ERASE);
+		ScrollWindowEx(hWnd, 0, nYPos-si.nTrackPos, &rcClient, &rcClient, NULL, NULL, SW_INVALIDATE| SW_ERASE);
 		
-		GetClientRect(hWnd, &rcClient);
-		rcClient.top = rcClient.bottom - s_nDeltaY;
-		InvalidateRect(hWnd, &rcClient, FALSE);
+		// GetClientRect(hWnd, &rcClient);
+		// rcClient.top = rcClient.bottom - s_nDeltaY;
+		// InvalidateRect(hWnd, &rcClient, FALSE);
 
 		UpdateWindow(hWnd);
 
