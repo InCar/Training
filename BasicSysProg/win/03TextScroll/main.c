@@ -1,157 +1,192 @@
-#include <Windows.h>
+ï»¿#include <Windows.h>
+#include <stdio.h>
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nCmdShow)
 {
-	wchar_t wszTitle[] = L"Text Scroll";
+    wchar_t wszTitle[] = L"Text Scroll";
 
-	WNDCLASS wcls;
-	ZeroMemory(&wcls, sizeof(WNDCLASS));
-	wcls.style = CS_HREDRAW | CS_VREDRAW;
-	wcls.lpfnWndProc = WindowProc;
-	wcls.hInstance = hInstance;
-	wcls.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
-	wcls.hIcon = LoadIcon(NULL, IDI_SHIELD);
-	wcls.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcls.lpszClassName = wszTitle;
+    WNDCLASS wcls;
+    ZeroMemory(&wcls, sizeof(WNDCLASS));
+    wcls.style = CS_HREDRAW | CS_VREDRAW;
+    wcls.lpfnWndProc = WindowProc;
+    wcls.hInstance = hInstance;
+    wcls.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+    wcls.hIcon = LoadIcon(NULL, IDI_SHIELD);
+    wcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wcls.lpszClassName = wszTitle;
 
 
-	if (!RegisterClass(&wcls)) {
-		MessageBox(NULL, L"Register class failed", L"Error", MB_OK);
-		return GetLastError();
-	}
+    if (!RegisterClass(&wcls)) {
+        MessageBox(NULL, L"Register class failed", L"Error", MB_OK);
+        return GetLastError();
+    }
 
-	HWND hWndMain = CreateWindow(wszTitle, wszTitle, WS_OVERLAPPEDWINDOW|WS_VSCROLL, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
-	if (!hWndMain) {
-		MessageBox(NULL, L"Create window failed", L"Error", MB_OK);
-		return GetLastError();
-	}
+    HWND hWndMain = CreateWindow(wszTitle, wszTitle, WS_OVERLAPPEDWINDOW|WS_VSCROLL, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
+    if (!hWndMain) {
+        MessageBox(NULL, L"Create window failed", L"Error", MB_OK);
+        return GetLastError();
+    }
 
-	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0)) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
+    MSG msg;
+    while (GetMessage(&msg, NULL, 0, 0)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
 
-	return (int)msg.wParam;
+    return (int)msg.wParam;
 }
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static int s_nDeltaY = 0, s_nCharAvg = 0;
-	static int s_nMargin = 4;
+    static int s_nDeltaY = 0, s_nCharAvg = 0;
+    static int s_nMargin = 4;
 
-	static int s_cxScreen = 0, s_cyScreen = 0, s_cxVScroll = 0;
+    static int s_cxScreen = 0, s_cyScreen = 0, s_cxVScroll = 0;
+    static wchar_t *pwszBuffer = NULL;
 
-	SCROLLINFO si;
+    SCROLLINFO si;
 
-	switch (uMsg) {
-	case WM_CREATE:
-	{
-		TEXTMETRIC tm;
+    switch (uMsg) {
+    case WM_CREATE:
+    {
+        TEXTMETRIC tm;
 
-		HDC hdc = GetDC(hWnd);
-		GetTextMetrics(hdc, &tm);
-		s_nDeltaY = tm.tmExternalLeading + tm.tmHeight + s_nMargin;
-		s_nCharAvg = tm.tmAveCharWidth;
-		ReleaseDC(hWnd, hdc);
+        HDC hdc = GetDC(hWnd);
+        GetTextMetrics(hdc, &tm);
+        s_nDeltaY = tm.tmExternalLeading + tm.tmHeight + s_nMargin;
+        s_nCharAvg = tm.tmAveCharWidth;
+        ReleaseDC(hWnd, hdc);
 
-		s_cxScreen = GetSystemMetrics(SM_CXSCREEN);
-		s_cyScreen = GetSystemMetrics(SM_CYSCREEN);
-		s_cxVScroll = GetSystemMetrics(SM_CXVSCROLL);
+        s_cxScreen = GetSystemMetrics(SM_CXSCREEN);
+        s_cyScreen = GetSystemMetrics(SM_CYSCREEN);
+        s_cxVScroll = GetSystemMetrics(SM_CXVSCROLL);
 
-		ShowWindow(hWnd, SW_SHOW);
-		return 0;
-	}
-	case WM_PAINT:
-	{
-		PAINTSTRUCT ps;
-		RECT rect;
-		HDC hdc;
+        FILE *pSrc = NULL;
+        if (_wfopen_s(&pSrc, L"main.c", L"r,ccs=UTF-8") == 0) {
+            // make buffer to store file content
+            fseek(pSrc, 0, SEEK_END);
+            long lSize = ftell(pSrc);
+            pwszBuffer = malloc(sizeof(wchar_t)*lSize);
+            // read file content
+            fseek(pSrc, 0, SEEK_SET);
+            size_t nRead = fread(pwszBuffer, sizeof(wchar_t), lSize, pSrc);
+            if (nRead < lSize) pwszBuffer[nRead] = 0;
+            else pwszBuffer[nRead - 1] = 0;
+            fclose(pSrc);
+        }
 
-		int nYPos = GetScrollPos(hWnd, SB_VERT);
+        ShowWindow(hWnd, SW_SHOW);
 
-		hdc = BeginPaint(hWnd, &ps);
-		GetClientRect(hWnd, &rect);
-		HFONT hFont = GetStockObject(OEM_FIXED_FONT);
-		HGDIOBJ hOldFont = SelectObject(hdc, hFont);
-		// DrawText(hdc, L"ÄãºÃ,ÏûÏ¢Ñ­»·", -1, &rect, DT_SINGLELINE|DT_VCENTER|DT_CENTER);
+        return 0;
+    }
+    case WM_PAINT:
+    {
+        PAINTSTRUCT ps;
+        RECT rect;
+        HDC hdc;
 
-		SetBkMode(hdc, OPAQUE);
-		
-		wchar_t wszText[] = L"ÎÄ±¾Êä³öÊ¾Àý!";
-		TextOut(hdc, s_nMargin, s_nMargin - nYPos, wszText, (int)wcslen(wszText));
-		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY - nYPos, wszText, (int)wcslen(wszText));
+        int nYPos = GetScrollPos(hWnd, SB_VERT);
 
-		wchar_t wszBuf[128];
-		wsprintf(wszBuf, L"ÆÁÄ»¿í¶È:%8d", s_cxScreen);
-		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 2 - nYPos, wszBuf, lstrlen(wszBuf));
-		wsprintf(wszBuf, L"ÆÁÄ»¸ß¶È:%8d", s_cyScreen);
-		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 3 - nYPos, wszBuf, lstrlen(wszBuf));
-		
-		wsprintf(wszBuf, L"´¹Ö±¹ö¶¯Ìõ¿í¶È:%8d", s_cxVScroll);
-		TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 5 - nYPos, wszBuf, lstrlen(wszBuf));
-		
-		RECT rcClient;
-		GetClientRect(hWnd, &rcClient);
-		wsprintf(wszBuf, L"ÎÒÊÇ×îµ×²¿µÄÒ»ÐÐ");
-		TextOut(hdc, s_nMargin, rcClient.bottom - s_nDeltaY, wszBuf, lstrlen(wszBuf));
+        hdc = BeginPaint(hWnd, &ps);
+        GetClientRect(hWnd, &rect);
+        HFONT hFont = GetStockObject(OEM_FIXED_FONT);
+        HGDIOBJ hOldFont = SelectObject(hdc, hFont);
+        // DrawText(hdc, L"ä½ å¥½,æ¶ˆæ¯å¾ªçŽ¯", -1, &rect, DT_SINGLELINE|DT_VCENTER|DT_CENTER);
 
-		SelectObject(hdc, hOldFont);
+        SetBkMode(hdc, OPAQUE);
+        
+        HRGN hClip = CreateRectRgn(rect.left, rect.top, rect.right, rect.bottom - s_nDeltaY - s_nMargin);
+        SelectClipRgn(hdc, hClip);
 
-		EndPaint(hWnd, &ps);
-		return 0;
-	}
-	case WM_SIZE:
-	{
-		int cx = LOWORD(lParam);
-		int cy = HIWORD(lParam);
+        wchar_t wszText[] = L"æ–‡æœ¬è¾“å‡ºç¤ºä¾‹!";
+        TextOut(hdc, s_nMargin, s_nMargin - nYPos, wszText, (int)wcslen(wszText));
+        TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY - nYPos, wszText, (int)wcslen(wszText));
 
-		wchar_t wszBuf[128];
-		wsprintf(wszBuf, L"%4d x %4d", cx, cy);
+        wchar_t wszBuf[128];
+        wsprintf(wszBuf, L"å±å¹•å®½åº¦:%8d", s_cxScreen);
+        TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 2 - nYPos, wszBuf, lstrlen(wszBuf));
+        wsprintf(wszBuf, L"å±å¹•é«˜åº¦:%8d", s_cyScreen);
+        TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 3 - nYPos, wszBuf, lstrlen(wszBuf));
 
-		HDC hdc = GetDC(hWnd);
-		TextOut(hdc, cx- s_nCharAvg * 11, cy - s_nDeltaY, wszBuf, lstrlen(wszBuf));
-		ReleaseDC(hWnd, hdc);
+        wsprintf(wszBuf, L"åž‚ç›´æ»šåŠ¨æ¡å®½åº¦:%8d", s_cxVScroll);
+        TextOut(hdc, s_nMargin, s_nMargin + s_nDeltaY * 5 - nYPos, wszBuf, lstrlen(wszBuf));
 
-		ZeroMemory(&si, sizeof(SCROLLINFO));
-		si.cbSize = sizeof(SCROLLBARINFO);
-		si.fMask = SIF_RANGE | SIF_PAGE;
-		si.nMin = 0;
-		si.nMax = 1000;
-		si.nPage = cy;
-		SetScrollInfo(hWnd, SB_VERT, &si, TRUE);
+        int nLine = 8;
+        wchar_t *pLine = pwszBuffer, *pNextLine = NULL;
+        do {
+            pNextLine = wcsstr(pLine, L"\n");
+            if (pNextLine) {
+                TextOut(hdc, s_nMargin, s_nDeltaY * nLine - nYPos, pLine, (int)(pNextLine - pLine));
+                pLine = pNextLine+1;
+                nLine++;
+            }
+        } while (pNextLine);
+        // The last line
+        if (pLine) {
+            TextOut(hdc, s_nMargin, s_nDeltaY * nLine - nYPos, pLine, lstrlen(pLine));
+        }
 
-		return 0;
-	}
-	case WM_VSCROLL:
-	{
-		ZeroMemory(&si, sizeof(SCROLLINFO));
-		si.cbSize = sizeof(SCROLLBARINFO);
-		si.fMask = SIF_ALL;
-		GetScrollInfo(hWnd, SB_VERT, &si);
+        RECT rcClient;
+        GetClientRect(hWnd, &rcClient);
+        SelectClipRgn(hdc, NULL);
+        wsprintf(wszBuf, L"æˆ‘æ˜¯æœ€åº•éƒ¨çš„ä¸€è¡Œ");
+        TextOut(hdc, s_nMargin, rcClient.bottom - s_nDeltaY, wszBuf, lstrlen(wszBuf));
 
-		int nYPos = si.nPos;
+        SelectObject(hdc, hOldFont);
 
-		SetScrollPos(hWnd, SB_VERT, si.nTrackPos, TRUE);
+        EndPaint(hWnd, &ps);
+        return 0;
+    }
+    case WM_SIZE:
+    {
+        int cx = LOWORD(lParam);
+        int cy = HIWORD(lParam);
 
-		RECT rcClient;
-		GetClientRect(hWnd, &rcClient);
-		rcClient.bottom -= s_nDeltaY;
-		ScrollWindowEx(hWnd, 0, nYPos-si.nTrackPos, &rcClient, &rcClient, NULL, NULL, SW_INVALIDATE| SW_ERASE);
-		
-		// GetClientRect(hWnd, &rcClient);
-		// rcClient.top = rcClient.bottom - s_nDeltaY;
-		// InvalidateRect(hWnd, &rcClient, FALSE);
+        wchar_t wszBuf[128];
+        wsprintf(wszBuf, L"%4d x %4d", cx, cy);
 
-		UpdateWindow(hWnd);
+        HDC hdc = GetDC(hWnd);
+        TextOut(hdc, cx - s_nCharAvg * 11, cy - s_nDeltaY, wszBuf, lstrlen(wszBuf));
+        ReleaseDC(hWnd, hdc);
 
-		return 0;
-	}
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
-	}
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        ZeroMemory(&si, sizeof(SCROLLINFO));
+        si.cbSize = sizeof(SCROLLBARINFO);
+        si.fMask = SIF_RANGE | SIF_PAGE;
+        si.nMin = 0;
+        si.nMax = 5000;
+        si.nPage = cy;
+        SetScrollInfo(hWnd, SB_VERT, &si, TRUE);
+
+        return 0;
+    }
+    case WM_VSCROLL:
+    {
+        ZeroMemory(&si, sizeof(SCROLLINFO));
+        si.cbSize = sizeof(SCROLLBARINFO);
+        si.fMask = SIF_ALL;
+        GetScrollInfo(hWnd, SB_VERT, &si);
+
+        int nYPos = si.nPos;
+
+        SetScrollPos(hWnd, SB_VERT, si.nTrackPos, TRUE);
+
+        RECT rcClient;
+        GetClientRect(hWnd, &rcClient);
+        rcClient.bottom -= (s_nDeltaY + s_nMargin);
+        ScrollWindowEx(hWnd, 0, nYPos - si.nTrackPos, &rcClient, &rcClient, NULL, NULL, SW_INVALIDATE | SW_ERASE);
+
+        UpdateWindow(hWnd);
+
+        return 0;
+    }
+    case WM_DESTROY:
+    {
+        free(pwszBuffer);
+        PostQuitMessage(0);
+        return 0;
+    }
+    }
+    return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
