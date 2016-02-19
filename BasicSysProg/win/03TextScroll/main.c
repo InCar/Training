@@ -64,7 +64,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         s_cxVScroll = GetSystemMetrics(SM_CXVSCROLL);
 
         FILE *pSrc = NULL;
-        if (_wfopen_s(&pSrc, L"main.c", L"r,ccs=UTF-8") == 0) {
+        if (_wfopen_s(&pSrc, L"main.c2", L"r,ccs=UTF-8") == 0) {
             // make buffer to store file content
             fseek(pSrc, 0, SEEK_END);
             long lSize = ftell(pSrc);
@@ -115,16 +115,17 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         int nLine = 8;
         wchar_t *pLine = pwszBuffer, *pNextLine = NULL;
-        do {
-            pNextLine = wcsstr(pLine, L"\n");
-            if (pNextLine) {
-                TextOut(hdc, s_nMargin, s_nDeltaY * nLine - nYPos, pLine, (int)(pNextLine - pLine));
-                pLine = pNextLine+1;
-                nLine++;
-            }
-        } while (pNextLine);
-        // The last line
-        if (pLine) {
+		if(pLine){
+			do {
+				pNextLine = wcsstr(pLine, L"\n");
+				if (pNextLine) {
+					TextOut(hdc, s_nMargin, s_nDeltaY * nLine - nYPos, pLine, (int)(pNextLine - pLine));
+					pLine = pNextLine+1;
+					nLine++;
+				}
+			} while (pNextLine);
+			// The last line
+        
             TextOut(hdc, s_nMargin, s_nDeltaY * nLine - nYPos, pLine, lstrlen(pLine));
         }
 
@@ -190,3 +191,37 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+																																						
+																														
