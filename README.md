@@ -26,8 +26,8 @@
 + 系统性编程课程-Basic System Programming
     + 第一个Windows程序 [windows](BasicSysProg/win/01HelloWindows) [.net](BasicSysProg/dotNet/01HelloDotNet) [linux](BasicSysProg/linux/01HelloWorld) [browser](../gh-pages/BasicSysProg/browser/01HelloWorld)
     + Windows消息循环 [windows](BasicSysProg/win/02MessageLoop)
-    + 文本输出&滚动条 [windows](BasicSysProg/win/03TextScroll) :boom:
-    + 基本图形绘制:点,线和矩形
+    + 文本输出&滚动条 [windows](BasicSysProg/win/03TextScroll)
+    + 基本图形绘制:点,线和矩形 [windows](BasicSysProg/win/04BasicDrawing) :boom:
     + 键盘与光标位置
     + 鼠标
     + 定时器
