@@ -26,7 +26,7 @@ void calcVertexs(int xCenter, int yCenter, int radius, float fAngle, POINT *pVer
 
 	for (int i = 0; i < count; i++) {
 		fAngVertex = (fPI / 2.0f - fAngle) - fAngDelta * i;
-		pVertexs[i].x = (int)(radius * cosf(fAngVertex));
-		pVertexs[i].y = (int)(radius * sinf(fAngVertex));
+		pVertexs[i].x = (int)(radius * cosf(fAngVertex)) + xCenter;
+		pVertexs[i].y = (int)(radius * sinf(fAngVertex)) + yCenter;
 	}
 }
