@@ -1,11 +1,12 @@
 #include <Windows.h>
 #include <stdio.h>
+#include "pentangle.h"
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nCmdShow)
 {
-	wchar_t wszTitle[] = L"Text Scroll";
+	wchar_t wszTitle[] = L"Basic Drawing";
 
 	WNDCLASS wcls;
 	ZeroMemory(&wcls, sizeof(WNDCLASS));
@@ -40,14 +41,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static HPEN hPen = NULL;
+	static HPEN hPen = NULL, hPen2 = NULL;
 	static HBRUSH hBrush = NULL;
 
 	switch (uMsg) {
 		case WM_CREATE:
 		{
 			hPen = CreatePen(PS_DOT, 1, RGB(0xff, 0, 0));
+			hPen2 = CreatePen(PS_SOLID, 2, RGB(0xff, 0xcc, 0x44));
 			hBrush = CreateSolidBrush(RGB(0xff, 0xee, 0xee));
+
+			SetTimer(hWnd, 1, 100, NULL);
 
 			ShowWindow(hWnd, SW_SHOW);
 			return 0;
@@ -83,19 +87,24 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SetTextAlign(hdc, TA_LEFT);
 			TextOut(hdc, 4, rc.bottom / 2 - 50, L"y+", 2);
 
+			// Îå½ÇÐÇ
+			DWORD dwCount = GetTickCount();
+			SelectObject(hdc, hPen2);
+			Pentangle(hdc, 0, 0, 200, dwCount * 3.14f / 30000.0f);
+			Pentangle(hdc, 0, 0, 50, dwCount * 3.14f / 5000.0f);
+
 			EndPaint(hWnd, &ps);
 			return 0;
 		}
-		case WM_SIZE:
+		case WM_TIMER:
 		{
-			return 0;
-		}
-		case WM_VSCROLL:
-		{
+			InvalidateRect(hWnd, NULL, FALSE);
 			return 0;
 		}
 		case WM_DESTROY:
 		{
+			KillTimer(hWnd, 1);
+
 			DeleteObject(hPen);
 			DeleteObject(hBrush);
 
