@@ -23,13 +23,13 @@ View* ViewInit(View*, Model*, HWND);
 
 typedef void(*fnViewOnPaint)(View*, HDC hdc);
 typedef int(*fnViewGetHeight)(View*);
-typedef void(*fnViewClose)(View*);
 typedef void(*fnViewChangeColor)(View*, COLORREF);
+typedef void(*fnViewClose)(View*);
 
 struct ViewFunctions
 {
 	fnViewOnPaint		OnPaint;
 	fnViewGetHeight		GetHeight;
-	fnViewClose			Close;
 	fnViewChangeColor	ChangeColor;
+	fnViewClose			Close;
 };
