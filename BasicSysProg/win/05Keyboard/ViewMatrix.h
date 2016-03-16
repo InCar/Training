@@ -16,6 +16,8 @@ typedef struct tagViewMatrix
 	COLORREF		color;
 	int				nPadding;
 	RECT			rect;
+	int				nMaxX;
+	int				nMaxZ;
 	ViewMatrixPoint	*pPoints;
 	// API÷∏’Î
 	ViewMatrixFunctions	*pAPI;
@@ -23,8 +25,14 @@ typedef struct tagViewMatrix
 
 struct tagViewMatrixPoint
 {
-	int x;
-	int y;
+	int		x;
+	int		y;
+	int		z;
+	int		nCharPos;
+	float	fSpeed; // pixels/s
+	int		nShadow;
+	DWORD	dwTick; // ms
+	DWORD	dwCharTick;
 };
 
 // API∂®“Â

@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "ViewMatrix.h"
 
-void ExpandPoints(ViewMatrix*,int);
+void ExpandPoints(ViewMatrix*);
+void ReAssignXZ(ViewMatrix*, ViewMatrixPoint*, int);
 
 void ViewMatrixOnPaint(ViewMatrix *this, HDC hdc)
 {
@@ -9,6 +10,9 @@ void ViewMatrixOnPaint(ViewMatrix *this, HDC hdc)
 	SetTextColor(hdc, this->color);
 	SelectObject(hdc, this->fontText);
 	SelectObject(hdc, this->hPen);
+
+	HRGN hClip = CreateRectRgnIndirect(&this->rect);
+	SelectClipRgn(hdc, hClip);
 
 	Model *pModel = this->pModel;
 	FillRect(hdc, &this->rect, this->brBack);
@@ -20,19 +24,54 @@ void ViewMatrixOnPaint(ViewMatrix *this, HDC hdc)
 	int nCount = pModel->pAPI->GetStringCount(pModel);
 
 	// 如果有更多的字符,就需要扩展一下
-	ExpandPoints(this, nCount);
+	ExpandPoints(this);
 
-	int nOffsetY = 18, nShadow = 12;
+	TEXTMETRIC tm;
+	GetTextMetrics(hdc, &tm);
+	int nLineHeight = /*tm.tmExternalLeading +*/ tm.tmHeight;
+	DWORD dwTickNow = GetTickCount();
 
+	ViewMatrixPoint *pPoint = this->pPoints;
 	for (int i = 0; i < nCount; i++) {
-		for (int j = 0; j < nShadow; j++) {
-			int y = this->pPoints[i].y + this->rect.top + this->nPadding - nOffsetY * j;
-			if(y > this->rect.top)
-				TextOut(hdc, this->pPoints[i].x, y, &pBuf[(y*nOffsetY) % nCount], 1);
+		int nMaxY = this->rect.bottom + nLineHeight * pPoint->nShadow;
+
+		for (int j = 0; j < pPoint->nShadow; j++) {
+			TextOut(hdc, pPoint->x, pPoint->y - nLineHeight*j + this->rect.top, pBuf + ((pPoint->nCharPos+j)%nCount), 1);
 		}
-		this->pPoints[i].y += (1 + rand()%16);
-		if (this->pPoints[i].y + this->rect.top + this->nPadding >= this->rect.bottom + nOffsetY*nShadow) this->pPoints[i].y = 0;
+
+		// 下坠计算
+		int ms = dwTickNow - pPoint->dwTick;
+		int nDeltaY = (int)(pPoint->fSpeed*ms / 1000.0f);
+		if (nDeltaY > 0) {
+			pPoint->y += nDeltaY;
+			if (pPoint->y > nMaxY) pPoint->y = 0;
+			pPoint->dwTick = dwTickNow;
+		}
+
+		// 变换字符计算
+		ms = dwTickNow - pPoint->dwCharTick;
+		if (ms > 100) {
+			pPoint->nCharPos = rand();
+			pPoint->dwCharTick = dwTickNow;
+		}
+
+		pPoint++;
 	}
+
+	SelectClipRgn(hdc, NULL);
+	DeleteObject(hClip);
+
+
+	// int nOffsetY = 18, nShadow = 12;
+	// for (int i = 0; i < nCount; i++) {
+	// 	for (int j = 0; j < nShadow; j++) {
+	// 		int y = this->pPoints[i].y + this->rect.top + this->nPadding - nOffsetY * j;
+	// 		if(y > this->rect.top)
+	// 			TextOut(hdc, this->pPoints[i].x, y, &pBuf[(y*nOffsetY) % nCount], 1);
+	// 	}
+	// 	this->pPoints[i].y += (1 + rand()%16);
+	// 	if (this->pPoints[i].y + this->rect.top + this->nPadding >= this->rect.bottom + nOffsetY*nShadow) this->pPoints[i].y = 0;
+	// }
 }
 
 void ViewMatrixChangeColor(ViewMatrix *this, COLORREF color)
@@ -46,13 +85,11 @@ void ViewMatrixSetRect(ViewMatrix *this, RECT *pRect)
 {
 	memcpy_s(&this->rect, sizeof(RECT), pRect, sizeof(RECT));
 
+	this->nMaxX = pRect->right - pRect->left;
+	this->nMaxZ = 16;
+
 	// 变更范围
-	int nWidth = pRect->right - pRect->left;
-	ViewMatrixPoint *pPoint = this->pPoints;
-	for (int i = 0; i < _msize(this->pPoints) / sizeof(ViewMatrixPoint); i++) {
-		pPoint->x = rand() % nWidth;
-		pPoint++;
-	}
+	ReAssignXZ(this, this->pPoints, (int)_msize(this->pPoints) / sizeof(ViewMatrixPoint));
 }
 
 void ViewMatrixClose(ViewMatrix *this)
@@ -95,39 +132,45 @@ ViewMatrix* ViewMatrixInit(ViewMatrix *this, Model *pModel, HWND hWnd)
 	int nCount = pModel->pAPI->GetStringCount(pModel);
 	if (nCount < 32) nCount = 32;
 	this->pPoints = (ViewMatrixPoint*)malloc(sizeof(ViewMatrixPoint)*nCount);
-
-	RECT rc;
-	GetWindowRect(this->hWnd, &rc);
-	int max = rc.right - rc.left;
-
-	ViewMatrixPoint *pPoint = this->pPoints;
-	memset(pPoint, 0, sizeof(ViewMatrixPoint)*nCount);
-	srand(GetTickCount());
-	for (int i = 0; i < nCount; i++) {
-		pPoint->x = rand() % max;
-		pPoint++;
-	}
+	memset(this->pPoints, 0, sizeof(ViewMatrixPoint)*nCount);
 
 	return this;
 }
 
-void ExpandPoints(ViewMatrix *this, int nCount)
+void ExpandPoints(ViewMatrix *this)
 {
 	int nOldCount = (int)(_msize(this->pPoints) / sizeof(ViewMatrixPoint));
-	if (nCount > nOldCount) {
+	int nNewCount = this->pModel->pAPI->GetStringCount(this->pModel);
+
+	if (nNewCount > nOldCount) {
 		// 需要扩展了
-		int nDelta = (nCount - nOldCount)*2;
+		int nDelta = (nNewCount - nOldCount)*2;
 		if (nDelta < 32) nDelta = 32;
 
 		this->pPoints = realloc(this->pPoints, sizeof(ViewMatrixPoint)*(nOldCount + nDelta));
 		_ASSERT(this->pPoints != NULL);
 
-		int nWidth = this->rect.right - this->rect.left;
-		ViewMatrixPoint *pPoint = this->pPoints + nOldCount;
-		memset(pPoint, 0, sizeof(ViewMatrixPoint)*nDelta);
-		for (int i = 0; i < nDelta; i++) {
-			pPoint->x = rand() % nWidth;
-			pPoint++;
-		}
+		ViewMatrixPoint *pPoints = this->pPoints + nOldCount;
+		memset(pPoints, 0, sizeof(ViewMatrixPoint)*nDelta);
+		ReAssignXZ(this, pPoints, nDelta);
+	}
+}
+
+void ReAssignXZ(ViewMatrix *this, ViewMatrixPoint *pPoints, int nCount)
+{
+	int nMinShadow = 4, nMaxShadow = 16;
+	float fMinSpeed = 32.0f, fMaxSpeed = 320.0f;
+	DWORD dwTick = GetTickCount();
+
+	for (int i = 0; i < nCount; i++) {
+		pPoints->x = rand() % this->nMaxX;
+		pPoints->z = rand() % this->nMaxZ;
+		pPoints->nCharPos = rand();
+		pPoints->nShadow = (rand() % (nMaxShadow - nMinShadow)) + nMinShadow;
+		pPoints->fSpeed = ((float)rand() / RAND_MAX)*(fMaxSpeed - fMinSpeed) + fMinSpeed;
+		pPoints->dwTick = dwTick;
+		pPoints->dwCharTick = dwTick;
+
+		pPoints++;
 	}
 }
