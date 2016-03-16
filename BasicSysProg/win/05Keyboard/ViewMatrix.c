@@ -1,17 +1,17 @@
 #include "stdafx.h"
 #include "ViewMatrix.h"
 
-void ExpandPoints(ViewMatrix *pView, int nCount);
+void ExpandPoints(ViewMatrix*,int);
 
-void ViewMatrixOnPaint(ViewMatrix *pView, HDC hdc)
+void ViewMatrixOnPaint(ViewMatrix *this, HDC hdc)
 {
 	SetBkColor(hdc, 0);
-	SetTextColor(hdc, pView->color);
-	SelectObject(hdc, pView->fontText);
-	SelectObject(hdc, pView->hPen);
+	SetTextColor(hdc, this->color);
+	SelectObject(hdc, this->fontText);
+	SelectObject(hdc, this->hPen);
 
-	Model *pModel = pView->pModel;
-	FillRect(hdc, &pView->rect, pView->brBack);
+	Model *pModel = this->pModel;
+	FillRect(hdc, &this->rect, this->brBack);
 
 	SetTextAlign(hdc, TA_CENTER);
 	SetBkMode(hdc, TRANSPARENT);
@@ -20,51 +20,51 @@ void ViewMatrixOnPaint(ViewMatrix *pView, HDC hdc)
 	int nCount = pModel->pAPI->GetStringCount(pModel);
 
 	// 如果有更多的字符,就需要扩展一下
-	ExpandPoints(pView, nCount);
+	ExpandPoints(this, nCount);
 
 	int nOffsetY = 18, nShadow = 12;
 
 	for (int i = 0; i < nCount; i++) {
 		for (int j = 0; j < nShadow; j++) {
-			int y = pView->pPoints[i].y + pView->rect.top + pView->nPadding - nOffsetY * j;
-			if(y > pView->rect.top)
-				TextOut(hdc, pView->pPoints[i].x, y, &pBuf[(y*nOffsetY) % nCount], 1);
+			int y = this->pPoints[i].y + this->rect.top + this->nPadding - nOffsetY * j;
+			if(y > this->rect.top)
+				TextOut(hdc, this->pPoints[i].x, y, &pBuf[(y*nOffsetY) % nCount], 1);
 		}
-		pView->pPoints[i].y += (1 + rand()%16);
-		if (pView->pPoints[i].y + pView->rect.top + pView->nPadding >= pView->rect.bottom + nOffsetY*nShadow) pView->pPoints[i].y = 0;
+		this->pPoints[i].y += (1 + rand()%16);
+		if (this->pPoints[i].y + this->rect.top + this->nPadding >= this->rect.bottom + nOffsetY*nShadow) this->pPoints[i].y = 0;
 	}
 }
 
-void ViewMatrixChangeColor(ViewMatrix *pView, COLORREF color)
+void ViewMatrixChangeColor(ViewMatrix *this, COLORREF color)
 {
-	pView->color = color;
-	DeleteObject(pView->hPen);
-	pView->hPen = CreatePen(PS_SOLID, 1, pView->color);
+	this->color = color;
+	DeleteObject(this->hPen);
+	this->hPen = CreatePen(PS_SOLID, 1, this->color);
 }
 
-void ViewMatrixSetRect(ViewMatrix *pView, RECT *pRect)
+void ViewMatrixSetRect(ViewMatrix *this, RECT *pRect)
 {
-	memcpy_s(&pView->rect, sizeof(RECT), pRect, sizeof(RECT));
+	memcpy_s(&this->rect, sizeof(RECT), pRect, sizeof(RECT));
 
-	// 收缩范围
+	// 变更范围
 	int nWidth = pRect->right - pRect->left;
-	POINT *pPoint = pView->pPoints;
-	for (int i = 0; i < _msize(pView->pPoints) / sizeof(POINT); i++) {
-		if (pPoint->x > nWidth) pPoint->x = pPoint->x % nWidth;
+	ViewMatrixPoint *pPoint = this->pPoints;
+	for (int i = 0; i < _msize(this->pPoints) / sizeof(ViewMatrixPoint); i++) {
+		pPoint->x = rand() % nWidth;
 		pPoint++;
 	}
 }
 
-void ViewMatrixClose(ViewMatrix *pView)
+void ViewMatrixClose(ViewMatrix *this)
 {
-	DeleteObject(pView->brBack);
-	DeleteObject(pView->fontText);
-	DeleteObject(pView->hPen);
+	DeleteObject(this->brBack);
+	DeleteObject(this->fontText);
+	DeleteObject(this->hPen);
 
-	free(pView->pPoints);
+	free(this->pPoints);
 }
 
-ViewMatrix* ViewMatrixInit(ViewMatrix *pView, Model *pModel, HWND hWnd)
+ViewMatrix* ViewMatrixInit(ViewMatrix *this, Model *pModel, HWND hWnd)
 {
 	static ViewMatrixFunctions s_fns =
 	{
@@ -74,54 +74,57 @@ ViewMatrix* ViewMatrixInit(ViewMatrix *pView, Model *pModel, HWND hWnd)
 		.Close			= ViewMatrixClose
 	};
 
-	memset(pView, 0, sizeof(ViewMatrix));
-	pView->pAPI = &s_fns;
-	pView->pModel = pModel;
-	pView->hWnd = hWnd;
+	memset(this, 0, sizeof(ViewMatrix));
+	this->pAPI = &s_fns;
+	this->pModel = pModel;
+	this->hWnd = hWnd;
 
-	pView->nPadding = 4;
-	pView->brBack = CreateSolidBrush(0); // black
-	pView->color = RGB(0x00, 0xff, 0x00); // green
+	this->nPadding = 4;
+	this->brBack = CreateSolidBrush(0); // black
+	this->color = RGB(0x00, 0xff, 0x00); // green
 
-	pView->hPen = CreatePen(PS_SOLID, 1, pView->color); // green
+	this->hPen = CreatePen(PS_SOLID, 1, this->color); // green
 
 	LOGFONT lf;
 	ZeroMemory(&lf, sizeof(LOGFONT));
 	wcscpy_s(lf.lfFaceName, sizeof(lf.lfFaceName) / sizeof(wchar_t), L"宋体");
 	lf.lfWeight = FW_BOLD;
-	pView->fontText = CreateFontIndirect(&lf);
+	this->fontText = CreateFontIndirect(&lf);
 
 	// 设置pPoints,每个字符对应一个点
 	int nCount = pModel->pAPI->GetStringCount(pModel);
 	if (nCount < 32) nCount = 32;
-	pView->pPoints = (POINT*)malloc(sizeof(POINT)*nCount);
+	this->pPoints = (ViewMatrixPoint*)malloc(sizeof(ViewMatrixPoint)*nCount);
 
-	int cx = GetSystemMetrics(SM_CXSCREEN);
-	POINT *pPoint = pView->pPoints;
-	memset(pPoint, 0, sizeof(POINT)*nCount);
+	RECT rc;
+	GetWindowRect(this->hWnd, &rc);
+	int max = rc.right - rc.left;
+
+	ViewMatrixPoint *pPoint = this->pPoints;
+	memset(pPoint, 0, sizeof(ViewMatrixPoint)*nCount);
 	srand(GetTickCount());
 	for (int i = 0; i < nCount; i++) {
-		pPoint->x = rand() % cx;
+		pPoint->x = rand() % max;
 		pPoint++;
 	}
 
-	return pView;
+	return this;
 }
 
-void ExpandPoints(ViewMatrix *pView, int nCount)
+void ExpandPoints(ViewMatrix *this, int nCount)
 {
-	int nOldCount = (int)(_msize(pView->pPoints) / sizeof(POINT));
+	int nOldCount = (int)(_msize(this->pPoints) / sizeof(ViewMatrixPoint));
 	if (nCount > nOldCount) {
 		// 需要扩展了
 		int nDelta = (nCount - nOldCount)*2;
 		if (nDelta < 32) nDelta = 32;
 
-		pView->pPoints = realloc(pView->pPoints, sizeof(POINT)*(nOldCount + nDelta));
-		_ASSERT(pView->pPoints != NULL);
+		this->pPoints = realloc(this->pPoints, sizeof(ViewMatrixPoint)*(nOldCount + nDelta));
+		_ASSERT(this->pPoints != NULL);
 
-		int nWidth = pView->rect.right - pView->rect.left;
-		POINT *pPoint = pView->pPoints + nOldCount;
-		memset(pPoint, 0, sizeof(POINT)*nDelta);
+		int nWidth = this->rect.right - this->rect.left;
+		ViewMatrixPoint *pPoint = this->pPoints + nOldCount;
+		memset(pPoint, 0, sizeof(ViewMatrixPoint)*nDelta);
 		for (int i = 0; i < nDelta; i++) {
 			pPoint->x = rand() % nWidth;
 			pPoint++;

@@ -49,6 +49,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static ViewMatrix vMatrix;
 	static HDC hdcMem;
 	static HBITMAP hBmp;
+	static LARGE_INTEGER bigFreq, bigCount;
 
 	switch (uMsg) {
 	case WM_CREATE:
@@ -58,15 +59,22 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		ViewInit(&view, &model, hWnd);
 		ViewMatrixInit(&vMatrix, &model, hWnd);
 
+		// 最大可能的桌面尺寸
+		int maxWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+		int maxHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+
+		// 双缓冲
 		HDC hdc = GetDC(hWnd);
 		hdcMem = CreateCompatibleDC(hdc);
-		hBmp = CreateCompatibleBitmap(hdc, 1000, 1000);
+		hBmp = CreateCompatibleBitmap(hdc, maxWidth, maxHeight);
 		SelectObject(hdcMem, hBmp);
 		ReleaseDC(hWnd, hdc);
 
+		QueryPerformanceFrequency(&bigFreq);
+		QueryPerformanceCounter(&bigCount);
+
 		ShowWindow(hWnd, SW_SHOW);
 
-		SetTimer(hWnd, 1, 25, NULL);
 		return 0;
 	}
 	case WM_PAINT:
@@ -74,16 +82,27 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PAINTSTRUCT ps;
 		RECT rect;
 		HDC hdc;
+		LARGE_INTEGER bigNow;
 
 		hdc = BeginPaint(hWnd, &ps);
 		GetClientRect(hWnd, &rect);
-
+		// 绘制在不可见的缓冲区上
 		view.pAPI->OnPaint(&view, hdcMem);
 		vMatrix.pAPI->OnPaint(&vMatrix, hdcMem);
-
+		// 复制到可见的前台缓冲区
 		BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
 
+		// FPS
+		QueryPerformanceCounter(&bigNow);
+		int fps = (int)(bigFreq.QuadPart / (bigNow.QuadPart - bigCount.QuadPart));
+		bigCount = bigNow;
+		view.pAPI->SetFPS(&view, fps);
+
 		EndPaint(hWnd, &ps);
+
+		// 立即重绘FPS机制
+		if(model.pAPI->GetStringCount(&model) > 0)
+			InvalidateRect(hWnd, NULL, FALSE);
 		return 0;
 	}
 	case WM_CHAR:
@@ -115,11 +134,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	}
-	case WM_TIMER:
-	{
-		InvalidateRect(hWnd, NULL, FALSE);
-		return 0;
-	}
 	case WM_SIZE:
 	{
 		RECT rc;
@@ -134,7 +148,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_DESTROY:
 	{
-		KillTimer(hWnd, 1);
 		model.pAPI->Clear(&model);
 		view.pAPI->Close(&view);
 		vMatrix.pAPI->Close(&vMatrix);

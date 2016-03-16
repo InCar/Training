@@ -3,7 +3,7 @@
 #define MODEL_MAX_BUFFER 64
 
 // 向前引用
-typedef struct ModelFunctions ModelFunctions;
+typedef struct tagModelFunctions ModelFunctions;
 
 // 模型定义
 typedef struct tagModel
@@ -22,7 +22,7 @@ typedef int(*fnModelGetStringCount)(Model*);
 typedef Model*(*fnModelClear)(Model*);
 typedef Model*(*fnModelPut)(Model*, wchar_t);
 
-struct ModelFunctions
+struct tagModelFunctions
 {
 	fnModelGetString GetString;
 	fnModelGetStringCount GetStringCount;

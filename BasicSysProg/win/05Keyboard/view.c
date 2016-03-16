@@ -1,77 +1,89 @@
 #include "stdafx.h"
 #include "view.h"
 
-void ViewOnPaint(View *pView, HDC hdc)
+void ViewOnPaint(View *this, HDC hdc)
 {
 	SetBkColor(hdc, 0);
-	SetTextColor(hdc, pView->color);
-	SelectObject(hdc, pView->fontText);
-	SelectObject(hdc, pView->hPen);
+	SetTextColor(hdc, this->color);
+	SelectObject(hdc, this->fontText);
+	SelectObject(hdc, this->hPen);
 
 	RECT rc;
-	GetClientRect(pView->hWnd, &rc);
-	rc.bottom = rc.top + pView->pAPI->GetHeight(pView);
+	GetClientRect(this->hWnd, &rc);
+	rc.bottom = rc.top + this->pAPI->GetHeight(this);
 
-	Model *pModel = pView->pModel;
-	FillRect(hdc, &rc, pView->brBack);
+	Model *pModel = this->pModel;
+	FillRect(hdc, &rc, this->brBack);
 
 	SetTextAlign(hdc, TA_CENTER);
 	SetBkMode(hdc, TRANSPARENT);
-	TextOut(hdc, (rc.left + rc.right) / 2, rc.top + pView->nPadding, pModel->pAPI->GetString(pModel), pModel->pAPI->GetStringCount(pModel));
+	TextOut(hdc, (rc.left + rc.right) / 2, rc.top + this->nPadding, pModel->pAPI->GetString(pModel), pModel->pAPI->GetStringCount(pModel));
+
+	// FPS
+	SetTextAlign(hdc, TA_RIGHT);
+	wchar_t wcsBuf[64];
+	wsprintf(wcsBuf, L"FPS: %4d", this->nFPS);
+	TextOut(hdc, rc.right - this->nPadding, rc.top + this->nPadding, wcsBuf, (int)wcslen(wcsBuf));
 	
 	MoveToEx(hdc, rc.left, rc.bottom, NULL);
 	LineTo(hdc, rc.right, rc.bottom);
 }
 
-int ViewGetHeight(View *pView)
+int ViewGetHeight(View *this)
 {
 	TEXTMETRIC tm;
-	HDC hdc = GetDC(pView->hWnd);
+	HDC hdc = GetDC(this->hWnd);
 	GetTextMetrics(hdc, &tm);
-	ReleaseDC(pView->hWnd, hdc);
-	return tm.tmExternalLeading + tm.tmHeight + pView->nPadding * 2;
+	ReleaseDC(this->hWnd, hdc);
+	return tm.tmExternalLeading + tm.tmHeight + this->nPadding * 2;
 }
 
-void ViewChangeColor(View *pView, COLORREF color)
+void ViewChangeColor(View *this, COLORREF color)
 {
-	pView->color = color;
-	DeleteObject(pView->hPen);
-	pView->hPen = CreatePen(PS_SOLID, 1, pView->color);
+	this->color = color;
+	DeleteObject(this->hPen);
+	this->hPen = CreatePen(PS_SOLID, 1, this->color);
 }
 
-void ViewClose(View *pView)
+void ViewSetFPS(View *this, int nFPS)
 {
-	DeleteObject(pView->brBack);
-	DeleteObject(pView->fontText);
-	DeleteObject(pView->hPen);
+	this->nFPS = nFPS;
 }
 
-View* ViewInit(View *pView, Model *pModel, HWND hWnd)
+void ViewClose(View *this)
+{
+	DeleteObject(this->brBack);
+	DeleteObject(this->fontText);
+	DeleteObject(this->hPen);
+}
+
+View* ViewInit(View *this, Model *pModel, HWND hWnd)
 {
 	static ViewFunctions s_fns =
 	{
 		.OnPaint		= ViewOnPaint,
 		.GetHeight		= ViewGetHeight,
 		.ChangeColor	= ViewChangeColor,
+		.SetFPS			= ViewSetFPS,
 		.Close			= ViewClose
 	};
 
-	memset(pView, 0, sizeof(View));
-	pView->pAPI = &s_fns;
-	pView->pModel = pModel;
-	pView->hWnd = hWnd;
+	memset(this, 0, sizeof(View));
+	this->pAPI = &s_fns;
+	this->pModel = pModel;
+	this->hWnd = hWnd;
 
-	pView->nPadding = 4;
-	pView->brBack = CreateSolidBrush(0); // black
-	pView->color = RGB(0x00, 0xff, 0x00); // green
+	this->nPadding = 4;
+	this->brBack = CreateSolidBrush(0); // black
+	this->color = RGB(0x00, 0xff, 0x00); // green
 
-	pView->hPen = CreatePen(PS_SOLID, 1, pView->color); // green
+	this->hPen = CreatePen(PS_SOLID, 1, this->color); // green
 
 	LOGFONT lf;
 	ZeroMemory(&lf, sizeof(LOGFONT));
 	wcscpy_s(lf.lfFaceName, sizeof(lf.lfFaceName)/sizeof(wchar_t), L"ËÎÌו");
 	lf.lfWeight = FW_BOLD;
-	pView->fontText = CreateFontIndirect(&lf);
+	this->fontText = CreateFontIndirect(&lf);
 
-	return pView;
+	return this;
 }

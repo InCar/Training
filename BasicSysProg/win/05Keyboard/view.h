@@ -2,7 +2,7 @@
 #include "model.h"
 
 // 向前引用
-typedef struct ViewFunctions ViewFunctions;
+typedef struct tagViewFunctions ViewFunctions;
 
 // 视图: 这是一个固定只有1行高的视图
 typedef struct tagView
@@ -14,6 +14,7 @@ typedef struct tagView
 	HFONT		fontText;
 	COLORREF	color;
 	int			nPadding;
+	int			nFPS;
 	// API指针
 	ViewFunctions	*pAPI;
 } View;
@@ -24,12 +25,14 @@ View* ViewInit(View*, Model*, HWND);
 typedef void(*fnViewOnPaint)(View*, HDC hdc);
 typedef int(*fnViewGetHeight)(View*);
 typedef void(*fnViewChangeColor)(View*, COLORREF);
+typedef void(*fnViewSetFPS)(View*, int);
 typedef void(*fnViewClose)(View*);
 
-struct ViewFunctions
+struct tagViewFunctions
 {
 	fnViewOnPaint		OnPaint;
 	fnViewGetHeight		GetHeight;
 	fnViewChangeColor	ChangeColor;
+	fnViewSetFPS		SetFPS;
 	fnViewClose			Close;
 };
