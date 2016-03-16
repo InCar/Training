@@ -1,5 +1,5 @@
 # Basic Drawing
-![pentangle](http://ic-media.oss-cn-hangzhou.aliyuncs.com/2016%2F03%2Fpentangle.png)
+![pentangle](http://ic-media.oss-cn-hangzhou.aliyuncs.com/2016%2F03%2Fpentangle.gif)
 
 ## DeviceContext
     - ×ø±êÏµ
