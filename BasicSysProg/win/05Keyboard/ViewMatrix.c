@@ -30,13 +30,28 @@ void ViewMatrixOnPaint(ViewMatrix *this, HDC hdc)
 	GetTextMetrics(hdc, &tm);
 	int nLineHeight = /*tm.tmExternalLeading +*/ tm.tmHeight;
 	DWORD dwTickNow = GetTickCount();
+	int nFontCount = sizeof(this->fontTexts) / sizeof(HFONT);
 
 	ViewMatrixPoint *pPoint = this->pPoints;
 	for (int i = 0; i < nCount; i++) {
 		int nMaxY = this->rect.bottom + nLineHeight * pPoint->nShadow;
 
 		for (int j = 0; j < pPoint->nShadow; j++) {
-			TextOut(hdc, pPoint->x, pPoint->y - nLineHeight*j + this->rect.top, pBuf + ((pPoint->nCharPos+j)%nCount), 1);
+			// 轨迹渐淡
+			BYTE color[3] = { GetRValue(this->color) , GetGValue(this->color) , GetBValue(this->color) };
+			for (int c = 0; c < 3; c++) {
+				color[c] = color[c] - color[c] * j / (pPoint->nShadow*2);
+				// Z
+				color[c] = color[c] - color[c] * pPoint->z / (this->nMaxZ * 2);
+			}
+			SetTextColor(hdc, RGB(color[0], color[1], color[2]));
+			// 字体大小
+			int nFontIndex = nFontCount*pPoint->z / this->nMaxZ;
+			SelectObject(hdc, this->fontTexts[nFontIndex]);
+			GetTextMetrics(hdc, &tm);
+			int nLineHeight = /*tm.tmExternalLeading +*/ tm.tmHeight;
+
+			TextOut(hdc, pPoint->x, pPoint->y - nLineHeight*j + this->rect.top, pBuf + ((pPoint->nCharPos + j) % nCount), 1);
 		}
 
 		// 下坠计算
@@ -50,7 +65,7 @@ void ViewMatrixOnPaint(ViewMatrix *this, HDC hdc)
 
 		// 变换字符计算
 		ms = dwTickNow - pPoint->dwCharTick;
-		if (ms > 100) {
+		if (ms > 200) {
 			pPoint->nCharPos = rand();
 			pPoint->dwCharTick = dwTickNow;
 		}
@@ -96,6 +111,8 @@ void ViewMatrixClose(ViewMatrix *this)
 {
 	DeleteObject(this->brBack);
 	DeleteObject(this->fontText);
+	for (int i = 0; i < sizeof(this->fontTexts) / sizeof(HFONT); i++)
+		DeleteObject(this->fontTexts[i]);
 	DeleteObject(this->hPen);
 
 	free(this->pPoints);
@@ -127,6 +144,10 @@ ViewMatrix* ViewMatrixInit(ViewMatrix *this, Model *pModel, HWND hWnd)
 	wcscpy_s(lf.lfFaceName, sizeof(lf.lfFaceName) / sizeof(wchar_t), L"宋体");
 	lf.lfWeight = FW_BOLD;
 	this->fontText = CreateFontIndirect(&lf);
+	for (int i = 0; i < sizeof(this->fontTexts) / sizeof(HFONT); i++) {
+		lf.lfHeight = 24 - 24 * i / (sizeof(this->fontTexts) / sizeof(HFONT) * 2);
+		this->fontTexts[i] = CreateFontIndirect(&lf);
+	}
 
 	// 设置pPoints,每个字符对应一个点
 	int nCount = pModel->pAPI->GetStringCount(pModel);
@@ -159,7 +180,7 @@ void ExpandPoints(ViewMatrix *this)
 void ReAssignXZ(ViewMatrix *this, ViewMatrixPoint *pPoints, int nCount)
 {
 	int nMinShadow = 4, nMaxShadow = 16;
-	float fMinSpeed = 32.0f, fMaxSpeed = 320.0f;
+	float fMinSpeed = 96.0f, fMaxSpeed = 620.0f;
 	DWORD dwTick = GetTickCount();
 
 	for (int i = 0; i < nCount; i++) {

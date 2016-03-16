@@ -1,6 +1,6 @@
 #pragma once
 
-#define MODEL_MAX_BUFFER 64
+#define MODEL_MAX_BUFFER 364
 
 // 向前引用
 typedef struct tagModelFunctions ModelFunctions;

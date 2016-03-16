@@ -13,6 +13,7 @@ typedef struct tagViewMatrix
 	HPEN			hPen;
 	HBRUSH			brBack;
 	HFONT			fontText;
+	HFONT			fontTexts[8];
 	COLORREF		color;
 	int				nPadding;
 	RECT			rect;
