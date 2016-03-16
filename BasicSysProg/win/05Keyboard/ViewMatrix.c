@@ -68,7 +68,7 @@ void ViewMatrixOnPaint(ViewMatrix *this, HDC hdc)
 
 		// ±ä»»×Ö·û¼ÆËã
 		ms = dwTickNow - pPoint->dwCharTick;
-		if (ms > 200) {
+		if (ms > 100) {
 			pPoint->nCharPos = rand();
 			pPoint->dwCharTick = dwTickNow;
 		}
@@ -78,18 +78,6 @@ void ViewMatrixOnPaint(ViewMatrix *this, HDC hdc)
 
 	SelectClipRgn(hdc, NULL);
 	DeleteObject(hClip);
-
-
-	// int nOffsetY = 18, nShadow = 12;
-	// for (int i = 0; i < nCount; i++) {
-	// 	for (int j = 0; j < nShadow; j++) {
-	// 		int y = this->pPoints[i].y + this->rect.top + this->nPadding - nOffsetY * j;
-	// 		if(y > this->rect.top)
-	// 			TextOut(hdc, this->pPoints[i].x, y, &pBuf[(y*nOffsetY) % nCount], 1);
-	// 	}
-	// 	this->pPoints[i].y += (1 + rand()%16);
-	// 	if (this->pPoints[i].y + this->rect.top + this->nPadding >= this->rect.bottom + nOffsetY*nShadow) this->pPoints[i].y = 0;
-	// }
 }
 
 void ViewMatrixChangeColor(ViewMatrix *this, COLORREF color)
