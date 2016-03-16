@@ -59,7 +59,10 @@ void ViewMatrixOnPaint(ViewMatrix *this, HDC hdc)
 		int nDeltaY = (int)(pPoint->fSpeed*ms / 1000.0f);
 		if (nDeltaY > 0) {
 			pPoint->y += nDeltaY;
-			if (pPoint->y > nMaxY) pPoint->y = 0;
+			if (pPoint->y > nMaxY) {
+				pPoint->y = 0;
+				ReAssignXZ(this, pPoint, 1);
+			}
 			pPoint->dwTick = dwTickNow;
 		}
 
