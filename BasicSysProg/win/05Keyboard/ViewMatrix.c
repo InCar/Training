@@ -104,6 +104,7 @@ void ViewMatrixSetRect(ViewMatrix *this, RECT *pRect)
 	memcpy_s(&this->rect, sizeof(RECT), pRect, sizeof(RECT));
 
 	this->nMaxX = pRect->right - pRect->left;
+	if (this->nMaxX <= 0) this->nMaxX = 1;
 	this->nMaxZ = 16;
 
 	// ±ä¸ü·¶Î§

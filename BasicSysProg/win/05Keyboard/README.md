@@ -14,6 +14,6 @@
 + 一个简单的MVC模式的使用
 
 ## 击键消息 vs. 字符消息
-+ WM_KEYDONW WM_KEYUP
++ WM_KEYDOWN WM_KEYUP
 + WM_CHAR
 + GetKeyState

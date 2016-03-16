@@ -50,6 +50,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static HDC hdcMem;
 	static HBITMAP hBmp;
 	static LARGE_INTEGER bigFreq, bigCount;
+	static int nMaxFPS = 40;
+	static BOOL bNoLimitFPS = TRUE;
 
 	switch (uMsg) {
 	case WM_CREATE:
@@ -96,13 +98,33 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		QueryPerformanceCounter(&bigNow);
 		int fps = (int)(bigFreq.QuadPart / (bigNow.QuadPart - bigCount.QuadPart));
 		bigCount = bigNow;
-		view.pAPI->SetFPS(&view, fps);
+		view.pAPI->SetFPS(&view, fps, nMaxFPS, bNoLimitFPS);
 
 		EndPaint(hWnd, &ps);
 
 		// 立即重绘FPS机制
-		if(model.pAPI->GetStringCount(&model) > 0)
+		if (model.pAPI->GetStringCount(&model) > 0) {
+			if (bNoLimitFPS || fps <= nMaxFPS) {
+				InvalidateRect(hWnd, NULL, FALSE);
+			}
+			else {
+				PostMessage(hWnd, WM_USER, 0, 0);
+			}
+		}
+		return 0;
+	}
+	case WM_USER:
+	{
+		LARGE_INTEGER bigNow;
+		QueryPerformanceCounter(&bigNow);
+		int fps = (int)(bigFreq.QuadPart / (bigNow.QuadPart - bigCount.QuadPart));
+		if (bNoLimitFPS || fps <= nMaxFPS) {
 			InvalidateRect(hWnd, NULL, FALSE);
+		}
+		else {
+			Sleep((fps - nMaxFPS) * 1000 / (fps*nMaxFPS));
+			PostMessage(hWnd, WM_USER, 0, 0);
+		}
 		return 0;
 	}
 	case WM_CHAR:
@@ -119,9 +141,12 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			// CTRL is pressed down
 			switch (wParam)
 			{
-			case 'R': color = RGB(0xff, 0x00, 0x00); break;
-			case 'G': color = RGB(0x00, 0xff, 0x00); break;
-			case 'B': color = RGB(0x00, 0x00, 0xff); break;
+			case L'R': color = RGB(0xff, 0x00, 0x00); break;
+			case L'G': color = RGB(0x00, 0xff, 0x00); break;
+			case L'B': color = RGB(0x00, 0x00, 0xff); break;
+			case VK_OEM_PLUS: nMaxFPS++; break;
+			case VK_OEM_MINUS: nMaxFPS > 1 && nMaxFPS--; break;
+			case VK_SPACE: bNoLimitFPS = !bNoLimitFPS; break;
 			}
 
 			if (color) {

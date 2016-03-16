@@ -22,7 +22,10 @@ void ViewOnPaint(View *this, HDC hdc)
 	// FPS
 	SetTextAlign(hdc, TA_RIGHT);
 	wchar_t wcsBuf[64];
-	wsprintf(wcsBuf, L"FPS: %4d", this->nFPS);
+	if (this->bNoLimit)
+		wsprintf(wcsBuf, L"FPS: %4d", this->nFPS);
+	else
+		wsprintf(wcsBuf, L"FPS[%d MAX]: %4d", this->nMaxFPS, this->nFPS);
 	TextOut(hdc, rc.right - this->nPadding, rc.top + this->nPadding, wcsBuf, (int)wcslen(wcsBuf));
 	
 	MoveToEx(hdc, rc.left, rc.bottom, NULL);
@@ -45,9 +48,11 @@ void ViewChangeColor(View *this, COLORREF color)
 	this->hPen = CreatePen(PS_SOLID, 1, this->color);
 }
 
-void ViewSetFPS(View *this, int nFPS)
+void ViewSetFPS(View *this, int nFPS, int nMaxFPS, BOOL bNoLimit)
 {
 	this->nFPS = nFPS;
+	this->nMaxFPS = nMaxFPS;
+	this->bNoLimit = bNoLimit;
 }
 
 void ViewClose(View *this)

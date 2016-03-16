@@ -15,6 +15,8 @@ typedef struct tagView
 	COLORREF	color;
 	int			nPadding;
 	int			nFPS;
+	int			nMaxFPS;
+	BOOL		bNoLimit;
 	// API÷∏’Î
 	ViewFunctions	*pAPI;
 } View;
@@ -25,7 +27,7 @@ View* ViewInit(View*, Model*, HWND);
 typedef void(*fnViewOnPaint)(View*, HDC hdc);
 typedef int(*fnViewGetHeight)(View*);
 typedef void(*fnViewChangeColor)(View*, COLORREF);
-typedef void(*fnViewSetFPS)(View*, int);
+typedef void(*fnViewSetFPS)(View*, int, int, BOOL);
 typedef void(*fnViewClose)(View*);
 
 struct tagViewFunctions
