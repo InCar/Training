@@ -27,7 +27,7 @@ Model* ModelPut(Model *this, wchar_t wchar)
 	else if (wchar == VK_ESCAPE) {
 		this->pAPI->Clear(this);
 	}
-	else if(wchar >= 0x30){
+	else if(wchar > 0x20){
 		if (len < MODEL_MAX_BUFFER - 1) {
 			// »º³åÇøÎ´Âú
 			this->wcsBuffer[len] = wchar;
