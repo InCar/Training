@@ -28,7 +28,8 @@ Model* ModelInit(Model*);
 typedef Point*(*fnModelGetPoints)(Model*);
 typedef int(*fnModelGetCount)(Model*);
 typedef Model*(*fnModelClear)(Model*);
-typedef Model*(*fnModelPut)(Model*, Point point);
+typedef Model*(*fnModelPut)(Model*, Point);
+typedef Model*(*fnModelMove)(Model*, int, Point);
 
 struct tagModelFunctions
 {
@@ -36,4 +37,5 @@ struct tagModelFunctions
 	fnModelGetCount GetCount;
 	fnModelClear Clear;
 	fnModelPut Put;
+    fnModelMove Move;
 };

@@ -26,13 +26,20 @@ Model* ModelPut(Model *pThis, Point point)
     return pThis;
 }
 
+Model* ModelMove(Model *pThis, int nIndex, Point point)
+{
+    pThis->points[nIndex] = point;
+    return pThis;
+}
+
 Model* ModelInit(Model *pThis)
 {
     static ModelFunctions s_fns = {
         .GetPoints  = ModelGetPoints,
         .GetCount   = ModelGetCount,
         .Clear      = ModelClear,
-        .Put        = ModelPut
+        .Put        = ModelPut,
+        .Move       = ModelMove
     };
 
     memset(pThis, 0, sizeof(Model));

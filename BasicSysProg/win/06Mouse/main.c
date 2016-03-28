@@ -77,9 +77,32 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         point.x = LOWORD(lParam);
         point.y = HIWORD(lParam);
 
-        pModel->pAPI->Put(pModel, point);
-        
+        if (!pView->pAPI->DragEnd(pView, point)) {
+            pModel->pAPI->Put(pModel, point);
+        }
+
         InvalidateRect(hWnd, NULL, FALSE);
+        break;
+    }
+    case WM_LBUTTONDOWN:
+    {
+        Point point;
+        point.x = LOWORD(lParam);
+        point.y = HIWORD(lParam);
+
+        pView->pAPI->DragStart(pView, point);
+        break;
+    }
+    case WM_MOUSEMOVE:
+    {
+        Point point;
+        point.x = LOWORD(lParam);
+        point.y = HIWORD(lParam);
+
+        if (wParam & MK_LBUTTON) {
+            pView->pAPI->Dragging(pView, point);
+            InvalidateRect(hWnd, NULL, TRUE);
+        }
         break;
     }
     case WM_KEYUP:

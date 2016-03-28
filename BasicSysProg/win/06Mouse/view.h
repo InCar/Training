@@ -10,6 +10,9 @@ typedef struct tagView
     Model		*pModel;
     HWND		hWnd;
     HPEN		hPen;
+    Point       pointDragStart;
+    int         nDragPoint;
+    int         nRange;
     // API÷∏’Î
     ViewFunctions	*pAPI;
 } View;
@@ -19,9 +22,15 @@ View* ViewInit(View*, Model*, HWND);
 
 typedef void(*fnViewOnPaint)(View*, HDC hdc);
 typedef void(*fnViewClose)(View*);
+typedef void(*fnViewDragStart)(View*, Point);
+typedef BOOL(*fnViewDragEnd)(View*, Point);
+typedef void(*fnViewDragging)(View*, Point);
 
 struct tagViewFunctions
 {
     fnViewOnPaint		OnPaint;
     fnViewClose			Close;
+    fnViewDragStart     DragStart;
+    fnViewDragEnd       DragEnd;
+    fnViewDragging      Dragging;
 };
