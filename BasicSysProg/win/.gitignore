@@ -5,8 +5,8 @@
 *.user
 *.filters
 
-*/Debug/
-*/Release/
+Debug/
+Release/
 */x64/
 **/.vs/
 ipch/
