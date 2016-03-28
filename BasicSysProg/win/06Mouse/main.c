@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "model.h"
 
 LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -43,9 +44,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    static Model *pModel = NULL;
+
 	switch (uMsg) {
 	case WM_CREATE:
 	{
+        
+        pModel = malloc(sizeof(Model));
+        ModelInit(pModel);
+
 		ShowWindow(hWnd, SW_SHOW);
 		break;
 	}
@@ -59,8 +66,31 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 		break;
 	}
+    case WM_LBUTTONUP:
+    {
+        Point point;
+        point.x = LOWORD(lParam);
+        point.y = HIWORD(lParam);
+
+        pModel->pAPI->Put(pModel, point);
+
+        break;
+    }
+    case WM_KEYUP:
+    {
+        switch (wParam)
+        {
+        case VK_ESCAPE:
+            pModel->pAPI->Clear(pModel);
+            break;
+        default:
+            break;
+        }
+    }
 	case WM_DESTROY:
 	{
+        free(pModel);
+
 		PostQuitMessage(0);
 		break;
 	}
