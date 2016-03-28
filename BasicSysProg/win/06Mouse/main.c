@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "model.h"
+#include "view.h"
 
 LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -45,6 +46,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static Model *pModel = NULL;
+    static View *pView = NULL;
 
 	switch (uMsg) {
 	case WM_CREATE:
@@ -52,6 +54,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         
         pModel = malloc(sizeof(Model));
         ModelInit(pModel);
+
+        pView = malloc(sizeof(View));
+        ViewInit(pView, pModel, hWnd);
 
 		ShowWindow(hWnd, SW_SHOW);
 		break;
@@ -62,7 +67,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		HDC hdc;
 
 		hdc = BeginPaint(hWnd, &ps);
-
+        pView->pAPI->OnPaint(pView, hdc);
 		EndPaint(hWnd, &ps);
 		break;
 	}
@@ -73,7 +78,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         point.y = HIWORD(lParam);
 
         pModel->pAPI->Put(pModel, point);
-
+        
+        InvalidateRect(hWnd, NULL, FALSE);
         break;
     }
     case WM_KEYUP:
@@ -82,14 +88,19 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
         case VK_ESCAPE:
             pModel->pAPI->Clear(pModel);
+            InvalidateRect(hWnd, NULL, TRUE);
             break;
         default:
             break;
         }
+        break;
     }
 	case WM_DESTROY:
 	{
+        pView->pAPI->Close(pView);
+
         free(pModel);
+        free(pView);
 
 		PostQuitMessage(0);
 		break;
