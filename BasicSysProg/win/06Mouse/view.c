@@ -9,6 +9,16 @@ void ViewOnPaint(View *pThis, HDC hdc)
 
     SelectObject(hdc, pThis->hPen);
 
+    RECT rc;
+    GetClientRect(pThis->hWnd, &rc);
+    FillRect(hdc, &rc, GetStockObject(LTGRAY_BRUSH));
+
+    int size = 8;
+    if (pThis->nHoverPoint >= 0) {
+        Point hover = points[pThis->nHoverPoint];
+        Ellipse(hdc, hover.x - size, hover.y - size, hover.x + size, hover.y + size);
+    }
+
     for (int i = 0; i < count; i++) {
         for (int j = 0; j < count; j++) {
             if (i == j) continue; // skip the same points
@@ -74,6 +84,27 @@ void ViewDragging(View *pThis, Point point)
     OutputDebugString(buf);
 }
 
+void ViewHover(View *pThis, Point point)
+{
+    pThis->pointDragStart = point;
+
+    // Hit Test
+    Model *pModel = pThis->pModel;
+    Point *points = pModel->pAPI->GetPoints(pModel);
+    int count = pModel->pAPI->GetCount(pModel);
+
+    for (int i = 0; i < count; i++) {
+        if ((abs(points[i].x - point.x) < pThis->nRange) &&
+            (abs(points[i].y - point.y) < pThis->nRange))
+        {
+            // tits point i 
+            pThis->nHoverPoint = i;
+            return;
+        }
+    }
+
+    pThis->nHoverPoint = -1;
+}
 
 View* ViewInit(View *pThis, Model *pModel, HWND hWnd)
 {
@@ -83,7 +114,8 @@ View* ViewInit(View *pThis, Model *pModel, HWND hWnd)
         .Close = ViewClose,
         .DragStart = ViewDragStart,
         .DragEnd = ViewDragEnd,
-        .Dragging = ViewDragging
+        .Dragging = ViewDragging,
+        .Hover = ViewHover
     };
 
     memset(pThis, 0, sizeof(View));
@@ -91,6 +123,7 @@ View* ViewInit(View *pThis, Model *pModel, HWND hWnd)
     pThis->pModel = pModel;
     pThis->hWnd = hWnd;
     pThis->nDragPoint = -1;
+    pThis->nHoverPoint = -1;
     pThis->nRange = 8;
 
     pThis->hPen = CreatePen(PS_SOLID, 1, RGB(0xcc, 0x00, 0x00)); // red

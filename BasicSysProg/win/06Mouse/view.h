@@ -12,6 +12,7 @@ typedef struct tagView
     HPEN		hPen;
     Point       pointDragStart;
     int         nDragPoint;
+    int         nHoverPoint;
     int         nRange;
     // API÷∏’Î
     ViewFunctions	*pAPI;
@@ -25,6 +26,7 @@ typedef void(*fnViewClose)(View*);
 typedef void(*fnViewDragStart)(View*, Point);
 typedef BOOL(*fnViewDragEnd)(View*, Point);
 typedef void(*fnViewDragging)(View*, Point);
+typedef void(*fnViewHover)(View*, Point);
 
 struct tagViewFunctions
 {
@@ -33,4 +35,5 @@ struct tagViewFunctions
     fnViewDragStart     DragStart;
     fnViewDragEnd       DragEnd;
     fnViewDragging      Dragging;
+    fnViewHover         Hover;
 };

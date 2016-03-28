@@ -47,6 +47,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static Model *pModel = NULL;
     static View *pView = NULL;
+    static HDC hdcMem;
+    static HBITMAP hBmp;
 
 	switch (uMsg) {
 	case WM_CREATE:
@@ -58,16 +60,38 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         pView = malloc(sizeof(View));
         ViewInit(pView, pModel, hWnd);
 
+        // 最大可能的桌面尺寸
+        int maxWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+        int maxHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+
+        // 双缓冲
+        HDC hdc = GetDC(hWnd);
+        hdcMem = CreateCompatibleDC(hdc);
+        hBmp = CreateCompatibleBitmap(hdc, maxWidth, maxHeight);
+        SelectObject(hdcMem, hBmp);
+        ReleaseDC(hWnd, hdc);
+
 		ShowWindow(hWnd, SW_SHOW);
 		break;
 	}
+    case WM_ERASEBKGND:
+    {
+        break;
+    }
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
 		HDC hdc;
+        RECT rect;
 
 		hdc = BeginPaint(hWnd, &ps);
-        pView->pAPI->OnPaint(pView, hdc);
+
+        GetClientRect(hWnd, &rect);
+        // 绘制在不可见的缓冲区上
+        pView->pAPI->OnPaint(pView, hdcMem);
+        // 复制到可见的前台缓冲区
+        BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
+
 		EndPaint(hWnd, &ps);
 		break;
 	}
@@ -101,8 +125,12 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         if (wParam & MK_LBUTTON) {
             pView->pAPI->Dragging(pView, point);
-            InvalidateRect(hWnd, NULL, TRUE);
         }
+        else {
+            pView->pAPI->Hover(pView, point);
+        }
+
+        InvalidateRect(hWnd, NULL, TRUE);
         break;
     }
     case WM_KEYUP:
@@ -124,6 +152,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         free(pModel);
         free(pView);
+
+        DeleteDC(hdcMem);
+        DeleteObject(hBmp);
 
 		PostQuitMessage(0);
 		break;
