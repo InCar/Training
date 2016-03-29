@@ -10,11 +10,24 @@ typedef struct tagView
     Model		*pModel;
     HWND		hWnd;
     HPEN		hPen;
+    HPEN        hPenSelect;
     HBRUSH      hBrush;
+    HBRUSH      hBrushBk;
+    COLORREF    colorBk;
     Point       pointDragStart;
     int         nDragPoint;
     int         nHoverPoint;
     int         nRange;
+    RECT        rcSelect;
+    BOOL        bShowSelect;
+    BOOL        selected[MAX_POINT_NUM];
+    Point       pointMoving[MAX_POINT_NUM];
+    Point       pointMoveTo;
+    float       fTheta;
+    float       fSpeed;
+    int         nDuration; // ms
+    LARGE_INTEGER tmMoveBegin;
+    LARGE_INTEGER freq;
     // API÷∏’Î
     ViewFunctions	*pAPI;
 } View;
@@ -28,6 +41,8 @@ typedef void(*fnViewDragStart)(View*, Point);
 typedef BOOL(*fnViewDragEnd)(View*, Point);
 typedef void(*fnViewDragging)(View*, Point);
 typedef void(*fnViewHover)(View*, Point);
+typedef void(*fnViewMoveToPoint)(View*, Point);
+typedef BOOL(*fnViewMoving)(View*);
 
 struct tagViewFunctions
 {
@@ -37,4 +52,6 @@ struct tagViewFunctions
     fnViewDragEnd       DragEnd;
     fnViewDragging      Dragging;
     fnViewHover         Hover;
+    fnViewMoveToPoint   MoveToPoint;
+    fnViewMoving        Moving;
 };

@@ -10,7 +10,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
 
 	WNDCLASS wcls;
 	ZeroMemory(&wcls, sizeof(WNDCLASS));
-	wcls.style = CS_HREDRAW | CS_VREDRAW;
+	wcls.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 	wcls.lpfnWndProc = WindowProc;
 	wcls.hInstance = hInstance;
 	wcls.hbrBackground = GetStockObject(LTGRAY_BRUSH);
@@ -135,6 +135,15 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
 
         InvalidateRect(hWnd, NULL, TRUE);
+        break;
+    }
+    case WM_RBUTTONDBLCLK:
+    {
+        Point point;
+        point.x = GET_X_LPARAM(lParam);
+        point.y = GET_Y_LPARAM(lParam);
+
+        pView->pAPI->MoveToPoint(pView, point);
         break;
     }
     case WM_KEYUP:

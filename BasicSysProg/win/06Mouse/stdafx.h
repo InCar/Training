@@ -3,3 +3,4 @@
 #include <windowsx.h>
 #include <malloc.h>
 #include <crtdbg.h>
+#include <math.h>
