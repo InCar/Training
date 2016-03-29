@@ -8,7 +8,8 @@ inline BOOL PointsInRange(Point p1, Point p2, int range)
 
 inline BOOL PointInRectangle(Point p, RECT *pRect)
 {
-    return (p.x > pRect->left && p.x < pRect->right) && (p.y > pRect->top && p.y < pRect->bottom);
+    return (((p.x - pRect->left) * (p.x - pRect->right)) < 0) &&
+        (((p.y - pRect->top) * (p.y - pRect->bottom)) < 0);
 }
 
 void ViewOnPaint(View *pThis, HDC hdc)
