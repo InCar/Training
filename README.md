@@ -28,8 +28,8 @@
     + Windows消息循环 [windows](BasicSysProg/win/02MessageLoop)
     + 文本输出&滚动条 [windows](BasicSysProg/win/03TextScroll)
     + 基本图形绘制:点,线和矩形 [windows](BasicSysProg/win/04BasicDrawing)
-    + 键盘 [windows](BasicSysProg/win/05Keyboard) :boom:
-    + 鼠标 [windows](BasicSysProg/win/6Mouse) :boom:
+    + 键盘 [windows](BasicSysProg/win/05Keyboard)
+    + 鼠标 [windows](BasicSysProg/win/06Mouse) :boom:
     + 定时器
     + 子窗口与控件
     + 菜单
