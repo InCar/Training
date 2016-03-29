@@ -98,9 +98,11 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONUP:
     {
         Point point;
-        point.x = LOWORD(lParam);
-        point.y = HIWORD(lParam);
+        point.x = GET_X_LPARAM(lParam);
+        point.y = GET_Y_LPARAM(lParam);
 
+        ReleaseCapture();
+        
         if (!pView->pAPI->DragEnd(pView, point)) {
             pModel->pAPI->Put(pModel, point);
         }
@@ -111,8 +113,10 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONDOWN:
     {
         Point point;
-        point.x = LOWORD(lParam);
-        point.y = HIWORD(lParam);
+        point.x = GET_X_LPARAM(lParam);
+        point.y = GET_Y_LPARAM(lParam);
+
+        SetCapture(hWnd);
 
         pView->pAPI->DragStart(pView, point);
         break;
@@ -120,8 +124,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEMOVE:
     {
         Point point;
-        point.x = LOWORD(lParam);
-        point.y = HIWORD(lParam);
+        point.x = GET_X_LPARAM(lParam);
+        point.y = GET_Y_LPARAM(lParam);
 
         if (wParam & MK_LBUTTON) {
             pView->pAPI->Dragging(pView, point);

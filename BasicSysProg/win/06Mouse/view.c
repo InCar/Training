@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "view.h"
 
+inline BOOL PointsInRange(Point p1, Point p2, int range)
+{
+    return (abs(p1.x - p2.x) < range) && (abs(p1.y - p2.y) < range);
+}
+
 void ViewOnPaint(View *pThis, HDC hdc)
 {
     Model *pModel = pThis->pModel;
@@ -8,17 +13,28 @@ void ViewOnPaint(View *pThis, HDC hdc)
     Point *points = pModel->pAPI->GetPoints(pModel);
 
     SelectObject(hdc, pThis->hPen);
+    SelectObject(hdc, GetStockObject(LTGRAY_BRUSH));
 
+    // Background
     RECT rc;
     GetClientRect(pThis->hWnd, &rc);
     FillRect(hdc, &rc, GetStockObject(LTGRAY_BRUSH));
 
-    int size = 8;
+    // Hover circle
+    int size = pThis->nRange;
     if (pThis->nHoverPoint >= 0) {
         Point hover = points[pThis->nHoverPoint];
         Ellipse(hdc, hover.x - size, hover.y - size, hover.x + size, hover.y + size);
     }
 
+    // Points
+    SelectObject(hdc, pThis->hBrush);
+    size /= 2;
+    for (int i = 0; i < count; i++) {
+        Ellipse(hdc, points[i].x - size, points[i].y - size, points[i].x + size, points[i].y + size);
+    }
+
+    // Lines
     for (int i = 0; i < count; i++) {
         for (int j = 0; j < count; j++) {
             if (i == j) continue; // skip the same points
@@ -31,6 +47,7 @@ void ViewOnPaint(View *pThis, HDC hdc)
 void ViewClose(View *pThis)
 {
     DeleteObject(pThis->hPen);
+    DeleteObject(pThis->hBrush);
 }
 
 void ViewDragStart(View *pThis, Point point)
@@ -43,8 +60,7 @@ void ViewDragStart(View *pThis, Point point)
     int count = pModel->pAPI->GetCount(pModel);
 
     for (int i = 0; i < count; i++) {
-        if ((abs(points[i].x - point.x) < pThis->nRange) &&
-            (abs(points[i].y - point.y) < pThis->nRange))
+        if(PointsInRange(points[i], point, pThis->nRange))
         {
             // tits point i 
             pThis->nDragPoint = i;
@@ -60,8 +76,7 @@ BOOL ViewDragEnd(View *pThis, Point point)
 {
     pThis->nDragPoint = -1;
     // 任何一个方向上移动了nRange以上的距离视为拖动了
-    if (abs(pThis->pointDragStart.x - point.x) < pThis->nRange &&
-        abs(pThis->pointDragStart.y - point.y) < pThis->nRange)
+    if(PointsInRange(pThis->pointDragStart, point, pThis->nRange))
     {
         return FALSE;
     }
@@ -75,10 +90,10 @@ void ViewDragging(View *pThis, Point point)
     if (pThis->nDragPoint >= 0) {
         pThis->pModel->pAPI->Move(pThis->pModel, pThis->nDragPoint, point);
         
-        wsprintf(buf, L"ddd\n", NULL);
+        wsprintf(buf, L"in -> %d,%d\n", point.x, point.y);
     }
     else {
-        wsprintf(buf, L"ccc\n", NULL);
+        wsprintf(buf, L"out -> %d,%d\n", point.x, point.y);
     }
 
     OutputDebugString(buf);
@@ -94,8 +109,7 @@ void ViewHover(View *pThis, Point point)
     int count = pModel->pAPI->GetCount(pModel);
 
     for (int i = 0; i < count; i++) {
-        if ((abs(points[i].x - point.x) < pThis->nRange) &&
-            (abs(points[i].y - point.y) < pThis->nRange))
+        if(PointsInRange(points[i], point, pThis->nRange))
         {
             // tits point i 
             pThis->nHoverPoint = i;
@@ -126,7 +140,9 @@ View* ViewInit(View *pThis, Model *pModel, HWND hWnd)
     pThis->nHoverPoint = -1;
     pThis->nRange = 8;
 
-    pThis->hPen = CreatePen(PS_SOLID, 1, RGB(0xcc, 0x00, 0x00)); // red
+    COLORREF color = RGB(0xcc, 0x00, 0x00);
+    pThis->hPen = CreatePen(PS_SOLID, 1, color); // red
+    pThis->hBrush = CreateSolidBrush(color);
 
     return pThis;
 }

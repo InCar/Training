@@ -10,6 +10,7 @@ typedef struct tagView
     Model		*pModel;
     HWND		hWnd;
     HPEN		hPen;
+    HBRUSH      hBrush;
     Point       pointDragStart;
     int         nDragPoint;
     int         nHoverPoint;
