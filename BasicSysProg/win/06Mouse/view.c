@@ -193,6 +193,12 @@ void ViewMoveToPoint(View *pThis, Point point)
     }
 }
 
+void ViewMoveSpeed(View *pThis, float fSpeed)
+{
+    pThis->fSpeed = fSpeed;
+    pThis->pAPI->MoveToPoint(pThis, pThis->pointMoveTo);
+}
+
 BOOL ViewMoving(View *pThis)
 {
     LARGE_INTEGER tmNow;
@@ -223,7 +229,8 @@ View* ViewInit(View *pThis, Model *pModel, HWND hWnd)
         .Dragging = ViewDragging,
         .Hover = ViewHover,
         .MoveToPoint = ViewMoveToPoint,
-        .Moving = ViewMoving
+        .Moving = ViewMoving,
+        .MoveSpeed = ViewMoveSpeed
     };
 
     memset(pThis, 0, sizeof(View));

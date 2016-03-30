@@ -137,13 +137,28 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         InvalidateRect(hWnd, NULL, TRUE);
         break;
     }
+    case WM_RBUTTONDOWN:
     case WM_RBUTTONDBLCLK:
     {
         Point point;
         point.x = GET_X_LPARAM(lParam);
         point.y = GET_Y_LPARAM(lParam);
 
+        float fSpeed = uMsg == WM_RBUTTONDOWN ? 0.3f : 12.0f;
+        pView->pAPI->MoveSpeed(pView, fSpeed);
         pView->pAPI->MoveToPoint(pView, point);
+        break;
+    }
+    case WM_KEYDOWN:
+    {
+        switch (wParam)
+        {
+        case L'B':
+            pView->pAPI->MoveSpeed(pView, 12.0f);
+            break;
+        default:
+            break;
+        }
         break;
     }
     case WM_KEYUP:

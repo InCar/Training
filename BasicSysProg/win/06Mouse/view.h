@@ -42,6 +42,7 @@ typedef BOOL(*fnViewDragEnd)(View*, Point);
 typedef void(*fnViewDragging)(View*, Point);
 typedef void(*fnViewHover)(View*, Point);
 typedef void(*fnViewMoveToPoint)(View*, Point);
+typedef void(*fnViewMoveSpeed)(View*, float);
 typedef BOOL(*fnViewMoving)(View*);
 
 struct tagViewFunctions
@@ -54,4 +55,5 @@ struct tagViewFunctions
     fnViewHover         Hover;
     fnViewMoveToPoint   MoveToPoint;
     fnViewMoving        Moving;
+    fnViewMoveSpeed     MoveSpeed;
 };
