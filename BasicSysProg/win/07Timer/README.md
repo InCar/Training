@@ -1,5 +1,5 @@
-# Timer
-¶¨Ê±Æ÷
+ï»¿# Timer
+å®šæ—¶å™¨
 
 ![timer](http://ic-media.oss-cn-hangzhou.aliyuncs.com/2016%2F04%2Ftimer.png)
 
