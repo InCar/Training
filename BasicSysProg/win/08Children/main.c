@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "SimpleWnd.h"
 
 LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -41,8 +42,26 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
     return (int)msg.wParam;
 }
 
+struct APP
+{
+    SimpleWnd swLeft;
+    SimpleWnd swRight;
+} g_app;
+
 BOOL OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 {
+    SimpleWndInit(&g_app.swLeft);
+    SimpleWndInit(&g_app.swRight);
+
+    RECT rc, rcLeft, rcRight;
+    GetClientRect(hwnd, &rc);
+    rcLeft = rc, rcRight = rc;
+    rcLeft.right = (rc.right - rc.left) / 2, rcLeft.bottom = (rc.bottom - rc.top)/2;
+    rcRight.left = rcLeft.right, rcRight.bottom = rcLeft.bottom;
+
+    g_app.swLeft.pAPI->Create(&g_app.swLeft, hwnd, &rcLeft, L"◊Û");
+    g_app.swRight.pAPI->Create(&g_app.swRight, hwnd, &rcRight, L"”“");
+
     ShowWindow(hwnd, SW_SHOW);
     return TRUE;
 }
