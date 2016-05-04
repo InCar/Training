@@ -2,6 +2,7 @@
 *.opensdf
 *.sdf
 *.opendb
+*.VC.db
 *.user
 *.filters
 

@@ -30,8 +30,8 @@
     + 基本图形绘制:点,线和矩形 [windows](BasicSysProg/win/04BasicDrawing)
     + 键盘 [windows](BasicSysProg/win/05Keyboard)
     + 鼠标 [windows](BasicSysProg/win/06Mouse)
-    + 定时器 [windows](BasicSysProg/win/07Timer) :boom:
-    + 子窗口与控件
+    + 定时器 [windows](BasicSysProg/win/07Timer)
+    + 子窗口与控件 [windows](BasicSysProg/win/08Children) :boom:
     + 菜单
     + 对话框
     + 剪贴板
