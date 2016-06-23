@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "resource.h"
 
 LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -12,8 +13,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
     wcls.lpfnWndProc = WindowProc;
     wcls.hInstance = hInstance;
     wcls.hbrBackground = GetStockObject(LTGRAY_BRUSH);
-    wcls.hIcon = LoadIcon(NULL, IDI_SHIELD);
+    wcls.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICONAPP));
     wcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wcls.lpszMenuName = MAKEINTRESOURCE(IDR_MENU_MAIN);
     wcls.lpszClassName = wszTitle;
 
     if (!RegisterClass(&wcls)) {
@@ -32,10 +34,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
         return GetLastError();
     }
 
+    HACCEL hAccel = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATOR));
+
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        if (!TranslateAccelerator(hWndMain, hAccel, &msg)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
     }
 
     return (int)msg.wParam;
@@ -71,7 +77,13 @@ void OnPaint(HWND hwnd)
 
 void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
-    FORWARD_WM_COMMAND(hwnd, id, hwndCtl, codeNotify, DefWindowProc);
+    switch (id) {
+    case ID_QUIT:
+        PostQuitMessage(0);
+        break;
+    default:
+        FORWARD_WM_COMMAND(hwnd, id, hwndCtl, codeNotify, DefWindowProc);
+    }
 }
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

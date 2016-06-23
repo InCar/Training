@@ -5,6 +5,7 @@
 *.VC.db
 *.user
 *.filters
+*.aps
 
 Debug/
 Release/
