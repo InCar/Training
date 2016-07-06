@@ -2,6 +2,7 @@
 #include "resource.h"
 
 LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK AboutDlgProc(HWND, UINT, WPARAM, LPARAM);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nCmdShow)
 {
@@ -43,16 +44,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
     return (int)msg.wParam;
 }
 
-struct APP
-{
-    HWND hStaticUser;
-    HWND hEditUser;
-    HWND hStaticPwd;
-    HWND hEditPwd;
-    HWND hBtnLogin;
-    HFONT hFontText;
-} g_app;
-
 BOOL OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 {
     ShowWindow(hwnd, SW_SHOW);
@@ -78,8 +69,14 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
         PostQuitMessage(0);
         break;
     case ID_HELP_ABOUT:
-        // TODO: To be continued...
+    {
+        wchar_t wcsBuf[64] = L"Hello";
+        INT_PTR nResult = DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG_ABOUT), hwnd, AboutDlgProc, wcsBuf);
+        
+        OutputDebugString(wcsBuf);
+        OutputDebugString(L"\r\n");
         break;
+    }
     default:
         FORWARD_WM_COMMAND(hwnd, id, hwndCtl, codeNotify, DefWindowProc);
     }
@@ -97,4 +94,29 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
 
     return 0L;
+}
+
+INT_PTR CALLBACK AboutDlgProc(HWND hDialog, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    static wchar_t *pwszBuf = NULL;
+    switch (uMsg)
+    {
+    case WM_INITDIALOG:
+        pwszBuf = (wchar_t*)lParam;
+        SetDlgItemText(hDialog, IDC_EDIT_NAME, pwszBuf);
+        return TRUE;
+    case WM_COMMAND:
+        switch (LOWORD(wParam))
+        {
+        case IDOK:
+            GetDlgItemText(hDialog, IDC_EDIT_NAME, pwszBuf, 64);
+        case IDCANCEL:
+            EndDialog(hDialog, 5);
+            return TRUE;
+        default:
+            break;
+        }
+        break;
+    }
+    return FALSE;
 }
