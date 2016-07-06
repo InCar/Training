@@ -6,7 +6,7 @@ INT_PTR CALLBACK AboutDlgProc(HWND, UINT, WPARAM, LPARAM);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nCmdShow)
 {
-    wchar_t wszTitle[] = L"Menu";
+    wchar_t wszTitle[] = L"Dialog";
 
     WNDCLASS wcls;
     ZeroMemory(&wcls, sizeof(WNDCLASS));
