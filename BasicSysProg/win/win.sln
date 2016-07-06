@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EA28F140-4566-47F8-9C37-19AE15951568}"
 	ProjectSection(SolutionItems) = preProject
@@ -26,6 +26,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08Children", "08Children\08Children.vcxproj", "{A95C311E-9906-4ECA-82E4-9135448B303B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "09Menu", "09Menu\09Menu.vcxproj", "{C20D1856-4171-4B24-B279-A662CA47CC5E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10Dialog", "10Dialog\10Dialog.vcxproj", "{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,6 +109,14 @@ Global
 		{C20D1856-4171-4B24-B279-A662CA47CC5E}.Release|x64.Build.0 = Release|x64
 		{C20D1856-4171-4B24-B279-A662CA47CC5E}.Release|x86.ActiveCfg = Release|Win32
 		{C20D1856-4171-4B24-B279-A662CA47CC5E}.Release|x86.Build.0 = Release|Win32
+		{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}.Debug|x64.ActiveCfg = Debug|x64
+		{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}.Debug|x64.Build.0 = Debug|x64
+		{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}.Debug|x86.ActiveCfg = Debug|Win32
+		{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}.Debug|x86.Build.0 = Debug|Win32
+		{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}.Release|x64.ActiveCfg = Release|x64
+		{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}.Release|x64.Build.0 = Release|x64
+		{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}.Release|x86.ActiveCfg = Release|Win32
+		{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -28,24 +28,30 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
     int width = cxScreen > 800 ? 800 : cxScreen;
     int height = cyScreen > 600 ? 600 : cyScreen;
 
-    HWND hWndMain = CreateWindow(wszTitle, L"²Ëµ¥", WS_OVERLAPPEDWINDOW, (cxScreen - width) / 2, (cyScreen - height) / 2, width, height, NULL, NULL, hInstance, NULL);
+    HWND hWndMain = CreateWindow(wszTitle, L"¶Ô»°¿ò", WS_OVERLAPPEDWINDOW, (cxScreen - width) / 2, (cyScreen - height) / 2, width, height, NULL, NULL, hInstance, NULL);
     if (!hWndMain) {
         MessageBox(NULL, L"Create window failed", L"Error", MB_OK);
         return GetLastError();
     }
 
-    HACCEL hAccel = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATOR));
-
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
-        if (!TranslateAccelerator(hWndMain, hAccel, &msg)) {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
 
     return (int)msg.wParam;
 }
+
+struct APP
+{
+    HWND hStaticUser;
+    HWND hEditUser;
+    HWND hStaticPwd;
+    HWND hEditPwd;
+    HWND hBtnLogin;
+    HFONT hFontText;
+} g_app;
 
 BOOL OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 {
@@ -68,8 +74,11 @@ void OnPaint(HWND hwnd)
 void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
     switch (id) {
-    case ID_QUIT:
+    case ID_FILE_EXIT:
         PostQuitMessage(0);
+        break;
+    case ID_HELP_ABOUT:
+        // TODO: To be continued...
         break;
     default:
         FORWARD_WM_COMMAND(hwnd, id, hwndCtl, codeNotify, DefWindowProc);

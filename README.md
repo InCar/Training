@@ -32,8 +32,8 @@
     + 鼠标 [windows](BasicSysProg/win/06Mouse)
     + 定时器 [windows](BasicSysProg/win/07Timer)
     + 子窗口与控件 [windows](BasicSysProg/win/08Children)
-    + 菜单 [windows](BasicSysProg/win/09Menu) :boom:
-    + 对话框
+    + 菜单 [windows](BasicSysProg/win/09Menu)
+    + 对话框 [windows](BasicSysProg/win/10Dialog) :boom:
     + 剪贴板
     + 打印机
     + 位图
