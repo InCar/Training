@@ -35,11 +35,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
         return GetLastError();
     }
 
+    HACCEL hAccel = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATOR));
+
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        if (!TranslateAccelerator(hWndMain, hAccel, &msg)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
     }
+
+    DestroyAcceleratorTable(hAccel);
 
     return (int)msg.wParam;
 }
@@ -68,10 +74,28 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
     case ID_FILE_EXIT:
         PostQuitMessage(0);
         break;
+    case ID_FILE_OPEN:
+    {
+        wchar_t wcsBuf[MAX_PATH];
+        ZeroMemory(wcsBuf, sizeof(wcsBuf));
+
+        OPENFILENAME ofn;
+        ZeroMemory(&ofn, sizeof(OPENFILENAME));
+        ofn.lStructSize = sizeof(OPENFILENAME);
+        ofn.hwndOwner = hwnd;
+        ofn.hInstance = GetModuleHandle(NULL);
+        ofn.lpstrFile = wcsBuf;
+        ofn.nMaxFile  = MAX_PATH;
+        ofn.Flags = OFN_FILEMUSTEXIST;
+        if (GetOpenFileName(&ofn)) {
+            OutputDebugString(wcsBuf);
+        }
+        break;
+    }   
     case ID_HELP_ABOUT:
     {
         wchar_t wcsBuf[64] = L"Hello";
-        INT_PTR nResult = DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG_ABOUT), hwnd, AboutDlgProc, wcsBuf);
+        INT_PTR nResult = DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG_ABOUT), hwnd, AboutDlgProc, (LPARAM)wcsBuf);
         
         OutputDebugString(wcsBuf);
         OutputDebugString(L"\r\n");

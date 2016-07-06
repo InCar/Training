@@ -1,7 +1,2 @@
-﻿# 菜单
-
-## 程序图标
-
-## 菜单
-
-## 快捷加速表
+﻿# 对话框
+![Dialog](http://ic-media.oss-cn-hangzhou.aliyuncs.com/2016/07/Dialog10.gif)

@@ -44,6 +44,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
         }
     }
 
+    DestroyAcceleratorTable(hAccel);
+
     return (int)msg.wParam;
 }
 
