@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "09Menu", "09Menu\09Menu.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10Dialog", "10Dialog\10Dialog.vcxproj", "{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11ClipBoard", "11ClipBoard\11ClipBoard.vcxproj", "{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -117,6 +119,14 @@ Global
 		{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}.Release|x64.Build.0 = Release|x64
 		{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}.Release|x86.ActiveCfg = Release|Win32
 		{C30C2D6F-FB7C-455E-B932-C8D05D07A40B}.Release|x86.Build.0 = Release|Win32
+		{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}.Debug|x64.ActiveCfg = Debug|x64
+		{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}.Debug|x64.Build.0 = Debug|x64
+		{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}.Debug|x86.ActiveCfg = Debug|Win32
+		{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}.Debug|x86.Build.0 = Debug|Win32
+		{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}.Release|x64.ActiveCfg = Release|x64
+		{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}.Release|x64.Build.0 = Release|x64
+		{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}.Release|x86.ActiveCfg = Release|Win32
+		{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

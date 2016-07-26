@@ -33,8 +33,8 @@
     + 定时器 [windows](BasicSysProg/win/07Timer)
     + 子窗口与控件 [windows](BasicSysProg/win/08Children)
     + 菜单 [windows](BasicSysProg/win/09Menu)
-    + 对话框 [windows](BasicSysProg/win/10Dialog) :boom:
-    + 剪贴板
+    + 对话框 [windows](BasicSysProg/win/10Dialog)
+    + 剪贴板 [windows](BasicSysProg/win/11ClipBoard) :boom:
     + 打印机
     + 位图
     + 字体
