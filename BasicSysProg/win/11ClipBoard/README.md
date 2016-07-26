@@ -1,13 +1,13 @@
-# ClipBoard
+ï»¿# ClipBoard
 
 ![](http://ic-media.oss-cn-hangzhou.aliyuncs.com/2016/07/ClipBoard.png)
 
-## ÄÚ´æ²ßÂÔ
+## å†…å­˜ç­–ç•¥
 GlobalAlloc
 GlobalLock
 GLobalUnlock
 
-## ¼ôÌù°å
+## å‰ªè´´æ¿
 OpenClipboard
 CloseClipboard
 
