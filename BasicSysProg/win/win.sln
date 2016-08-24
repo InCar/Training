@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10Dialog", "10Dialog\10Dial
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11ClipBoard", "11ClipBoard\11ClipBoard.vcxproj", "{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12Printer", "12Printer\12Printer.vcxproj", "{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -127,6 +129,14 @@ Global
 		{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}.Release|x64.Build.0 = Release|x64
 		{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}.Release|x86.ActiveCfg = Release|Win32
 		{B00ABCA0-8DC4-432D-B4FB-A9CE4579E653}.Release|x86.Build.0 = Release|Win32
+		{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}.Debug|x64.ActiveCfg = Debug|x64
+		{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}.Debug|x64.Build.0 = Debug|x64
+		{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}.Debug|x86.ActiveCfg = Debug|Win32
+		{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}.Debug|x86.Build.0 = Debug|Win32
+		{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}.Release|x64.ActiveCfg = Release|x64
+		{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}.Release|x64.Build.0 = Release|x64
+		{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}.Release|x86.ActiveCfg = Release|Win32
+		{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
