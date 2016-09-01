@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "resource.h"
 
-#define WM_USER_BMP WM_USER + 6
+#define WM_USER_IMG WM_USER + 6
 HDC g_hdcMem = NULL;
 SIZE g_szBmp;
 LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 void LoadBMP(wchar_t*, HWND);
+void LoadJPG(wchar_t*, HWND);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nCmdShow)
 {
@@ -119,7 +120,11 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
                     PWSTR pwszFilePath = NULL;
                     hr = psi->GetDisplayName(SIGDN_FILESYSPATH, &pwszFilePath);
                     if (SUCCEEDED(hr)) {
-                        SendMessage(hwnd, WM_USER_BMP, 0, (LPARAM)pwszFilePath);
+                        wchar_t * pext = wcsrchr(pwszFilePath, L'.');
+                        if(pext != NULL && _wcsicmp(pext, L".bmp") == 0)
+                            SendMessage(hwnd, WM_USER_IMG, 0, (LPARAM)pwszFilePath);
+                        else
+                            SendMessage(hwnd, WM_USER_IMG, 1, (LPARAM)pwszFilePath);
                         CoTaskMemFree(pwszFilePath);
                     }
                     psi->Release();
@@ -146,10 +151,13 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         HANDLE_MSG(hWnd, WM_PAINT, OnPaint);
         HANDLE_MSG(hWnd, WM_COMMAND, OnCommand);
         HANDLE_MSG(hWnd, WM_ERASEBKGND, OnEraseBkgnd);
-    case WM_USER_BMP:
+    case WM_USER_IMG:
     {
         wchar_t *pwszFile = (wchar_t*)lParam;
-        LoadBMP(pwszFile, hWnd);
+        if (wParam == 0)
+            LoadBMP(pwszFile, hWnd);
+        else
+            LoadJPG(pwszFile, hWnd);
         break;
     }
     default:
@@ -164,19 +172,73 @@ void LoadBMP(wchar_t *pwszBmp, HWND hwnd)
     // read the bmp content
     HBITMAP hBmp = (HBITMAP)LoadImage(NULL, pwszBmp, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-    BITMAP bmp;
-    GetObject(hBmp, sizeof(BITMAP), &bmp);
-    g_szBmp.cx = bmp.bmWidth;
-    g_szBmp.cy = bmp.bmHeight;
+    if (hBmp) {
+        BITMAP bmp;
+        GetObject(hBmp, sizeof(BITMAP), &bmp);
+        g_szBmp.cx = bmp.bmWidth;
+        g_szBmp.cy = bmp.bmHeight;
 
-    if (g_hdcMem == NULL) {
-        HDC hdc = GetDC(hwnd);
-        g_hdcMem = CreateCompatibleDC(hdc);
-        ReleaseDC(hwnd, hdc);
+        if (g_hdcMem == NULL) {
+            HDC hdc = GetDC(hwnd);
+            g_hdcMem = CreateCompatibleDC(hdc);
+            ReleaseDC(hwnd, hdc);
+        }
+
+        HBITMAP hBmpOld = SelectBitmap(g_hdcMem, hBmp);
+        if (hBmpOld != NULL) DeleteObject(hBmpOld);
+
+        InvalidateRect(hwnd, NULL, TRUE);
     }
-    
-    HBITMAP hBmpOld = SelectBitmap(g_hdcMem, hBmp);
-    if (hBmpOld != NULL) DeleteObject(hBmpOld);
+}
 
-    InvalidateRect(hwnd, NULL, TRUE);
+void LoadJPG(wchar_t *pwszJpg, HWND hwnd)
+{
+    IWICImagingFactory *pFactory = NULL;
+    HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pFactory));
+    if (SUCCEEDED(hr)) {
+        IWICBitmapDecoder *pDecoder = NULL;
+        hr = pFactory->CreateDecoderFromFilename(pwszJpg, NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &pDecoder);
+        if (SUCCEEDED(hr)) {
+            IWICBitmapFrameDecode *pIDecoderFrame = NULL;
+            hr = pDecoder->GetFrame(0, &pIDecoderFrame);
+            if (SUCCEEDED(hr)) {
+                IWICFormatConverter *pFC = NULL;
+                hr = pFactory->CreateFormatConverter(&pFC);
+                hr = pFC->Initialize(pIDecoderFrame, GUID_WICPixelFormat24bppBGR, WICBitmapDitherTypeNone, NULL, 0.0, WICBitmapPaletteTypeCustom);
+
+                BITMAPINFOHEADER bmhdr;
+                ZeroMemory(&bmhdr, sizeof(BITMAPINFOHEADER));
+                bmhdr.biSize = sizeof(BITMAPINFOHEADER);
+                hr = pIDecoderFrame->GetSize((UINT*)&bmhdr.biWidth, (UINT*)&bmhdr.biHeight);
+                bmhdr.biPlanes = 1;
+                bmhdr.biBitCount = 24;
+                bmhdr.biCompression = BI_RGB;
+
+                unsigned int nBytesLine = 4 * (bmhdr.biWidth * bmhdr.biBitCount + 31) / 32;
+                unsigned int nTotal = nBytesLine * bmhdr.biHeight;
+                BYTE *pBuf = new BYTE[nTotal];
+
+                hr = pIDecoderFrame->CopyPixels(NULL, nBytesLine, nTotal, pBuf);
+
+                if (SUCCEEDED(hr)) {
+                    HDC hdc = GetDC(hwnd);
+                    for (int i = 0; i < bmhdr.biHeight; i++) {
+                        for (int j = 0; j < bmhdr.biWidth; j++) {
+                            BYTE *pColor = pBuf + nBytesLine*i + j * 3;
+                            BYTE blue = *(pColor + 2), green = *(pColor + 1), red = *(pColor + 0);
+
+                            SetPixel(hdc, j, i, RGB(green, red, blue));
+                        }
+                    }
+                }
+
+                delete pBuf;
+
+                pIDecoderFrame->Release();
+            }
+            pDecoder->Release();
+        }
+
+        pFactory->Release();
+    }
 }
