@@ -33,6 +33,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11ClipBoard", "11ClipBoard\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12Printer", "12Printer\12Printer.vcxproj", "{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13Bitmap", "13Bitmap\13Bitmap.vcxproj", "{93D9FEDD-733D-42D7-9AFA-9D5883FD1054}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -137,6 +139,14 @@ Global
 		{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}.Release|x64.Build.0 = Release|x64
 		{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}.Release|x86.ActiveCfg = Release|Win32
 		{485FFA1C-2A0F-44D6-86BA-852B51D4DBCD}.Release|x86.Build.0 = Release|Win32
+		{93D9FEDD-733D-42D7-9AFA-9D5883FD1054}.Debug|x64.ActiveCfg = Debug|x64
+		{93D9FEDD-733D-42D7-9AFA-9D5883FD1054}.Debug|x64.Build.0 = Debug|x64
+		{93D9FEDD-733D-42D7-9AFA-9D5883FD1054}.Debug|x86.ActiveCfg = Debug|Win32
+		{93D9FEDD-733D-42D7-9AFA-9D5883FD1054}.Debug|x86.Build.0 = Debug|Win32
+		{93D9FEDD-733D-42D7-9AFA-9D5883FD1054}.Release|x64.ActiveCfg = Release|x64
+		{93D9FEDD-733D-42D7-9AFA-9D5883FD1054}.Release|x64.Build.0 = Release|x64
+		{93D9FEDD-733D-42D7-9AFA-9D5883FD1054}.Release|x86.ActiveCfg = Release|Win32
+		{93D9FEDD-733D-42D7-9AFA-9D5883FD1054}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

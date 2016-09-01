@@ -35,8 +35,8 @@
     + 菜单 [windows](BasicSysProg/win/09Menu)
     + 对话框 [windows](BasicSysProg/win/10Dialog)
     + 剪贴板 [windows](BasicSysProg/win/11ClipBoard)
-    + 打印机 [windows](BasicSysProg/win/12Printer) :boom:
-    + 位图
+    + 打印机 [windows](BasicSysProg/win/12Printer)
+    + 位图 [windows](BasicSysProg/win/13Bitmap) :boom:
     + 字体
     + 文件
     + 多线程
