@@ -104,14 +104,16 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
         IFileDialog *pFileDialog = NULL;
         HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pFileDialog));
         if (SUCCEEDED(hr)) {
-            COMDLG_FILTERSPEC filter[2];
+            COMDLG_FILTERSPEC filter[3];
             filter[0].pszName = L"位图文件(*.bmp)";
             filter[0].pszSpec = L"*.bmp";
             filter[1].pszName = L"JPEG(*.jpg;*.jpeg)";
             filter[1].pszSpec = L"*.jpg;*.jpeg";
+            filter[2].pszName = L"所有支持的文件(*.jpg;*.jpeg;*.bmp;)";
+            filter[2].pszSpec = L"*.jpg;*.jpeg;*.bmp;*.png";
 
-            hr = pFileDialog->SetFileTypes(2, filter);
-            hr = pFileDialog->SetFileTypeIndex(1);
+            hr = pFileDialog->SetFileTypes(3, filter);
+            hr = pFileDialog->SetFileTypeIndex(3);
             hr = pFileDialog->Show(hwnd);
             if (SUCCEEDED(hr)) {
                 IShellItem *psi = NULL;
@@ -167,28 +169,33 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return 0L;
 }
 
+void MakeMemDC(HBITMAP hBmp, HWND hwnd)
+{
+    if (hBmp == NULL) return;
+
+    BITMAP bmp;
+    GetObject(hBmp, sizeof(BITMAP), &bmp);
+    g_szBmp.cx = bmp.bmWidth;
+    g_szBmp.cy = bmp.bmHeight;
+
+    if (g_hdcMem == NULL) {
+        HDC hdc = GetDC(hwnd);
+        g_hdcMem = CreateCompatibleDC(hdc);
+        ReleaseDC(hwnd, hdc);
+    }
+
+    HBITMAP hBmpOld = SelectBitmap(g_hdcMem, hBmp);
+    if (hBmpOld != NULL) DeleteObject(hBmpOld);
+}
+
 void LoadBMP(wchar_t *pwszBmp, HWND hwnd)
 {
     // read the bmp content
     HBITMAP hBmp = (HBITMAP)LoadImage(NULL, pwszBmp, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-    if (hBmp) {
-        BITMAP bmp;
-        GetObject(hBmp, sizeof(BITMAP), &bmp);
-        g_szBmp.cx = bmp.bmWidth;
-        g_szBmp.cy = bmp.bmHeight;
+    MakeMemDC(hBmp, hwnd);
 
-        if (g_hdcMem == NULL) {
-            HDC hdc = GetDC(hwnd);
-            g_hdcMem = CreateCompatibleDC(hdc);
-            ReleaseDC(hwnd, hdc);
-        }
-
-        HBITMAP hBmpOld = SelectBitmap(g_hdcMem, hBmp);
-        if (hBmpOld != NULL) DeleteObject(hBmpOld);
-
-        InvalidateRect(hwnd, NULL, TRUE);
-    }
+    InvalidateRect(hwnd, NULL, TRUE);
 }
 
 void LoadJPG(wchar_t *pwszJpg, HWND hwnd)
@@ -206,33 +213,47 @@ void LoadJPG(wchar_t *pwszJpg, HWND hwnd)
                 hr = pFactory->CreateFormatConverter(&pFC);
                 hr = pFC->Initialize(pIDecoderFrame, GUID_WICPixelFormat24bppBGR, WICBitmapDitherTypeNone, NULL, 0.0, WICBitmapPaletteTypeCustom);
 
-                BITMAPINFOHEADER bmhdr;
-                ZeroMemory(&bmhdr, sizeof(BITMAPINFOHEADER));
-                bmhdr.biSize = sizeof(BITMAPINFOHEADER);
-                hr = pIDecoderFrame->GetSize((UINT*)&bmhdr.biWidth, (UINT*)&bmhdr.biHeight);
-                bmhdr.biPlanes = 1;
-                bmhdr.biBitCount = 24;
-                bmhdr.biCompression = BI_RGB;
+                BITMAPINFO bmpInfo;
+                ZeroMemory(&bmpInfo, sizeof(BITMAPINFO));
+                bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+                hr = pIDecoderFrame->GetSize((UINT*)&bmpInfo.bmiHeader.biWidth, (UINT*)&bmpInfo.bmiHeader.biHeight);
+                bmpInfo.bmiHeader.biPlanes = 1;
+                bmpInfo.bmiHeader.biBitCount = 24;
+                bmpInfo.bmiHeader.biCompression = BI_RGB;
 
-                unsigned int nBytesLine = 4 * (bmhdr.biWidth * bmhdr.biBitCount + 31) / 32;
-                unsigned int nTotal = nBytesLine * bmhdr.biHeight;
-                BYTE *pBuf = new BYTE[nTotal];
+                BYTE *pBuf = NULL;
+                HDC hdc = GetDC(hwnd);
+                bmpInfo.bmiHeader.biHeight *= -1; // BMP 方向调整
+                HBITMAP hBmp = CreateDIBSection(hdc, &bmpInfo, DIB_RGB_COLORS, (void**)&pBuf, NULL, 0);
+                bmpInfo.bmiHeader.biHeight *= -1;
 
-                hr = pIDecoderFrame->CopyPixels(NULL, nBytesLine, nTotal, pBuf);
+                // 内部格式 按4字节边界对齐
+                /*unsigned int cbStride = 4 * (bmpInfo.bmiHeader.biWidth * bmpInfo.bmiHeader.biBitCount + 31) / 32;
+                unsigned int total = cbStride * bmpInfo.bmiHeader.biHeight;
+                hr = pIDecoderFrame->CopyPixels(NULL, cbStride, total, pBuf);*/
 
-                if (SUCCEEDED(hr)) {
-                    HDC hdc = GetDC(hwnd);
-                    for (int i = 0; i < bmhdr.biHeight; i++) {
-                        for (int j = 0; j < bmhdr.biWidth; j++) {
-                            BYTE *pColor = pBuf + nBytesLine*i + j * 3;
+                // 普通方式
+                unsigned int cbStride = 3 * bmpInfo.bmiHeader.biWidth;
+                unsigned int total = cbStride*bmpInfo.bmiHeader.biHeight;
+                hr = pIDecoderFrame->CopyPixels(NULL, cbStride, total, pBuf);
+
+                /*if (SUCCEEDED(hr)) {
+                    hdc = GetDC(hwnd);
+                    for (int i = 0; i < bmpInfo.bmiHeader.biHeight; i++) {
+                        for (int j = 0; j < bmpInfo.bmiHeader.biWidth; j++) {
+                            BYTE *pColor = pBuf + cbStride*i + j * 3;
                             BYTE blue = *(pColor + 2), green = *(pColor + 1), red = *(pColor + 0);
+                            if (red > 0xff) red = 0xff;
 
                             SetPixel(hdc, j, i, RGB(green, red, blue));
                         }
                     }
-                }
+                }*/
 
-                delete pBuf;
+                if (SUCCEEDED(hr)) {
+                    MakeMemDC(hBmp, hwnd);
+                    InvalidateRect(hwnd, NULL, TRUE);
+                }
 
                 pIDecoderFrame->Release();
             }
