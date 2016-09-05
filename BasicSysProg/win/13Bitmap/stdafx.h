@@ -5,5 +5,6 @@
 #include <Shobjidl.h>
 #include <wincodec.h>
 #include <wincodecsdk.h>
+#include <DirectXMath.h>
 #include <malloc.h>
 #include <crtdbg.h>

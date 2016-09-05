@@ -237,18 +237,30 @@ void LoadJPG(wchar_t *pwszJpg, HWND hwnd)
                 unsigned int total = cbStride*bmpInfo.bmiHeader.biHeight;
                 hr = pIDecoderFrame->CopyPixels(NULL, cbStride, total, pBuf);
 
-                /*if (SUCCEEDED(hr)) {
+
+                DirectX::XMVECTORF32 colorLuminance = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+                if (SUCCEEDED(hr)) {
                     hdc = GetDC(hwnd);
                     for (int i = 0; i < bmpInfo.bmiHeader.biHeight; i++) {
                         for (int j = 0; j < bmpInfo.bmiHeader.biWidth; j++) {
                             BYTE *pColor = pBuf + cbStride*i + j * 3;
-                            BYTE blue = *(pColor + 2), green = *(pColor + 1), red = *(pColor + 0);
-                            if (red > 0xff) red = 0xff;
+                            BYTE blue = *(pColor + 0), green = *(pColor + 1), red = *(pColor + 2);
 
-                            SetPixel(hdc, j, i, RGB(green, red, blue));
+                            DirectX::XMVECTORF32 colorRGB = { red/255.0f, green/255.0f, blue/255.0f, 1.0f};
+                            DirectX::XMVECTOR colorHSL = DirectX::XMColorRGBToHSL(colorRGB);
+                            colorHSL = DirectX::XMColorModulate(colorHSL, colorLuminance);
+                            DirectX::XMVECTOR colorRGB2 = DirectX::XMColorHSLToRGB(colorHSL);
+                            DirectX::XMFLOAT4A colorRGB3;
+                            DirectX::XMStoreFloat4A(&colorRGB3, colorRGB2);
+                            pColor[0] = (BYTE)(colorRGB3.z * 255); // blue
+                            pColor[1] = (BYTE)(colorRGB3.y * 255); // green
+                            pColor[2] = (BYTE)(colorRGB3.x * 255); // red
+
+                            SetPixel(hdc, j, i, RGB(pColor[2], pColor[1], pColor[0]));
                         }
                     }
-                }*/
+                }
 
                 if (SUCCEEDED(hr)) {
                     MakeMemDC(hBmp, hwnd);
