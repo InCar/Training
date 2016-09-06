@@ -109,7 +109,7 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
             filter[0].pszSpec = L"*.bmp";
             filter[1].pszName = L"JPEG(*.jpg;*.jpeg)";
             filter[1].pszSpec = L"*.jpg;*.jpeg";
-            filter[2].pszName = L"所有支持的文件(*.jpg;*.jpeg;*.bmp;)";
+            filter[2].pszName = L"所有支持的文件(*.jpg;*.jpeg;*.bmp;*.png)";
             filter[2].pszSpec = L"*.jpg;*.jpeg;*.bmp;*.png";
 
             hr = pFileDialog->SetFileTypes(3, filter);
@@ -227,16 +227,11 @@ void LoadJPG(wchar_t *pwszJpg, HWND hwnd)
                 HBITMAP hBmp = CreateDIBSection(hdc, &bmpInfo, DIB_RGB_COLORS, (void**)&pBuf, NULL, 0);
                 bmpInfo.bmiHeader.biHeight *= -1;
 
-                // 内部格式 按4字节边界对齐
-                /*unsigned int cbStride = 4 * (bmpInfo.bmiHeader.biWidth * bmpInfo.bmiHeader.biBitCount + 31) / 32;
-                unsigned int total = cbStride * bmpInfo.bmiHeader.biHeight;
-                hr = pIDecoderFrame->CopyPixels(NULL, cbStride, total, pBuf);*/
-
-                // 普通方式
+                // 计算扫描线
                 unsigned int cbStride = 3 * bmpInfo.bmiHeader.biWidth;
                 unsigned int total = cbStride*bmpInfo.bmiHeader.biHeight;
-                hr = pIDecoderFrame->CopyPixels(NULL, cbStride, total, pBuf);
-
+                hr = pFC->CopyPixels(NULL, cbStride, total, pBuf);
+                hr = pFC->Release();
 
                 DirectX::XMVECTORF32 colorLuminance = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -261,6 +256,8 @@ void LoadJPG(wchar_t *pwszJpg, HWND hwnd)
                         }
                     }
                 }
+
+                ReleaseDC(hwnd, hdc);
 
                 if (SUCCEEDED(hr)) {
                     MakeMemDC(hBmp, hwnd);
