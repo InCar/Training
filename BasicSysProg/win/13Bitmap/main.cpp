@@ -213,12 +213,14 @@ void LoadJPG(wchar_t *pwszJpg, HWND hwnd)
                 hr = pFactory->CreateFormatConverter(&pFC);
                 hr = pFC->Initialize(pIDecoderFrame, GUID_WICPixelFormat24bppBGR, WICBitmapDitherTypeNone, NULL, 0.0, WICBitmapPaletteTypeCustom);
 
+                const int nBytesPixel = 3; // GUID_WICPixelFormat24bppBGR 每像素3字节(24bits)
+
                 BITMAPINFO bmpInfo;
                 ZeroMemory(&bmpInfo, sizeof(BITMAPINFO));
                 bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
                 hr = pIDecoderFrame->GetSize((UINT*)&bmpInfo.bmiHeader.biWidth, (UINT*)&bmpInfo.bmiHeader.biHeight);
                 bmpInfo.bmiHeader.biPlanes = 1;
-                bmpInfo.bmiHeader.biBitCount = 24;
+                bmpInfo.bmiHeader.biBitCount = 8 * nBytesPixel;
                 bmpInfo.bmiHeader.biCompression = BI_RGB;
 
                 BYTE *pBuf = NULL;
@@ -228,29 +230,23 @@ void LoadJPG(wchar_t *pwszJpg, HWND hwnd)
                 bmpInfo.bmiHeader.biHeight *= -1;
 
                 // 计算扫描线
-                unsigned int cbStride = 3 * bmpInfo.bmiHeader.biWidth;
+                unsigned int cbStride = nBytesPixel * bmpInfo.bmiHeader.biWidth;
                 unsigned int total = cbStride*bmpInfo.bmiHeader.biHeight;
                 hr = pFC->CopyPixels(NULL, cbStride, total, pBuf);
-                hr = pFC->Release();
 
-                DirectX::XMVECTORF32 colorLuminance = { 1.0f, 1.0f, 1.0f, 1.0f };
+                // HSL色彩空间变换
+                DirectX::XMVECTORF32 colorTransofrom = { 1.0f, 1.0f, 1.0f, 1.0f };
 
                 if (SUCCEEDED(hr)) {
-                    hdc = GetDC(hwnd);
                     for (int i = 0; i < bmpInfo.bmiHeader.biHeight; i++) {
                         for (int j = 0; j < bmpInfo.bmiHeader.biWidth; j++) {
-                            BYTE *pColor = pBuf + cbStride*i + j * 3;
-                            BYTE blue = *(pColor + 0), green = *(pColor + 1), red = *(pColor + 2);
+                            BYTE *pColor = pBuf + cbStride*i + j * nBytesPixel;
 
-                            DirectX::XMVECTORF32 colorRGB = { red/255.0f, green/255.0f, blue/255.0f, 1.0f};
-                            DirectX::XMVECTOR colorHSL = DirectX::XMColorRGBToHSL(colorRGB);
-                            colorHSL = DirectX::XMColorModulate(colorHSL, colorLuminance);
-                            DirectX::XMVECTOR colorRGB2 = DirectX::XMColorHSLToRGB(colorHSL);
-                            DirectX::XMFLOAT4A colorRGB3;
-                            DirectX::XMStoreFloat4A(&colorRGB3, colorRGB2);
-                            pColor[0] = (BYTE)(colorRGB3.z * 255); // blue
-                            pColor[1] = (BYTE)(colorRGB3.y * 255); // green
-                            pColor[2] = (BYTE)(colorRGB3.x * 255); // red
+                            DirectX::XMVECTOR colorM = DirectX::PackedVector::XMLoadUByteN4((DirectX::PackedVector::XMUBYTEN4*)pColor);
+                            colorM = DirectX::XMColorRGBToHSL(colorM);
+                            colorM = DirectX::XMColorModulate(colorM, colorTransofrom);
+                            colorM = DirectX::XMColorHSLToRGB(colorM);
+                            DirectX::PackedVector::XMStoreUByteN4((DirectX::PackedVector::XMUBYTEN4*)pColor, colorM);
 
                             SetPixel(hdc, j, i, RGB(pColor[2], pColor[1], pColor[0]));
                         }
@@ -264,6 +260,7 @@ void LoadJPG(wchar_t *pwszJpg, HWND hwnd)
                     InvalidateRect(hwnd, NULL, TRUE);
                 }
 
+                hr = pFC->Release();
                 pIDecoderFrame->Release();
             }
             pDecoder->Release();

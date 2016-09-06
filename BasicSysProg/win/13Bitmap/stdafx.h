@@ -6,5 +6,6 @@
 #include <wincodec.h>
 #include <wincodecsdk.h>
 #include <DirectXMath.h>
+#include <DirectXPackedVector.h>
 #include <malloc.h>
 #include <crtdbg.h>
