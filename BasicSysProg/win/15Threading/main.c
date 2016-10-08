@@ -4,6 +4,7 @@
 DWORD g_dwTotal_shared = 0;
 BOOL g_bShouldExit_shared = FALSE;
 HWND g_hwndMain = NULL;
+HDC g_hdcMem = NULL;
 HFONT g_fontNumber = NULL;
 
 LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
@@ -67,22 +68,37 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
 
 BOOL OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 {
+    // 最大可能的桌面尺寸
+    int maxWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    int maxHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+
     LOGFONT lf;
     ZeroMemory(&lf, sizeof(LOGFONT));
-
     lf.lfHeight = 128;
     lf.lfWeight = FW_HEAVY;
-    wcscpy_s(lf.lfFaceName, 32, L"agency fb");
-
+    wcscpy_s(lf.lfFaceName, 32, L"Engravers MT");
     g_fontNumber = CreateFontIndirect(&lf);
 
+    // 双缓冲
+    HDC hdc = GetDC(hwnd);
+    g_hdcMem = CreateCompatibleDC(hdc);
+    HBITMAP hBMP = CreateCompatibleBitmap(hdc, maxWidth, maxHeight);
+    SelectBitmap(g_hdcMem, hBMP);
+    ReleaseDC(hwnd, hdc);
+
+    SelectFont(g_hdcMem, g_fontNumber);
+    SetBkMode(g_hdcMem, TRANSPARENT);
+    SetTextColor(g_hdcMem, RGB(0x40, 0xd4, 0x40));
+
     ShowWindow(hwnd, SW_SHOW);
+
     return TRUE;
 }
 
 void OnDestroy(HWND hwnd)
 {
     DeleteFont(g_fontNumber);
+    DeleteDC(g_hdcMem);
 
     PostQuitMessage(0);
 }
@@ -90,19 +106,16 @@ void OnDestroy(HWND hwnd)
 void OnPaint(HWND hwnd)
 {
     static wchar_t wszBuf[64];
-    StringCchPrintf(wszBuf, 64-1, L"%d", g_dwTotal_shared);
+    StringCchPrintf(wszBuf, 64-1, L"%d\r\n", g_dwTotal_shared);
 
     RECT rc;
     GetClientRect(hwnd, &rc);
+    FillRect(g_hdcMem, &rc, GetStockBrush(BLACK_BRUSH));
+    DrawText(g_hdcMem, wszBuf, (int)wcslen(wszBuf), &rc, DT_CENTER);
 
     PAINTSTRUCT ps;
     HDC hdc = BeginPaint(hwnd, &ps);
-    HFONT fontOld = SelectFont(hdc, g_fontNumber);
-    SetBkMode(hdc, TRANSPARENT);
-    SetTextColor(hdc, RGB(0x40, 0xd4, 0x40));
-    DrawText(hdc, wszBuf, (int)wcslen(wszBuf), &rc, DT_CENTER);
-    SelectFont(hdc, fontOld);
-
+    BitBlt(hdc, 0, 0, rc.right - rc.left, rc.bottom - rc.top, g_hdcMem, 0, 0, SRCCOPY);
     EndPaint(hwnd, &ps);
 }
 
@@ -145,7 +158,7 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
         }
 
         g_dwTotal_shared = 0;
-        InvalidateRect(g_hwndMain, NULL, TRUE);
+        InvalidateRect(g_hwndMain, NULL, FALSE);
         break;
     }
     case ID_FILE_EXIT:
@@ -166,6 +179,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         HANDLE_MSG(hWnd, WM_DESTROY, OnDestroy);
         HANDLE_MSG(hWnd, WM_PAINT, OnPaint);
         HANDLE_MSG(hWnd, WM_COMMAND, OnCommand);
+    case WM_USER:
+        InvalidateRect(hWnd, NULL, FALSE);
+        break;
     default:
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
@@ -195,9 +211,11 @@ DWORD WINAPI CountNumber(LPVOID pArgs)
         // g_dwTotal_shared++;
         InterlockedIncrement(&g_dwTotal_shared);
         
-        InvalidateRect(g_hwndMain, NULL, TRUE);
+        InvalidateRect(g_hwndMain, NULL, FALSE);
         if (g_bShouldExit_shared) break;
     }
+
+    PostMessage(g_hwndMain, WM_USER, 0, 0);
 
     return *pdwStopAt;
 }
