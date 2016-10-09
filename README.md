@@ -38,8 +38,8 @@
     + 打印机 [windows](BasicSysProg/win/12Printer)
     + 位图 [windows](BasicSysProg/win/13Bitmap)
     + 文件 [windows](BasicSysProg/win/14File)
-    + 多线程 [windows](BasicSysProg/win/15Threading) :boom:
-    + 动态链接库
+    + 多线程 [windows](BasicSysProg/win/15Threading)
+    + 动态链接库(BasicSysProg/win/16Main) :boom:
     + 网络
     + 音频&视频
     + 3D图形
