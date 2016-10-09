@@ -1,4 +1,5 @@
 ﻿# 多线程
+![CPU](http://ic-media.oss-cn-hangzhou.aliyuncs.com/2016/10/cpu.gif)
 
 ## 代价
 + 创建线程要消耗资源
