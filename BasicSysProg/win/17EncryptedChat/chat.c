@@ -137,7 +137,7 @@ void ChatAcceptOrRead()
             nTry++;
             if (nTry > 5)
             {
-                StringCchPrintf(buf, 4096, L"接受失败");
+                StringCchPrintf((wchar_t*)buf, 2048, L"接受失败");
                 break;
             }
             else
