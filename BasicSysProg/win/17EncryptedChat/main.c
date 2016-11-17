@@ -46,15 +46,20 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
     g_chat.hwndMain = hwndMain;
     HACCEL hAccel = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATOR));
 
+    BOOL bExit = FALSE;
     MSG msg;
     HANDLE evs[] = { g_chat.ev15673, g_chat.ev15683 };
-
     do {
         int nEV = sizeof(evs) / sizeof(HANDLE);
-        DWORD dwWait = MsgWaitForMultipleObjects(nEV, evs, FALSE, INFINITE, QS_ALLEVENTS);
+        DWORD dwWait = MsgWaitForMultipleObjects(nEV, evs, FALSE, INFINITE, QS_ALLEVENTS&(~QS_RAWINPUT));
+        
         if ((int)dwWait >= nEV) {
-            if (GetMessage(&msg, NULL, 0, 0)) {
-                if (msg.message == WM_RBUTTONUP) {
+            while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+                if (msg.message == WM_QUIT) {
+                    bExit = TRUE;
+                    break;
+                }
+                else if (msg.message == WM_RBUTTONUP) {
                     POINT point = {
                         .x = GET_X_LPARAM(msg.lParam),
                         .y = GET_Y_LPARAM(msg.lParam)
@@ -70,8 +75,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrev, PWSTR pCmdLine, int nC
                     DispatchMessage(&msg);
                 }
             }
-            else
-                break;
+            if (bExit) break; // Quit 
         }
         else if(dwWait == WAIT_OBJECT_0 ){
             // 收到通信事件
