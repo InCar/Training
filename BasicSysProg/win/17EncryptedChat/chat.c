@@ -61,7 +61,7 @@ void ChatStartup(Chat *pChat)
     listen(s_skt15683, 32);
 
     pChat->ev15683 = CreateEvent(NULL, TRUE, FALSE, NULL);
-    WSAEventSelect(s_skt15683, pChat->ev15683, FD_ACCEPT);
+    WSAEventSelect(s_skt15683, pChat->ev15683, FD_ACCEPT|FD_READ);
 }
 
 void ChatShutdown(Chat *pChat)
@@ -131,11 +131,21 @@ void ChatAcceptOrRead()
         DWORD dwLen = 32;
         WSAAddressToString(&from, sizeof(SOCKADDR), NULL, xfrom, &dwLen);
 
+        int nTry = 0;
         char buf[4096];
-        recv(skt2, buf, sizeof(buf), 0);
-        closesocket(skt2);
-        
+        while (recv(skt2, buf, sizeof(buf), 0) == SOCKET_ERROR) {
+            nTry++;
+            if (nTry > 5)
+            {
+                StringCchPrintf(buf, 4096, L"Ω” ‹ ß∞‹");
+                break;
+            }
+            else
+             Sleep(500);
+        }
+
         SendMessage(g_chat.hwndMain, WM_INCOMING_MSG, (WPARAM)xfrom, (LPARAM)buf);
+        closesocket(skt2);
     }
 }
 
