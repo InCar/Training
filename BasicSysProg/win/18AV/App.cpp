@@ -22,6 +22,11 @@ BOOL CApp::Init(HINSTANCE hInstance)
     HRESULT hr = CoInitialize(NULL);
     if (FAILED(hr)) return FALSE;
 
+    INITCOMMONCONTROLSEX icex;
+    icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+    icex.dwICC = ICC_STANDARD_CLASSES;
+    InitCommonControlsEx(&icex);
+
     return TRUE;
 }
 

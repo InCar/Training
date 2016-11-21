@@ -146,6 +146,7 @@
     <ClCompile Include="AV.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWnd.cpp" />
+    <ClCompile Include="SineWnd.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -162,6 +163,7 @@
     <ClInclude Include="AV.h" />
     <ClInclude Include="MainWnd.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SineWnd.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="XWnd.h" />
   </ItemGroup>

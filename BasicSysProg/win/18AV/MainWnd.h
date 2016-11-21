@@ -1,6 +1,7 @@
 #pragma once
 #include "XWnd.h"
 #include "resource.h"
+#include "SineWnd.h"
 
 class CMainWnd : public CXWnd
 {
@@ -10,5 +11,7 @@ public:
 
     virtual ATOM Register();
     BOOL Create();
+private:
+    CSineWnd m_wndSine;
 };
 

@@ -58,6 +58,15 @@ BOOL CMainWnd::Create()
             DWMNCRENDERINGPOLICY policy = DWMNCRP_ENABLED;
             DwmSetWindowAttribute(m_hwnd, DWMWA_NCRENDERING_POLICY, &policy, sizeof(DWMNCRENDERINGPOLICY));
         }
-        return TRUE;
     }
+
+    // SineWnd
+    wstring wstrSine = L"ÕýÏÒ²¨";
+    RECT rcSine;
+    rcSine.left = rcSine.top = 0;
+    rcSine.right = width / 2;
+    rcSine.bottom = height / 2;
+    m_wndSine.Create(wstrSine, rcSine, *this, 0);
+
+    return TRUE;
 }
