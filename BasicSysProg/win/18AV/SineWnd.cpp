@@ -43,7 +43,6 @@ BOOL CSineWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     hr = pIMMDeviceEnumerator->GetDefaultAudioEndpoint(eRender, eMultimedia, &pMMDevice);
 
     // 激活设备
-    UINT32 uFrameCount = 0;
     hr = pMMDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, NULL, reinterpret_cast<void**>(&m_pAudioClient));
     WAVEFORMATEX *pwfex = NULL;
     hr = m_pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, reinterpret_cast<WAVEFORMATEX*>(&m_wfex), &pwfex);
@@ -58,20 +57,7 @@ BOOL CSineWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     }
 
     hr = m_pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, m_reftDuration, 0, reinterpret_cast<WAVEFORMATEX*>(&m_wfex), NULL);
-    hr = m_pAudioClient->GetBufferSize(&uFrameCount);
     hr = m_pAudioClient->GetService(__uuidof(IAudioRenderClient), reinterpret_cast<void**>(&m_pRenderClient));
-
-    BYTE *pData;
-    hr = m_pRenderClient->GetBuffer(uFrameCount, &pData);
-    // fill buffer
-    float *pFloatData = reinterpret_cast<float*>(pData);
-    for (unsigned int i = 0; i < uFrameCount; i++) {
-        *pFloatData = sinf(400 * 2 * 3.1415927f*i / m_wfex.Format.nSamplesPerSec);
-        *(pFloatData + 1) = *pFloatData;
-        pFloatData += 2;
-    }
-
-    hr = m_pRenderClient->ReleaseBuffer(uFrameCount, 0);
 
     pMMDevice->Release();
     pIMMDeviceEnumerator->Release();
@@ -93,9 +79,23 @@ void CSineWnd::OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
     {
     case ID_AUDIO_PLAY:
     {
+        UINT uFrameCount = 0;
+        BYTE *pData = NULL;
+        HRESULT hr = m_pAudioClient->GetBufferSize(&uFrameCount);
+        hr = m_pRenderClient->GetBuffer(uFrameCount, &pData);
+        // fill buffer
+        float *pFloatData = reinterpret_cast<float*>(pData);
+        for (unsigned int i = 0; i < uFrameCount; i++) {
+            *pFloatData = sinf(400 * 2 * 3.1415927f*i / m_wfex.Format.nSamplesPerSec);
+            *(pFloatData + 1) = *pFloatData;
+            pFloatData += 2;
+        }
+
+        hr = m_pRenderClient->ReleaseBuffer(uFrameCount, 0);
+
         // 计算缓冲区可播放时间
         // double dDuration = (double)uFrameCount / m_wfex.Format.nSamplesPerSec;
-        HRESULT hr = m_pAudioClient->Start();
+        hr = m_pAudioClient->Start();
         Sleep(1000);
         hr = m_pAudioClient->Stop();
         break;
