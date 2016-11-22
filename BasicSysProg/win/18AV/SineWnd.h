@@ -14,7 +14,7 @@ private:
     HWND m_hwndBtnPlay;
 
     REFERENCE_TIME m_reftDuration;
-    WAVEFORMATEX *m_pwfex;
+    WAVEFORMATEXTENSIBLE m_wfex;
     IAudioClient *m_pAudioClient;
     IAudioRenderClient *m_pRenderClient;
 };
