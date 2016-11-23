@@ -61,6 +61,7 @@ LRESULT CXWnd::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         HANDLE_MSG(hWnd, WM_DESTROY, OnDestroy);
         HANDLE_MSG(hWnd, WM_PAINT, OnPaint);
         HANDLE_MSG(hWnd, WM_COMMAND, OnCommand);
+        HANDLE_MSG(hWnd, WM_SIZE, OnSize);
         break;
     default:
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -87,11 +88,19 @@ LRESULT CXWnd::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 BOOL CXWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 {
+    LOGFONT lf;
+    ZeroMemory(&lf, sizeof(LOGFONT));
+    lf.lfHeight = 12;
+    lf.lfWeight = FW_MEDIUM;
+    wcscpy_s(lf.lfFaceName, 32, L"ËÎÌו");
+    m_hfontSong = CreateFontIndirect(&lf);
+
     return TRUE;
 }
 
 void CXWnd::OnDestroy(HWND hwnd)
 {
+    DeleteFont(m_hfontSong);
     PostQuitMessage(0);
 }
 
@@ -100,6 +109,10 @@ void CXWnd::OnPaint(HWND hwnd)
     PAINTSTRUCT ps;
     HDC hdc = BeginPaint(hwnd, &ps);
     EndPaint(hwnd, &ps);
+}
+
+void CXWnd::OnSize(HWND hwnd, UINT state, int cx, int cy)
+{
 }
 
 void CXWnd::OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)

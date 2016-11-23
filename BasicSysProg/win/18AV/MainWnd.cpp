@@ -60,13 +60,44 @@ BOOL CMainWnd::Create()
         }
     }
 
+    RECT rc;
+    GetClientRect(m_hwnd, &rc);
+
     // SineWnd
     wstring wstrSine = L"ÕýÏÒ²¨";
     RECT rcSine;
     rcSine.left = rcSine.top = 0;
-    rcSine.right = width / 2;
-    rcSine.bottom = height / 2;
+    rcSine.right = rc.right / 2;
+    rcSine.bottom = rc.bottom / 2;
     m_wndSine.Create(wstrSine, rcSine, *this, 0);
 
+    // MP3Player
+    wstring wstrMP3 = L"MP3Player";
+    RECT rcMP3;
+    rcMP3.left = rcSine.right - 1;
+    rcMP3.top = rcSine.top;
+    rcMP3.right = rc.right;
+    rcMP3.bottom = rcSine.bottom;
+    m_wndMP3Player.Create(wstrMP3, rcMP3, *this, 0);
+
     return TRUE;
+}
+
+void CMainWnd::OnSize(HWND hwnd, UINT state, int cx, int cy)
+{
+    RECT rc;
+    GetClientRect(m_hwnd, &rc);
+
+    RECT rcSine;
+    rcSine.left = rcSine.top = 0;
+    rcSine.right = rc.right / 2;
+    rcSine.bottom = rc.bottom / 2;
+    SetWindowPos(m_wndSine, 0, rcSine.left, rcSine.top, rcSine.right - rcSine.left, rcSine.bottom - rcSine.top, SWP_NOZORDER);
+
+    RECT rcMP3;
+    rcMP3.left = rcSine.right - 1;
+    rcMP3.top = rcSine.top;
+    rcMP3.right = rc.right;
+    rcMP3.bottom = rcSine.bottom;
+    SetWindowPos(m_wndMP3Player, 0, rcMP3.left, rcMP3.top, rcMP3.right - rcMP3.left, rcMP3.bottom - rcMP3.top, SWP_NOZORDER);
 }

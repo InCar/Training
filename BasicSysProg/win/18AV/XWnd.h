@@ -13,6 +13,7 @@ public:
     void Destroy();
 protected:
     wstring m_wstrClsName;
+    HFONT m_hfontSong;
     HWND m_hwnd;
 
     virtual ATOM Register();
@@ -23,6 +24,7 @@ protected:
     virtual BOOL OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct);
     virtual void OnDestroy(HWND hwnd);
     virtual void OnPaint(HWND hwnd);
+    virtual void OnSize(HWND hwnd, UINT state, int cx, int cy);
     virtual void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 };
 

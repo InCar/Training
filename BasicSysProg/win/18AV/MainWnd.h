@@ -2,6 +2,7 @@
 #include "XWnd.h"
 #include "resource.h"
 #include "SineWnd.h"
+#include "MP3Player.h"
 
 class CMainWnd : public CXWnd
 {
@@ -11,7 +12,10 @@ public:
 
     virtual ATOM Register();
     BOOL Create();
+protected:
+    virtual void OnSize(HWND hwnd, UINT state, int cx, int cy);
 private:
     CSineWnd m_wndSine;
+    CMP3Player m_wndMP3Player;
 };
 
