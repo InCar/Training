@@ -4,3 +4,4 @@
 ![Windows Audio](https://i-msdn.sec.s-msft.com/dynimg/IC45726.jpg)
 
 ## 视频
+![Windows Media Foundation](https://i-msdn.sec.s-msft.com/dynimg/IC291771.gif)

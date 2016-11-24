@@ -155,7 +155,7 @@ void CMP3Player::OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
                 hr = m_pAudioClient->Start();
 
                 // 继续填充缓冲区
-                SetTimer(hwnd, TIME_ID_PLAY, (UINT)(dDuration * 1000 / 1200), NULL);
+                SetTimer(hwnd, TIME_ID_PLAY, (UINT)(dDuration * 1000 * 0.8), NULL);
                 Button_Enable(hwndCtl, FALSE);
             }
             Button_Enable(m_hwndBtnPlay, FALSE);
@@ -211,8 +211,12 @@ void CMP3Player::OnTimer(HWND hwnd, UINT id)
         // read buffer
         if (m_uLastBufferSize == 0) {
             hr = m_pSourceReader->ReadSample(MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, NULL, &dwFlags, NULL, &m_pSample);
-            if (dwFlags & MF_SOURCE_READERF_ENDOFSTREAM) { // 放完了
-                SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_MP3_STOP, 0), 0);
+            if (dwFlags & MF_SOURCE_READERF_ENDOFSTREAM) {
+                // 放完了，待缓冲区放完就停止
+                KillTimer(hwnd, TIME_ID_PLAY);
+                UINT uFramesPadding = 0;
+                hr = m_pAudioClient->GetCurrentPadding(&uFramesPadding); // 还没有播放的帧数
+                SetTimer(hwnd, TIME_ID_STOP,static_cast<UINT>((double)uFramesPadding * 1000 / m_pwfex->nSamplesPerSec), NULL);
                 break;
             }
             hr = m_pSample->ConvertToContiguousBuffer(&pMFBuffer);
@@ -235,10 +239,6 @@ void CMP3Player::OnTimer(HWND hwnd, UINT id)
             m_uLastBufferSize = dwLen;
         }
         else {
-            wchar_t buf[256];
-            static unsigned int c = 0;
-            StringCchPrintf(buf, 256, L"%d %s", uFrameRead, (c++)%8==7?L"\n":L"");
-            OutputDebugString(buf);
             // write buffer
             memcpy(pData, pSrc, dwLen);
             hr = m_pRenderClient->ReleaseBuffer(uFrameRead, 0);
@@ -250,9 +250,25 @@ void CMP3Player::OnTimer(HWND hwnd, UINT id)
             pMFBuffer->Release();
             m_pSample->Release();
             m_pSample = NULL;
+
+            // buffer trace
+            wchar_t buf[256];
+            static unsigned int c = 0;
+            UINT uFramesPadding = 0;
+            hr = m_pAudioClient->GetCurrentPadding(&uFramesPadding); // 还没有播放的帧数
+            UINT msAdd = static_cast<UINT>((double)uFrameRead * 1000 / m_pwfex->nSamplesPerSec);
+            UINT msTotal = static_cast<UINT>((double)uFramesPadding * 1000 / m_pwfex->nSamplesPerSec);
+            StringCchPrintf(buf, 256, L"+%d[%dms]->%dms %s", uFrameRead, msAdd, msTotal, (c++) % 4 == 3 ? L"\n" : L"");
+            OutputDebugString(buf);
         }
 
         
+        break;
+    }
+    case TIME_ID_STOP:
+    {
+        KillTimer(hwnd, TIME_ID_STOP);
+        SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_MP3_STOP, 0), 0);
         break;
     }
     default:

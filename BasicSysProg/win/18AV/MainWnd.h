@@ -3,6 +3,7 @@
 #include "resource.h"
 #include "SineWnd.h"
 #include "MP3Player.h"
+#include "MovPlayer.h"
 
 class CMainWnd : public CXWnd
 {
@@ -17,5 +18,6 @@ protected:
 private:
     CSineWnd m_wndSine;
     CMP3Player m_wndMP3Player;
+    CMovPlayer m_wndMovPlayer;
 };
 

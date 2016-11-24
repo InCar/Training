@@ -146,6 +146,7 @@
     <ClCompile Include="AV.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWnd.cpp" />
+    <ClCompile Include="MovPlayer.cpp" />
     <ClCompile Include="MP3Player.cpp" />
     <ClCompile Include="SineWnd.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -163,6 +164,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="AV.h" />
     <ClInclude Include="MainWnd.h" />
+    <ClInclude Include="MovPlayer.h" />
     <ClInclude Include="MP3Player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SineWnd.h" />

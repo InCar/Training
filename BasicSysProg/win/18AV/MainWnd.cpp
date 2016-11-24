@@ -69,6 +69,7 @@ BOOL CMainWnd::Create()
     rcSine.left = rcSine.top = 0;
     rcSine.right = rc.right / 2;
     rcSine.bottom = rc.bottom / 2;
+    if (rcSine.bottom > 128) rcSine.bottom = 128;
     m_wndSine.Create(wstrSine, rcSine, *this, 0);
 
     // MP3Player
@@ -79,6 +80,15 @@ BOOL CMainWnd::Create()
     rcMP3.right = rc.right;
     rcMP3.bottom = rcSine.bottom;
     m_wndMP3Player.Create(wstrMP3, rcMP3, *this, 0);
+
+    // MovPlayer
+    wstring wstrMov = L"MovPlayer";
+    RECT rcMov;
+    rcMov.left = rc.left;
+    rcMov.top = rcSine.bottom - 1;
+    rcMov.right = rc.right;
+    rcMov.bottom = rc.bottom;
+    m_wndMovPlayer.Create(wstrMov, rcMov, *this, 0);
 
     return TRUE;
 }
@@ -92,6 +102,7 @@ void CMainWnd::OnSize(HWND hwnd, UINT state, int cx, int cy)
     rcSine.left = rcSine.top = 0;
     rcSine.right = rc.right / 2;
     rcSine.bottom = rc.bottom / 2;
+    if (rcSine.bottom > 128) rcSine.bottom = 128;
     SetWindowPos(m_wndSine, 0, rcSine.left, rcSine.top, rcSine.right - rcSine.left, rcSine.bottom - rcSine.top, SWP_NOZORDER);
 
     RECT rcMP3;
@@ -100,4 +111,11 @@ void CMainWnd::OnSize(HWND hwnd, UINT state, int cx, int cy)
     rcMP3.right = rc.right;
     rcMP3.bottom = rcSine.bottom;
     SetWindowPos(m_wndMP3Player, 0, rcMP3.left, rcMP3.top, rcMP3.right - rcMP3.left, rcMP3.bottom - rcMP3.top, SWP_NOZORDER);
+
+    RECT rcMov;
+    rcMov.left = rc.left;
+    rcMov.top = rcSine.bottom - 1;
+    rcMov.right = rc.right;
+    rcMov.bottom = rc.bottom;
+    SetWindowPos(m_wndMovPlayer, 0, rcMov.left, rcMov.top, rcMov.right - rcMov.left, rcMov.bottom - rcMov.top, SWP_NOZORDER);
 }
