@@ -1,7 +1,5 @@
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN 
-
 #include <Windows.h>
 #include <windowsx.h>
 #include <CommCtrl.h>
@@ -19,6 +17,7 @@
 
 #pragma comment(lib, "Comctl32.lib")
 #pragma comment(lib, "Dwmapi.lib")
+#pragma comment(lib, "Mf.lib")
 #pragma comment(lib, "Mfplat.lib")
 #pragma comment(lib, "mfuuid.lib")
 #pragma comment(lib, "Mfreadwrite.lib")
