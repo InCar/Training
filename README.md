@@ -41,5 +41,5 @@
     + 多线程 [windows](BasicSysProg/win/15Threading)
     + 动态链接库 [windows](BasicSysProg/win/16Main)
     + 网络 [windows](BasicSysProg/win/17EncryptedChat)
-    + 音频&视频 [windows](BasicSysProg/win/18AV) :boom:
-    + 3D图形
+    + 音频&视频 [windows](BasicSysProg/win/18AV)
+    + 3D图形 [windows](BasicSysProg/win/19D3D) :boom:
