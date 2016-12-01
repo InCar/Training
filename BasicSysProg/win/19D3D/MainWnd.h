@@ -48,3 +48,4 @@ private:
 
     ConstantBuffer m_cb;
     ULONGLONG m_u64Begin;
+};

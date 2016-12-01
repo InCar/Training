@@ -101,7 +101,7 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     }
     hr = spFactory.Get()->QueryInterface(IID_PPV_ARGS(&spFactory3));
 
-    // �����Կ���Ӧ�豸
+    // 创建D3D设备
     UINT uFlag = 0;
 #ifdef _DEBUG
     uFlag |= D3D11_CREATE_DEVICE_DEBUG;
@@ -112,7 +112,7 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
         return FALSE;
     }
 
-    // ����������
+    // 创建交换链
     DXGI_SWAP_CHAIN_DESC1 desc;
     ZeroMemory(&desc, sizeof(DXGI_SWAP_CHAIN_DESC1));
     desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -130,7 +130,7 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
         return FALSE;
     }
 
-    // ������Ⱦ����
+    // 设定渲染目标
     ComPtr<ID3D11Texture2D> spBackBuffer;
     hr = m_spSwapChain->GetBuffer(0, IID_PPV_ARGS(&spBackBuffer));
     hr = m_spD3D11->CreateRenderTargetView(spBackBuffer.Get(), NULL, &m_spRTV);
@@ -162,7 +162,7 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
         return FALSE;
     }
 
-    // ��������
+    // 设定可见区域
     D3D11_VIEWPORT viewPort;
     viewPort.TopLeftX = 0.0f;
     viewPort.TopLeftY = 0.0f;
@@ -179,7 +179,7 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
         return FALSE;
     }
 
-    // ��������ʽ����
+    // 数据流格式
     D3D11_INPUT_ELEMENT_DESC layout[] = {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA , 0 }
@@ -187,7 +187,7 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     hr = m_spD3D11->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), m_pVS, m_dwVS, &m_spIL);
     m_spImCtx->IASetInputLayout(m_spIL.Get());
 
-    // ����������
+    // 立方体
     m_pCube = new CCube(m_spD3D11);
     hr = m_pCube->Init();
 
@@ -198,7 +198,7 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     m_spImCtx->IASetIndexBuffer(m_pCube->GetIndex().Get(), DXGI_FORMAT_R32_UINT, 0);
     m_spImCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    // 3D����
+    // 3D空间
     D3D11_BUFFER_DESC descWorld;
     ZeroMemory(&descWorld, sizeof(D3D11_BUFFER_DESC));
     descWorld.Usage = D3D11_USAGE_DEFAULT;
@@ -206,25 +206,25 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     descWorld.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = m_spD3D11->CreateBuffer(&descWorld, NULL, &m_spConstant);
 
-    // Initialize the world matrix
+    // 标准空间
     XMMATRIX xmWorld = ::XMMatrixIdentity();
 
-    // Initialize the view matrix
+    // 摄像机位
     XMVECTOR Eye = XMVectorSet(0.0f, 2.0f, -5.0f, 0.0f);
     XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
     XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
     XMMATRIX xmView = ::XMMatrixLookAtLH(Eye, At, Up);
 
-    // Initialize the projection matrix
+    // 镜头
     XMMATRIX  xmProjection = ::XMMatrixPerspectiveFovLH(XM_PIDIV2, lpCreateStruct->cx / (FLOAT)lpCreateStruct->cy, 0.01f, 100.0f);
 
     m_cb.mWorld = ::XMMatrixTranspose(xmWorld);
     m_cb.mView = ::XMMatrixTranspose(xmView);
     m_cb.mProjection = ::XMMatrixTranspose(xmProjection);
 
-    // ��ת��ʼʱ��
+    // 开始时间标定
     m_u64Begin = GetTickCount64();
-    SetTimer(hwnd, 1, 25, NULL);
+    SetTimer(hwnd, 1, 33, NULL);
 
     return TRUE;
 }
