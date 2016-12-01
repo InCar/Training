@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "MainWnd.h"
 #include "App.h"
 
@@ -171,6 +171,18 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     viewPort.MinDepth = 0.0f;
     viewPort.MaxDepth = 1.0f;
     m_spImCtx->RSSetViewports(1, &viewPort);
+
+    // 光栅参数
+    D3D11_RASTERIZER_DESC descRS;
+    ZeroMemory(&descRS, sizeof(D3D11_RASTERIZER_DESC));
+    descRS.FillMode = D3D11_FILL_SOLID;
+    descRS.CullMode = D3D11_CULL_BACK;
+    descRS.DepthClipEnable = TRUE;
+    descRS.MultisampleEnable = TRUE;
+
+    ComPtr<ID3D11RasterizerState> spRS;
+    hr = m_spD3D11->CreateRasterizerState(&descRS, &spRS);
+    m_spImCtx->RSSetState(spRS.Get());
 
     // GPU
     hr = LoadShader();
