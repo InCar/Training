@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="Cube2.h" />
     <ClInclude Include="D3DApp.h" />
     <ClInclude Include="MainWnd.h" />
     <ClInclude Include="resource.h" />
@@ -153,6 +154,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Cube2.cpp" />
     <ClCompile Include="D3DApp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWnd.cpp" />

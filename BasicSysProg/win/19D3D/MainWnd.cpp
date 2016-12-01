@@ -228,7 +228,7 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     m_cb.mView = ::XMMatrixLookAtLH(Eye, At, Up);
 
     // 镜头
-    m_cb.mProjection = ::XMMatrixPerspectiveFovLH(XM_PIDIV2, lpCreateStruct->cx / (FLOAT)lpCreateStruct->cy, 0.01f, 100.0f);
+    m_cb.mProjection = ::XMMatrixPerspectiveFovLH(XM_PIDIV2, (rc.right-rc.left) / (FLOAT)(rc.bottom-rc.top), 0.01f, 100.0f);
 
     // 灯光
     m_cb.vLightDir = XMFLOAT4(-0.577f, 0.577f, -0.577f, 1.0f);
