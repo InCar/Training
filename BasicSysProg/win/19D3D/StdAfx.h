@@ -5,6 +5,7 @@
 #include <Dwmapi.h>
 #include <d3d11.h>
 #include <dxgi1_3.h>
+#include <DirectXMath.h>
 #include <directxcolors.h>
 #include <wrl.h>
 #include <string>
