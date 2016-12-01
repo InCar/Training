@@ -219,20 +219,20 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     hr = m_spD3D11->CreateBuffer(&descWorld, NULL, &m_spConstant);
 
     // 标准空间
-    XMMATRIX xmWorld = ::XMMatrixIdentity();
+    m_cb.mWorld = ::XMMatrixIdentity();
 
     // 摄像机位
-    XMVECTOR Eye = XMVectorSet(0.0f, 2.0f, -5.0f, 0.0f);
+    XMVECTOR Eye = XMVectorSet(0.0f, 2.0f, -10.0f, 0.0f);
     XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
     XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-    XMMATRIX xmView = ::XMMatrixLookAtLH(Eye, At, Up);
+    m_cb.mView = ::XMMatrixLookAtLH(Eye, At, Up);
 
     // 镜头
-    XMMATRIX  xmProjection = ::XMMatrixPerspectiveFovLH(XM_PIDIV2, lpCreateStruct->cx / (FLOAT)lpCreateStruct->cy, 0.01f, 100.0f);
+    m_cb.mProjection = ::XMMatrixPerspectiveFovLH(XM_PIDIV2, lpCreateStruct->cx / (FLOAT)lpCreateStruct->cy, 0.01f, 100.0f);
 
-    m_cb.mWorld = ::XMMatrixTranspose(xmWorld);
-    m_cb.mView = ::XMMatrixTranspose(xmView);
-    m_cb.mProjection = ::XMMatrixTranspose(xmProjection);
+    // 灯光
+    m_cb.vLightDir = XMFLOAT4(-0.577f, 0.577f, -0.577f, 1.0f);
+    m_cb.vLightColor = (XMFLOAT4)Colors::White;
 
     // 开始时间标定
     m_u64Begin = GetTickCount64();
@@ -274,11 +274,26 @@ void CMainWnd::OnPaint(HWND hwnd)
 {
     CXWnd::OnPaint(hwnd);
 
-    m_spImCtx->UpdateSubresource(m_spConstant.Get(), 0, nullptr, &m_cb, 0, 0);
+    ConstantBuffer cb1;
+    cb1.mWorld = XMMatrixTranspose(m_cb.mWorld);
+    cb1.mView = XMMatrixTranspose(m_cb.mView);
+    cb1.mProjection = XMMatrixTranspose(m_cb.mProjection);
+    m_spImCtx->UpdateSubresource(m_spConstant.Get(), 0, nullptr, &cb1, 0, 0);
     ID3D11Buffer *pConstant = m_spConstant.Get();
     m_spImCtx->VSSetConstantBuffers(0, 1, &pConstant);
     m_spImCtx->VSSetShader(m_spVS.Get(), NULL, 0);
     m_spImCtx->PSSetShader(m_spPS.Get(), NULL, 0);
+    m_spImCtx->DrawIndexed(m_pCube->GetVertexesCount(), 0, 0);
+
+    ConstantBuffer cb2;
+    cb2.mWorld = XMMatrixTranspose(m_cb.mWorld
+        * XMMatrixScaling(0.3f, 0.3f, 0.3f)
+        * XMMatrixRotationX((GetTickCount64() - m_u64Begin) / 1000.0f)
+        * XMMatrixTranslation(+4.0f, 0.0f, 0.0f)
+        * XMMatrixRotationY((GetTickCount64() - m_u64Begin) / -1100.0f));
+    cb2.mView = XMMatrixTranspose(m_cb.mView);
+    cb2.mProjection = XMMatrixTranspose(m_cb.mProjection);
+    m_spImCtx->UpdateSubresource(m_spConstant.Get(), 0, nullptr, &cb2, 0, 0);
     m_spImCtx->DrawIndexed(m_pCube->GetVertexesCount(), 0, 0);
 
     HRESULT hr = m_spSwapChain->Present(1, 0);

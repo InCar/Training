@@ -10,6 +10,9 @@ struct ConstantBuffer
     XMMATRIX mWorld;
     XMMATRIX mView;
     XMMATRIX mProjection;
+
+    XMFLOAT4 vLightDir;
+    XMFLOAT4 vLightColor;
 };
 
 class CMainWnd : public CXWnd
