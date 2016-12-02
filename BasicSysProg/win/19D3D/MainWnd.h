@@ -2,6 +2,7 @@
 #include "XWnd.h"
 #include "resource.h"
 #include "Cube.h"
+#include "Cube2.h"
 
 using namespace Microsoft::WRL;
 
@@ -41,7 +42,7 @@ private:
     ComPtr<ID3D11InputLayout> m_spIL;
     ComPtr<ID3D11Buffer> m_spConstant;
 
-    CCube *m_pCube;
+    CCube2 *m_pCube;
 
     BYTE *m_pVS, *m_pPS;
     DWORD m_dwVS, m_dwPS;

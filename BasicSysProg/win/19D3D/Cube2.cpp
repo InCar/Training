@@ -12,30 +12,30 @@ CCube2::CCube2(ComPtr<ID3D11Device> &spD3D11)
     m_pVertexes[2].Point = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);      m_pVertexes[2].Normal = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
     m_pVertexes[3].Point = XMFLOAT4(-1.0f, 1.0f, 1.0f, 1.0f);     m_pVertexes[3].Normal = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 
-    m_pVertexes[4].Point = XMFLOAT4(-1.0f, -1.0f, -1.0f, 1.0f);   m_pVertexes[0].Normal = XMFLOAT4(0.0f, -1.0f, 0.0f, 1.0f);
-    m_pVertexes[5].Point = XMFLOAT4(1.0f, -1.0f, -1.0f, 1.0f);    m_pVertexes[1].Normal = XMFLOAT4(0.0f, -1.0f, 0.0f, 1.0f);
-    m_pVertexes[6].Point = XMFLOAT4(1.0f, -1.0f, 1.0f, 1.0f);     m_pVertexes[2].Normal = XMFLOAT4(0.0f, -1.0f, 0.0f, 1.0f);
-    m_pVertexes[7].Point = XMFLOAT4(-1.0f, -1.0f, 1.0f, 1.0f);    m_pVertexes[3].Normal = XMFLOAT4(0.0f, -1.0f, 0.0f, 1.0f);
+    m_pVertexes[4].Point = XMFLOAT4(-1.0f, -1.0f, -1.0f, 1.0f);   m_pVertexes[4].Normal = XMFLOAT4(0.0f, -1.0f, 0.0f, 1.0f);
+    m_pVertexes[5].Point = XMFLOAT4(1.0f, -1.0f, -1.0f, 1.0f);    m_pVertexes[5].Normal = XMFLOAT4(0.0f, -1.0f, 0.0f, 1.0f);
+    m_pVertexes[6].Point = XMFLOAT4(1.0f, -1.0f, 1.0f, 1.0f);     m_pVertexes[6].Normal = XMFLOAT4(0.0f, -1.0f, 0.0f, 1.0f);
+    m_pVertexes[7].Point = XMFLOAT4(-1.0f, -1.0f, 1.0f, 1.0f);    m_pVertexes[7].Normal = XMFLOAT4(0.0f, -1.0f, 0.0f, 1.0f);
 
-    m_pVertexes[8].Point = XMFLOAT4(-1.0f, -1.0f, 1.0f, 1.0f);    m_pVertexes[0].Normal = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
-    m_pVertexes[9].Point = XMFLOAT4(-1.0f, -1.0f, -1.0f, 1.0f);   m_pVertexes[1].Normal = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
-    m_pVertexes[10].Point = XMFLOAT4(-1.0f, 1.0f, -1.0f, 1.0f);   m_pVertexes[2].Normal = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
-    m_pVertexes[11].Point = XMFLOAT4(-1.0f, 1.0f, 1.0f, 1.0f);    m_pVertexes[3].Normal = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
+    m_pVertexes[8].Point = XMFLOAT4(-1.0f, -1.0f, 1.0f, 1.0f);    m_pVertexes[8].Normal = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
+    m_pVertexes[9].Point = XMFLOAT4(-1.0f, -1.0f, -1.0f, 1.0f);   m_pVertexes[9].Normal = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
+    m_pVertexes[10].Point = XMFLOAT4(-1.0f, 1.0f, -1.0f, 1.0f);   m_pVertexes[10].Normal = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
+    m_pVertexes[11].Point = XMFLOAT4(-1.0f, 1.0f, 1.0f, 1.0f);    m_pVertexes[11].Normal = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
 
-    m_pVertexes[12].Point = XMFLOAT4(1.0f, -1.0f, 1.0f, 1.0f);    m_pVertexes[0].Normal = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-    m_pVertexes[13].Point = XMFLOAT4(1.0f, -1.0f, -1.0f, 1.0f);   m_pVertexes[1].Normal = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-    m_pVertexes[14].Point = XMFLOAT4(1.0f, 1.0f, -1.0f, 1.0f);    m_pVertexes[2].Normal = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-    m_pVertexes[15].Point = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);     m_pVertexes[3].Normal = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+    m_pVertexes[12].Point = XMFLOAT4(1.0f, -1.0f, 1.0f, 1.0f);    m_pVertexes[12].Normal = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+    m_pVertexes[13].Point = XMFLOAT4(1.0f, -1.0f, -1.0f, 1.0f);   m_pVertexes[13].Normal = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+    m_pVertexes[14].Point = XMFLOAT4(1.0f, 1.0f, -1.0f, 1.0f);    m_pVertexes[14].Normal = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+    m_pVertexes[15].Point = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);     m_pVertexes[15].Normal = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 
-    m_pVertexes[16].Point = XMFLOAT4(-1.0f, -1.0f, -1.0f, 1.0f);  m_pVertexes[0].Normal = XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f);
-    m_pVertexes[17].Point = XMFLOAT4(1.0f, -1.0f, -1.0f, 1.0f);   m_pVertexes[1].Normal = XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f);
-    m_pVertexes[18].Point = XMFLOAT4(1.0f, 1.0f, -1.0f, 1.0f);    m_pVertexes[2].Normal = XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f);
-    m_pVertexes[19].Point = XMFLOAT4(-1.0f, 1.0f, -1.0f, 1.0f);   m_pVertexes[3].Normal = XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f);
+    m_pVertexes[16].Point = XMFLOAT4(-1.0f, -1.0f, -1.0f, 1.0f);  m_pVertexes[16].Normal = XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f);
+    m_pVertexes[17].Point = XMFLOAT4(1.0f, -1.0f, -1.0f, 1.0f);   m_pVertexes[17].Normal = XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f);
+    m_pVertexes[18].Point = XMFLOAT4(1.0f, 1.0f, -1.0f, 1.0f);    m_pVertexes[18].Normal = XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f);
+    m_pVertexes[19].Point = XMFLOAT4(-1.0f, 1.0f, -1.0f, 1.0f);   m_pVertexes[19].Normal = XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f);
 
-    m_pVertexes[20].Point = XMFLOAT4(-1.0f, -1.0f, 1.0f, 1.0f);   m_pVertexes[0].Normal = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-    m_pVertexes[21].Point = XMFLOAT4(1.0f, -1.0f, 1.0f, 1.0f);    m_pVertexes[1].Normal = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-    m_pVertexes[22].Point = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);     m_pVertexes[2].Normal = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-    m_pVertexes[23].Point = XMFLOAT4(-1.0f, 1.0f, 1.0f, 1.0f);    m_pVertexes[3].Normal = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+    m_pVertexes[20].Point = XMFLOAT4(-1.0f, -1.0f, 1.0f, 1.0f);   m_pVertexes[20].Normal = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+    m_pVertexes[21].Point = XMFLOAT4(1.0f, -1.0f, 1.0f, 1.0f);    m_pVertexes[21].Normal = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+    m_pVertexes[22].Point = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);     m_pVertexes[22].Normal = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+    m_pVertexes[23].Point = XMFLOAT4(-1.0f, 1.0f, 1.0f, 1.0f);    m_pVertexes[23].Normal = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 
     // 转换为一系列的三角形,立方体有6个面,每个面拆成2个三角形,三角形3个点,共计3*2*6=36个点
     m_pCubeIndex = new UINT[36];
@@ -70,7 +70,7 @@ HRESULT CCube2::Init()
     // 顶点缓冲区
     D3D11_BUFFER_DESC descVertex;
     ZeroMemory(&descVertex, sizeof(D3D11_BUFFER_DESC));
-    descVertex.ByteWidth = sizeof(ColorPoint2) * 8;
+    descVertex.ByteWidth = sizeof(ColorPoint2) * 24;
     descVertex.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
     D3D11_SUBRESOURCE_DATA xinit;;
@@ -83,14 +83,14 @@ HRESULT CCube2::Init()
     if (FAILED(hr)) return hr;
 
     // 索引缓冲区
-    D3D11_BUFFER_DESC desCCube2Index;
-    ZeroMemory(&desCCube2Index, sizeof(D3D11_BUFFER_DESC));
-    desCCube2Index.ByteWidth = sizeof(UINT) * 36;
-    desCCube2Index.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    D3D11_BUFFER_DESC descCubeIndex;
+    ZeroMemory(&descCubeIndex, sizeof(D3D11_BUFFER_DESC));
+    descCubeIndex.ByteWidth = sizeof(UINT) * 36;
+    descCubeIndex.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
     xinit.pSysMem = m_pCubeIndex;
 
-    hr = m_spD3D11->CreateBuffer(&desCCube2Index, &xinit, &m_spCubeIndex);
+    hr = m_spD3D11->CreateBuffer(&descCubeIndex, &xinit, &m_spCubeIndex);
     if (FAILED(hr)) return hr;
 
     return S_OK;

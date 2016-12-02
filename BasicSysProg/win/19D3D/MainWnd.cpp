@@ -182,7 +182,7 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 
     ComPtr<ID3D11RasterizerState> spRS;
     hr = m_spD3D11->CreateRasterizerState(&descRS, &spRS);
-    m_spImCtx->RSSetState(spRS.Get());
+    //m_spImCtx->RSSetState(spRS.Get());
 
     // GPU
     hr = LoadShader();
@@ -192,15 +192,19 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     }
 
     // 数据流格式
+    // D3D11_INPUT_ELEMENT_DESC layout[] = {
+    //     { "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    //     { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA , 0 }
+    // };
     D3D11_INPUT_ELEMENT_DESC layout[] = {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA , 0 }
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA , 0 }
     };
     hr = m_spD3D11->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), m_pVS, m_dwVS, &m_spIL);
     m_spImCtx->IASetInputLayout(m_spIL.Get());
 
     // 立方体
-    m_pCube = new CCube(m_spD3D11);
+    m_pCube = new CCube2(m_spD3D11);
     hr = m_pCube->Init();
 
     UINT stride = m_pCube->GetStride();
@@ -222,17 +226,17 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     m_cb.mWorld = ::XMMatrixIdentity();
 
     // 摄像机位
-    XMVECTOR Eye = XMVectorSet(0.0f, 2.0f, -10.0f, 0.0f);
+    XMVECTOR Eye = XMVectorSet(0.0f, 3.0f, -5.0f, 0.0f);
     XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
     XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
     m_cb.mView = ::XMMatrixLookAtLH(Eye, At, Up);
 
     // 镜头
-    m_cb.mProjection = ::XMMatrixPerspectiveFovLH(XM_PIDIV2, (rc.right-rc.left) / (FLOAT)(rc.bottom-rc.top), 0.01f, 100.0f);
+    m_cb.mProjection = ::XMMatrixPerspectiveFovLH(XM_2PI/3.0f, (rc.right-rc.left) / (FLOAT)(rc.bottom-rc.top), 0.01f, 100.0f);
 
     // 灯光
     m_cb.vLightDir = XMFLOAT4(-0.577f, 0.577f, -0.577f, 1.0f);
-    m_cb.vLightColor = (XMFLOAT4)Colors::White;
+    m_cb.vLightColor = XMFLOAT4(0.5f, 0.5f, 0.3f, 1.0f);
 
     // 开始时间标定
     m_u64Begin = GetTickCount64();
@@ -265,7 +269,7 @@ void CMainWnd::OnSize(HWND hwnd, UINT state, int cx, int cy)
 
 BOOL CMainWnd::OnEraseBkgnd(HWND hwnd, HDC hdc)
 {
-    m_spImCtx->ClearRenderTargetView(m_spRTV.Get(), Colors::Black);
+    m_spImCtx->ClearRenderTargetView(m_spRTV.Get(), Colors::Blue);
     m_spImCtx->ClearDepthStencilView(m_spZView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     return TRUE;
 }
@@ -278,10 +282,13 @@ void CMainWnd::OnPaint(HWND hwnd)
     cb1.mWorld = XMMatrixTranspose(m_cb.mWorld);
     cb1.mView = XMMatrixTranspose(m_cb.mView);
     cb1.mProjection = XMMatrixTranspose(m_cb.mProjection);
+    cb1.vLightDir = m_cb.vLightDir;
+    cb1.vLightColor = m_cb.vLightColor;
     m_spImCtx->UpdateSubresource(m_spConstant.Get(), 0, nullptr, &cb1, 0, 0);
     ID3D11Buffer *pConstant = m_spConstant.Get();
     m_spImCtx->VSSetConstantBuffers(0, 1, &pConstant);
     m_spImCtx->VSSetShader(m_spVS.Get(), NULL, 0);
+    m_spImCtx->PSSetConstantBuffers(0, 1, &pConstant);
     m_spImCtx->PSSetShader(m_spPS.Get(), NULL, 0);
     m_spImCtx->DrawIndexed(m_pCube->GetVertexesCount(), 0, 0);
 
@@ -293,8 +300,11 @@ void CMainWnd::OnPaint(HWND hwnd)
         * XMMatrixRotationY((GetTickCount64() - m_u64Begin) / -1100.0f));
     cb2.mView = XMMatrixTranspose(m_cb.mView);
     cb2.mProjection = XMMatrixTranspose(m_cb.mProjection);
+    cb2.vLightDir = m_cb.vLightDir;
+    cb2.vLightColor = m_cb.vLightColor;
     m_spImCtx->UpdateSubresource(m_spConstant.Get(), 0, nullptr, &cb2, 0, 0);
     m_spImCtx->DrawIndexed(m_pCube->GetVertexesCount(), 0, 0);
+
 
     HRESULT hr = m_spSwapChain->Present(1, 0);
 }
@@ -311,7 +321,7 @@ HRESULT CMainWnd::LoadShader()
     GetModuleFileName(NULL, buf, 512);
     wchar_t *pLast = wcsrchr(buf, L'\\');
     if (pLast == NULL) return E_FAIL;
-    wcscpy_s(pLast + 1, 512 - ((pLast + 1) - buf), L"VS.cso");
+    wcscpy_s(pLast + 1, 512 - ((pLast + 1) - buf), L"VS2.cso");
 
     HANDLE hCSO = CreateFile(buf, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
     if (hCSO == INVALID_HANDLE_VALUE) return E_HANDLE;
@@ -323,7 +333,7 @@ HRESULT CMainWnd::LoadShader()
     HRESULT hr = m_spD3D11->CreateVertexShader(m_pVS, m_dwVS, NULL, &m_spVS);
     if (FAILED(hr)) return hr;
 
-    wcscpy_s(pLast + 1, 512 - ((pLast + 1) - buf), L"PS.cso");
+    wcscpy_s(pLast + 1, 512 - ((pLast + 1) - buf), L"PS2.cso");
     hCSO = CreateFile(buf, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
     if (hCSO == INVALID_HANDLE_VALUE) return E_HANDLE;
     dwSize = GetFileSize(hCSO, NULL);
