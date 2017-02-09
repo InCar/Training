@@ -1,13 +1,4 @@
-# :bell: 近期活动
-###  大师面对面 | TypeScript之父 :boom:
-[Anders Hejlsberg 将来到北京，与广大TypeScript开发者和编程爱好者见面，分享最新的技术动态并与您进行巅峰对话。您将有机会与Anders零距离沟通，一睹大师风采，并享用一场关于TypeScript编程之美的饕餮盛宴……](https://github.com/HP-Enterprise/Training/issues/11)
-
-:clock2: 2015年10月24日 | :earth_asia: 北京市朝阳区望京街8号利星行广场C座微软大厦3层
----|---
-[![Anders Hejlsberg](https://avatars2.githubusercontent.com/u/4226954?v=3&s=128)](https://github.com/ahejlsberg) | [![TeemolSparrow](https://avatars3.githubusercontent.com/u/13936823?v=3&s=80)](https://github.com/TeemolSparrow) [![Septemberwh](https://avatars1.githubusercontent.com/u/9412495?v=3&s=80)](https://github.com/Septemberwh) [![jiangli0509](https://avatars3.githubusercontent.com/u/5874912?v=3&s=80)](https://github.com/jiangli0509) [![any0921](https://avatars2.githubusercontent.com/u/14539598?v=3&s=80)](https://github.com/any0921)
-
 # :book: 训练教程
-
 
 + Git 源代码管理工具
     + [*《Pro Git》* 第1章 起步,第2章 Git基础,第3章 Git分支](http://git-scm.com/book/zh/v2)
@@ -42,4 +33,20 @@
     + 动态链接库 [windows](BasicSysProg/win/16Main)
     + 网络 [windows](BasicSysProg/win/17EncryptedChat)
     + 音频&视频 [windows](BasicSysProg/win/18AV)
-    + 3D图形 [windows](BasicSysProg/win/19D3D) :boom:
+    + 3D图形 [windows](BasicSysProg/win/19D3D)
++ 系统性编程课程-Object Oriented Programming
+    + 封装
+    + 对象
+    + 组合
+    + 拆分
+    + 继承
+    + 重构
+    + 泛型
+
+# :bell: 活动
+###  大师面对面 | TypeScript之父 :boom:
+[Anders Hejlsberg 将来到北京，与广大TypeScript开发者和编程爱好者见面，分享最新的技术动态并与您进行巅峰对话。您将有机会与Anders零距离沟通，一睹大师风采，并享用一场关于TypeScript编程之美的饕餮盛宴……](https://github.com/HP-Enterprise/Training/issues/11)
+
+:clock2: 2015年10月24日 | :earth_asia: 北京市朝阳区望京街8号利星行广场C座微软大厦3层
+---|---
+[![Anders Hejlsberg](https://avatars2.githubusercontent.com/u/4226954?v=3&s=128)](https://github.com/ahejlsberg) | [![TeemolSparrow](https://avatars3.githubusercontent.com/u/13936823?v=3&s=80)](https://github.com/TeemolSparrow) [![Septemberwh](https://avatars1.githubusercontent.com/u/9412495?v=3&s=80)](https://github.com/Septemberwh) [![jiangli0509](https://avatars3.githubusercontent.com/u/5874912?v=3&s=80)](https://github.com/jiangli0509) [![any0921](https://avatars2.githubusercontent.com/u/14539598?v=3&s=80)](https://github.com/any0921)
