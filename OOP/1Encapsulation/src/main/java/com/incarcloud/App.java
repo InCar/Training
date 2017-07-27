@@ -5,6 +5,7 @@ import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.sql.*;
+import java.util.List;
 
 @SpringBootApplication
 public class App implements CommandLineRunner {
@@ -20,43 +21,22 @@ public class App implements CommandLineRunner {
 
     public void run(String... args) throws Exception{
         System.out.println("=====begin=====");
-        Connection conn = DriverManager.getConnection(_cfg.DataBase
-                + "&user=" + _cfg.User
-                + "&password=" + _cfg.Password);
 
-        Statement statement = conn.createStatement();
-        /* 最后所在位置
-        SELECT A.obdCode, B.lastTime, substr(A.longitude,2) as lon, substr(A.latitude,2) as lat
-        FROM t_obd_location A
-        JOIN (SELECT obdCode, max(locationTime) lastTime
-              FROM t_obd_location
-              GROUP BY obdCode) B ON A.obdCode = B.obdCode and A.locationTime = B.lastTime
-        */
-        String sql = "SELECT A.obdCode, B.lastTime, substr(A.longitude,2) as lon, substr(A.latitude,2) as lat\n" +
-                     "FROM t_obd_location A\n" +
-                     "JOIN (SELECT obdCode, max(locationTime) lastTime\n" +
-                           "FROM t_obd_location\n" +
-                           "GROUP BY obdCode) B ON A.obdCode = B.obdCode and A.locationTime = B.lastTime";
-        ResultSet rs = statement.executeQuery(sql);
-        while(rs.next()){
+        // Loading data
+        DataRepo repo = new DataRepo();
+        repo.setDataSource(_cfg.DataBase, _cfg.User, _cfg.Password);
+        List<LastMark> listMarks = repo.fetchMarks();
 
-            try {
-                double dLon = rs.getDouble("lon");
-                double dLat = rs.getDouble("lat");
-
-                if (dLon >= _wuhan.left && dLon <= _wuhan.right
-                        && dLat >= _wuhan.bottom && dLat <= _wuhan.top) {
-                    String strCode = rs.getString("obdCode");
-                    String strTm = rs.getString("lastTime");
-
-                    System.out.println(strCode + " is in Wuhan at " + strTm);
-                }
+        // check bound
+        GeoBound wuhan = new GeoBound(_wuhan.left, _wuhan.top, _wuhan.right, _wuhan.bottom);
+        for(LastMark mark : listMarks){
+            if(wuhan.isInside(mark.Lon, mark.Lat)){
+                System.out.println(mark.Id + " is in Wuhan at " + mark.Tm);
             }
-            catch(Exception ex){
-                // ignore
-            }
-
         }
+
         System.out.println("=====end=====");
     }
+
+
 }
