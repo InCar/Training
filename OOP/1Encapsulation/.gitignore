@@ -1,0 +1,15 @@
+.idea
+.gradle
+
+.settings
+
+build
+out
+bin
+
+application-*.yml
+gradle.properties
+
+*.iml
+*.log
+*.out

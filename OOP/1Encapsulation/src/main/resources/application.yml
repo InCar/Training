@@ -1,0 +1,10 @@
+com.incarcloud:
+  datasource:
+    database: jdbc:mysql://service.incardata.com.cn/incardev?characterEncoding=utf8
+    user: incarapp
+    pwd: your-pass-word
+  wuhan: # 粗略的武汉边界经纬度
+    top: 30.8
+    bottom: 30.3
+    left: 114.0
+    right: 114.7
