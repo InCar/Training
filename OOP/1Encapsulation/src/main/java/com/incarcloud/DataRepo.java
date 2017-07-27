@@ -56,18 +56,3 @@ class DataRepo {
         return listMarks;
     }
 }
-
-class LastMark
-{
-    LastMark(String id, String tm, double lon, double lat){
-        this.Id = id;
-        this.Tm = tm;
-        this.Lon = lon;
-        this.Lat = lat;
-    }
-
-    String Id;
-    String Tm;
-    double Lon;
-    double Lat;
-}
