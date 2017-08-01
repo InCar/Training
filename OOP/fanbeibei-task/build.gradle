@@ -1,0 +1,63 @@
+group 'com.incarcloud'
+version '1.0'
+
+buildscript {
+    repositories {
+        if (project.hasProperty("maven")) {
+            if (maven.equals("maven.aliyun.com"))
+                maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+            else
+                mavenCentral()
+        } else {
+            mavenCentral()
+        }
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.+")
+    }
+}
+
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    if (project.hasProperty("maven")) {
+        if (maven.equals("maven.aliyun.com"))
+            maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        else
+            mavenCentral()
+    } else {
+        mavenCentral()
+    }
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter:1.5.+")
+    compile("mysql:mysql-connector-java:5.1.+")
+}
+
+compileJava{
+    options.encoding = "utf-8"
+    options.compilerArgs << "-Xlint:unchecked"
+}
+
+compileTestJava{
+    options.encoding = "utf-8"
+    options.compilerArgs << "-Xlint:unchecked"
+}
+
+test{
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+    }
+}
+
+bootRun{
+    systemProperties System.getProperties()
+}
+
+defaultTasks "build"
