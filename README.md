@@ -44,6 +44,16 @@
     + 泛型
 
 # :bell: 活动
+### 华为全联接大会2018
+[数字化升维，智能纪降临。华为预测，到2025年全球个人智能终端将达到400亿，企业和机构的人工智能利用率将达到86%，数据利用率将达到80%，智能将像空气一样泛在。
+ICT作为全球数字经济和智能世界的基石，AI、云、大数据、IoT等关键技术日新月异，依托数字化平台，所有的企业和机构亟待智能加持，洞见和把握市场先机，提升运营效率。
+华为聚焦ICT基础设施和智能终端，立志于将数字世界带入每个人、每个家庭、每个组织，构建万物互联的智能世界。让我们和全球的客户、伙伴们一起，“+智能，见未来”！](https://www.huawei.com/cn/press-events/events/huaweiconnect2018)
+
+:clock2: 2018年10月10日 | :earth_asia: 上海世博展览馆
+---|---
+![](https://user-images.githubusercontent.com/5030312/47403713-249db800-d77d-11e8-83d1-adee40e52d38.jpg) ![](https://user-images.githubusercontent.com/5030312/47403840-983fc500-d77d-11e8-8b18-bcae933e86eb.jpg) | ![](https://user-images.githubusercontent.com/5030312/47403707-20719a80-d77d-11e8-9181-e29e2355cc16.jpg) ![](https://user-images.githubusercontent.com/5030312/47403710-223b5e00-d77d-11e8-83b8-cc676465af11.jpg) ![](https://user-images.githubusercontent.com/5030312/47404076-7b57c180-d77e-11e8-8500-a3bfd87ad664.jpg)
+
+
 ###  大师面对面 | TypeScript之父 :boom:
 [Anders Hejlsberg 将来到北京，与广大TypeScript开发者和编程爱好者见面，分享最新的技术动态并与您进行巅峰对话。您将有机会与Anders零距离沟通，一睹大师风采，并享用一场关于TypeScript编程之美的饕餮盛宴……](https://github.com/HP-Enterprise/Training/issues/11)
 
