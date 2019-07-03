@@ -1,0 +1,11 @@
+#pragma once
+#include <Windows.h>
+#include <windowsx.h>
+#include <Strsafe.h>
+#include <Shobjidl.h>
+#include <wincodec.h>
+#include <wincodecsdk.h>
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h>
+#include <malloc.h>
+#include <crtdbg.h>
