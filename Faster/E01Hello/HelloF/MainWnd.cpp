@@ -1,7 +1,8 @@
 #include "stdafx.h"
+#include "resource.h"
 #include "MainWnd.h"
 #include "App.h"
-#include "resource.h"
+#include "AdvCalc.h"
 
 MainWnd::MainWnd()
 {
@@ -54,6 +55,8 @@ BOOL MainWnd::Create()
 
 	// 第一次刷新窗口
 	UpdateWindow(m_hwnd);
+	// 自定义消息
+	PostMessage(m_hwnd, WM_USER, 0, 0);
 
 	return TRUE;
 }
@@ -63,6 +66,8 @@ LRESULT MainWnd::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg) {
 		HANDLE_MSG(hWnd, WM_ERASEBKGND, OnEraseBkgnd);
 		break;
+	case WM_USER:
+		return OnMyMsg(hWnd, wParam, lParam);
 	default:
 		return XWnd::WndProc(hWnd, uMsg, wParam, lParam);
 	}
@@ -78,8 +83,10 @@ void MainWnd::OnPaint(HWND hwnd)
 
 	// 绘制内容
 	GetClientRect(hwnd, &rect);
+	rect.right -= 24;
+	rect.top = rect.bottom / 2 - 24;
 	HGDIOBJ hOldFont = SelectObject(hdc, m_hfontSong);
-	DrawText(hdc, L"你好,C++!", -1, &rect, DT_SINGLELINE | DT_VCENTER | DT_CENTER);
+	DrawText(hdc, m_wszBuf, -1, &rect, DT_CENTER);
 	SelectObject(hdc, hOldFont);
 
 	EndPaint(hwnd, &ps);
@@ -93,4 +100,34 @@ BOOL MainWnd::OnEraseBkgnd(HWND hwnd, HDC hdc)
 	// 填充背景色
 	FillRect(hdc, &rect, (HBRUSH)GetStockObject(WHITE_BRUSH));
 	return TRUE;
+}
+
+LRESULT MainWnd::OnMyMsg(HWND hwnd, WPARAM wParam, LPARAM lParam)
+{
+	AdvCalc advCalc;
+	LARGE_INTEGER freq, s0, s1, s2, s3;
+	QueryPerformanceFrequency(&freq);
+	QueryPerformanceCounter(&s0);
+	float f1 = advCalc.calcBasic();
+	QueryPerformanceCounter(&s1);
+	float f2 = advCalc.calcSSE();
+	QueryPerformanceCounter(&s2);
+	float f3 = advCalc.calcAVX();
+	QueryPerformanceCounter(&s3);
+
+	float t1 = 1000.0f * (s1.QuadPart - s0.QuadPart) / freq.QuadPart;
+	float t2 = 1000.0f * (s2.QuadPart - s1.QuadPart) / freq.QuadPart;
+	float t3 = 1000.0f * (s3.QuadPart - s2.QuadPart) / freq.QuadPart;
+
+	wchar_t* pbuf = m_wszBuf;
+	int n, left = 512;
+	n = swprintf_s(pbuf, left, L"%15s %15s %15s\n", L"NA", L"SSE 4x", L"AVX 8x");
+	left -= n;
+	n = swprintf_s(pbuf+n, left, L"%15.3f %15.3f %15.3f\n", f1, f2, f3);
+	left -= n;
+	swprintf_s(pbuf + n, left, L"%13.3fms %13.3fms %13.3fms", t1, t2, t3);
+
+	InvalidateRect(hwnd, NULL, TRUE);
+
+	return 0L;
 }

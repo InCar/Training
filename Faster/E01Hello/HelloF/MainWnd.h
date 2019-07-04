@@ -15,5 +15,8 @@ protected:
 
 	void OnPaint(HWND hwnd) override;
 	virtual BOOL OnEraseBkgnd(HWND hwnd, HDC hdc);
+	virtual LRESULT OnMyMsg(HWND hwnd, WPARAM wParam, LPARAM lParam);
+private:
+	wchar_t m_wszBuf[512];
 };
 

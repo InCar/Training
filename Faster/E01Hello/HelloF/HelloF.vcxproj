@@ -91,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AdvCalc.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="HelloApp.cpp" />
     <ClCompile Include="MainWnd.cpp" />
@@ -102,6 +103,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AdvCalc.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="HelloApp.h" />
     <ClInclude Include="MainWnd.h" />
