@@ -30,7 +30,7 @@ public:
 	float calcAVX512();
 private:
 	// stress
-	const int c_loop = 1000;
+	const int c_loop = 10000;
 	// count
 	const int c_len = 8000;
 	// float a
