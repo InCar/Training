@@ -171,14 +171,7 @@ float AdvCalc::calcAVX512()
 			sum = _mm512_add_ps(sum, x);
 		}
 
-		float* pSum = (float*)_aligned_malloc(sizeof(float) * 16, 64);
-		_mm512_store_ps(pSum, sum);
-
-		fSum = 0.0f;
-		for (int i = 0;i < 16;i++) {
-			fSum += pSum[i];
-		}
-		_aligned_free(pSum);
+		fSum = _mm512_reduce_add_ps(sum);
 	}
 	return fSum;
 }
