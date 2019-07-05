@@ -167,8 +167,7 @@ float AdvCalc::calcAVX512()
 		__m512 sum = _mm512_set1_ps(0.0f);
 
 		for (int i = 0;i < c_len / 16;i++) {
-			__m512 x = _mm512_mul_ps(a, pV[i]);
-			x = _mm512_add_ps(x, b);
+			__m512 x = _mm512_fmadd_ps(pV[i], a, b);
 			sum = _mm512_add_ps(sum, x);
 		}
 
