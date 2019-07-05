@@ -1,18 +1,33 @@
 #pragma once
+enum SIMD
+{
+	NA = 0,
+	MMX,
+	SSE,
+	AVX,
+	FMA,
+	AVX512
+};
+
 class AdvCalc
 {
 public:
 	AdvCalc();
 	virtual ~AdvCalc();
 
+	// SIMD支持类型
+	BOOL IsSupport(SIMD level);
+
 	// 基本计算
 	float calcBasic();
-
 	// MMX
 	float calcSSE();
-
 	// AVX
 	float calcAVX();
+	// FMA
+	float calcFMA();
+	// AVX512
+	float calcAVX512();
 private:
 	// stress
 	const int c_loop = 1000;
@@ -25,4 +40,3 @@ private:
 	// float values
 	float* m_pV = NULL;
 };
-

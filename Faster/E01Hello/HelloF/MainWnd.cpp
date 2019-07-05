@@ -6,6 +6,7 @@
 
 MainWnd::MainWnd()
 {
+	ZeroMemory(m_wszBuf, sizeof(m_wszBuf));
 }
 
 MainWnd::~MainWnd()
@@ -105,27 +106,36 @@ BOOL MainWnd::OnEraseBkgnd(HWND hwnd, HDC hdc)
 LRESULT MainWnd::OnMyMsg(HWND hwnd, WPARAM wParam, LPARAM lParam)
 {
 	AdvCalc advCalc;
-	LARGE_INTEGER freq, s0, s1, s2, s3;
-	QueryPerformanceFrequency(&freq);
-	QueryPerformanceCounter(&s0);
-	float f1 = advCalc.calcBasic();
-	QueryPerformanceCounter(&s1);
-	float f2 = advCalc.calcSSE();
-	QueryPerformanceCounter(&s2);
-	float f3 = advCalc.calcAVX();
-	QueryPerformanceCounter(&s3);
 
-	float t1 = 1000.0f * (s1.QuadPart - s0.QuadPart) / freq.QuadPart;
-	float t2 = 1000.0f * (s2.QuadPart - s1.QuadPart) / freq.QuadPart;
-	float t3 = 1000.0f * (s3.QuadPart - s2.QuadPart) / freq.QuadPart;
+	const int N = 5;
+	float f[N] = {0.0f}, t[N];
+	LARGE_INTEGER freq, s[N+1];
+	QueryPerformanceFrequency(&freq);
+	QueryPerformanceCounter(&s[0]);
+	f[0] = advCalc.calcBasic();
+	QueryPerformanceCounter(&s[1]);
+	if (advCalc.IsSupport(SIMD::SSE)) f[1] = advCalc.calcSSE();
+	QueryPerformanceCounter(&s[2]);
+	if(advCalc.IsSupport(SIMD::AVX)) f[2] = advCalc.calcAVX();
+	QueryPerformanceCounter(&s[3]);
+	if (advCalc.IsSupport(SIMD::FMA)) f[3] = advCalc.calcFMA();
+	QueryPerformanceCounter(&s[4]);
+	if (advCalc.IsSupport(SIMD::AVX512)) f[4] = advCalc.calcAVX512();
+	QueryPerformanceCounter(&s[5]);
+
+	for (int i = 0;i < N;i++) {
+		t[i] = 1000.0f * (s[i+1].QuadPart - s[i].QuadPart) / freq.QuadPart;
+	} 
 
 	wchar_t* pbuf = m_wszBuf;
 	int n, left = 512;
-	n = swprintf_s(pbuf, left, L"%15s %15s %15s\n", L"NA", L"SSE 4x", L"AVX 8x");
+	n = swprintf_s(pbuf, left, L"%15s %15s %15s %15s %15s\n", L"NA", L"SSE 4x", L"AVX 8x", L"FMA 8x+", L"AVX512 16x+");
 	left -= n;
-	n = swprintf_s(pbuf+n, left, L"%15.3f %15.3f %15.3f\n", f1, f2, f3);
+	pbuf += n;
+	n = swprintf_s(pbuf, left, L"%15.3f %15.3f %15.3f %15.3f %15.3f\n", f[0], f[1], f[2], f[3], f[4]);
 	left -= n;
-	swprintf_s(pbuf + n, left, L"%13.3fms %13.3fms %13.3fms", t1, t2, t3);
+	pbuf += n;
+	swprintf_s(pbuf, left, L"%13.3fms %13.3fms %13.3fms %13.3fms %13.3fms", t[0], t[1], t[2], t[3], t[4]);
 
 	InvalidateRect(hwnd, NULL, TRUE);
 
