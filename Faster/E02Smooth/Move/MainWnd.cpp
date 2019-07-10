@@ -52,3 +52,99 @@ BOOL MainWnd::Create()
 
 	return TRUE;
 }
+
+LRESULT MainWnd::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	// 消息处理
+	switch (uMsg) {
+		HANDLE_MSG(hWnd, WM_KEYDOWN, OnKeyDown);
+		break;
+	default:
+		return XWnd::WndProc(hWnd, uMsg, wParam, lParam);
+	}
+}
+
+BOOL MainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
+{
+	__super::OnCreate(hwnd, lpCreateStruct);
+
+	m_hDotPen = CreatePen(PS_DOT, 0, RGB(0xff, 0x00, 0x00));
+	m_hbrCar = CreateSolidBrush(RGB(0x33, 0x33, 0xcc));
+	return TRUE;
+}
+
+void MainWnd::OnDestroy(HWND hwnd)
+{
+	DeletePen(m_hDotPen);
+	DeleteBrush(m_hbrCar);
+	__super::OnDestroy(hwnd);
+}
+
+void MainWnd::OnPaint(HWND hwnd)
+{
+	// 获取主显示器高度(以像素为单位)
+	int pixelsInHeight = GetSystemMetrics(SM_CYSCREEN);
+	int pixels = static_cast<int>(pixelsInHeight * 0.9f);
+	// 获取窗口尺寸(以显示器设备像素为单位)
+	RECT rc;
+	GetClientRect(hwnd, &rc);
+
+	PAINTSTRUCT ps;
+	HDC hdc = BeginPaint(hwnd, &ps);
+
+	// 设定坐标系统
+	SetMapMode(hdc, MM_ISOTROPIC);
+	SetWindowExtEx(hdc, 100000, 100000, NULL); // 标准世界有多大
+	SetViewportExtEx(hdc, pixels, -pixels, NULL); // 用显示器设备上的多少像素展示标准世界
+	SetViewportOrgEx(hdc, rc.right / 2, rc.bottom / 2, NULL); // 标准世界的(0,0)相对窗口左上角在什么位置(以显示器设备像素为单位)
+
+	// 标准世界边界
+	Rectangle(hdc, -50000, -50000, 50000, 50000);
+
+	// 坐标轴
+	SelectPen(hdc, m_hDotPen);
+	MoveToEx(hdc, -50000, 0, NULL);
+	LineTo(hdc, +50000, 0);
+	MoveToEx(hdc, 0, -50000, NULL);
+	LineTo(hdc, 0, +50000);
+
+	// 车辆
+	RECT rcCar;
+	FLOAT2 pos = m_car.GetPos();
+	FLOAT2 size = m_car.GetSize();
+	rcCar.left = static_cast<int>(1000.0f * (pos.x - size.x / 2.0f));
+	rcCar.right = static_cast<int>(1000.0f * (pos.x + size.x / 2.0f));
+	rcCar.top = static_cast<int>(1000.0f * (pos.y + size.y / 2.0f));
+	rcCar.bottom = static_cast<int>(1000.0f * (pos.y - size.y / 2.0f));
+	FillRect(hdc, &rcCar, m_hbrCar);
+
+	EndPaint(hwnd, &ps);
+}
+
+void MainWnd::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+{
+	// 方向
+	float fDX = 0.0f, fDY = 0.0f;
+	// 速率
+	float fSpeed = 0.5f;
+
+	switch (vk)
+	{
+	case VK_UP:		fDY = +1.0f;	break;
+	case VK_DOWN:	fDY = -1.0f;	break;
+	case VK_LEFT:	fDX = -1.0f;	break;
+	case VK_RIGHT:	fDX = +1.0f;	break;
+	default:
+		break;
+	}
+
+	// 计算位移
+	float fDeltaX = fSpeed * fDX;
+	float fDeltaY = fSpeed * fDY;
+
+	// 移动车辆
+	m_car.Move(fDeltaX, fDeltaY);
+
+	// 刷新
+	InvalidateRect(hwnd, NULL, TRUE);
+}
