@@ -59,6 +59,8 @@ LRESULT MainWnd::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg) {
 		HANDLE_MSG(hWnd, WM_KEYDOWN, OnKeyDown);
 		break;
+	case WM_CAR_MOVING:
+		return OnCarMoving(hWnd, uMsg, wParam, lParam);
 	default:
 		return XWnd::WndProc(hWnd, uMsg, wParam, lParam);
 	}
@@ -119,32 +121,43 @@ void MainWnd::OnPaint(HWND hwnd)
 	FillRect(hdc, &rcCar, m_hbrCar);
 
 	EndPaint(hwnd, &ps);
+
+	// 继续移动
+	PostMessage(hwnd, WM_CAR_MOVING, 0, 0);
 }
 
 void MainWnd::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
-	// 方向
-	float fDX = 0.0f, fDY = 0.0f;
-	// 速率
-	float fSpeed = 0.5f;
-
 	switch (vk)
 	{
-	case VK_UP:		fDY = +1.0f;	break;
-	case VK_DOWN:	fDY = -1.0f;	break;
-	case VK_LEFT:	fDX = -1.0f;	break;
-	case VK_RIGHT:	fDX = +1.0f;	break;
+	case VK_UP:
+	case VK_DOWN:
+	case VK_LEFT:
+	case VK_RIGHT:
+		PostMessage(hwnd, WM_CAR_MOVING, 0, 0);
+		break;
 	default:
 		break;
 	}
+}
+
+LRESULT MainWnd::OnCarMoving(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	// 速率
+	float fSpeed = 0.01f;
+	// 方向
+	int iX = (GetKeyState(VK_RIGHT) >> 8 & 0x01) - (GetKeyState(VK_LEFT) >> 8 & 0x01);
+	int iY = (GetKeyState(VK_UP) >> 8 & 0x01) - (GetKeyState(VK_DOWN) >> 8 & 0x01);
 
 	// 计算位移
-	float fDeltaX = fSpeed * fDX;
-	float fDeltaY = fSpeed * fDY;
+	float fDeltaX = fSpeed * iX;
+	float fDeltaY = fSpeed * iY;
 
-	// 移动车辆
-	m_car.Move(fDeltaX, fDeltaY);
+	// 如果需要移动车辆
+	if (iX != 0 || iY != 0) {
+		m_car.Move(fDeltaX, fDeltaY);
+		InvalidateRect(hwnd, NULL, TRUE);
+	}
 
-	// 刷新
-	InvalidateRect(hwnd, NULL, TRUE);
+	return 0L;
 }

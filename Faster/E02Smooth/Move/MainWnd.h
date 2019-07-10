@@ -16,6 +16,7 @@ protected:
 	void OnDestroy(HWND hwnd) override;
 	virtual void OnPaint(HWND hwnd) override;
 	virtual void OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags);
+	virtual LRESULT OnCarMoving(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 private:
 	Car m_car;
 	HPEN m_hDotPen;

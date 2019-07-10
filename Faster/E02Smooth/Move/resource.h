@@ -3,6 +3,7 @@
 // Used by Move.rc
 //
 #define IDI_ICONAPP                     101
+#define WM_CAR_MOVING	WM_USER+1
 
 // Next default values for new objects
 // 
