@@ -58,6 +58,7 @@ LRESULT MainWnd::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	// 消息处理
 	switch (uMsg) {
 		HANDLE_MSG(hWnd, WM_KEYDOWN, OnKeyDown);
+		HANDLE_MSG(hWnd, WM_ERASEBKGND, OnEraseBkgnd);
 		break;
 	case WM_CAR_MOVING:
 		return OnCarMoving(hWnd, uMsg, wParam, lParam);
@@ -72,6 +73,18 @@ BOOL MainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 
 	m_hDotPen = CreatePen(PS_DOT, 0, RGB(0xff, 0x00, 0x00));
 	m_hbrCar = CreateSolidBrush(RGB(0x33, 0x33, 0xcc));
+
+	// 最大可能的桌面尺寸
+	int maxWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+	int maxHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+
+	// 双缓冲
+	HDC hdc = GetDC(hwnd);
+	m_hdcMem = CreateCompatibleDC(hdc);
+	m_hBmp = CreateCompatibleBitmap(hdc, maxWidth, maxHeight);
+	SelectObject(m_hdcMem, m_hBmp);
+	ReleaseDC(hwnd, hdc);
+
 	return TRUE;
 }
 
@@ -79,6 +92,10 @@ void MainWnd::OnDestroy(HWND hwnd)
 {
 	DeletePen(m_hDotPen);
 	DeleteBrush(m_hbrCar);
+
+	DeleteDC(m_hdcMem);
+	DeleteBitmap(m_hBmp);
+
 	__super::OnDestroy(hwnd);
 }
 
@@ -91,9 +108,8 @@ void MainWnd::OnPaint(HWND hwnd)
 	RECT rc;
 	GetClientRect(hwnd, &rc);
 
-	PAINTSTRUCT ps;
-	HDC hdc = BeginPaint(hwnd, &ps);
-
+	// 绘制在不可见的内存缓冲区
+	HDC hdc = m_hdcMem;
 	// 设定坐标系统
 	SetMapMode(hdc, MM_ISOTROPIC);
 	SetWindowExtEx(hdc, 100000, 100000, NULL); // 标准世界有多大
@@ -120,10 +136,23 @@ void MainWnd::OnPaint(HWND hwnd)
 	rcCar.bottom = static_cast<int>(1000.0f * (pos.y - size.y / 2.0f));
 	FillRect(hdc, &rcCar, m_hbrCar);
 
+	// 使用硬件加速
+	PAINTSTRUCT ps;
+	HDC hdcDev = BeginPaint(hwnd, &ps);
+	SetMapMode(hdcDev, MM_ISOTROPIC);
+	SetWindowExtEx(hdcDev, 100000, 100000, NULL);
+	SetViewportExtEx(hdcDev, pixels, -pixels, NULL);
+	SetViewportOrgEx(hdcDev, rc.right / 2, rc.bottom / 2, NULL);
+	BitBlt(hdcDev, -50000, -50000, 100000, 100000, hdc, -50000, -50000, SRCCOPY);
 	EndPaint(hwnd, &ps);
 
 	// 继续移动
 	PostMessage(hwnd, WM_CAR_MOVING, 0, 0);
+}
+
+BOOL MainWnd::OnEraseBkgnd(HWND hwnd, HDC hdc)
+{
+	return TRUE;
 }
 
 void MainWnd::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
@@ -144,7 +173,7 @@ void MainWnd::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 LRESULT MainWnd::OnCarMoving(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	// 速率
-	float fSpeed = 0.01f;
+	float fSpeed = 0.05f;
 	// 方向
 	int iX = (GetKeyState(VK_RIGHT) >> 8 & 0x01) - (GetKeyState(VK_LEFT) >> 8 & 0x01);
 	int iY = (GetKeyState(VK_UP) >> 8 & 0x01) - (GetKeyState(VK_DOWN) >> 8 & 0x01);
