@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Car.h"
 
-const float Car::c_fLength = 4.519f;
-const float Car::c_fWidth = 1.852f;
+const float Car::c_fLength = 4.519f; // 单位:米
+const float Car::c_fWidth  = 1.852f; // 单位:米
 
 Car::Car()
 {

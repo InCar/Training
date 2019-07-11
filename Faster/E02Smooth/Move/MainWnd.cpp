@@ -57,7 +57,8 @@ LRESULT MainWnd::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	// 消息处理
 	switch (uMsg) {
-		HANDLE_MSG(hWnd, WM_KEYDOWN, OnKeyDown);
+		HANDLE_MSG(hWnd, WM_KEYDOWN, OnKeyUpDown);
+		HANDLE_MSG(hWnd, WM_KEYUP, OnKeyUpDown);
 		HANDLE_MSG(hWnd, WM_ERASEBKGND, OnEraseBkgnd);
 		break;
 	case WM_CAR_MOVING:
@@ -85,6 +86,9 @@ BOOL MainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	SelectObject(m_hdcMem, m_hBmp);
 	ReleaseDC(hwnd, hdc);
 
+	// 获取高性能计数器频率
+	QueryPerformanceFrequency(&m_i64Freq);
+
 	return TRUE;
 }
 
@@ -103,28 +107,48 @@ void MainWnd::OnPaint(HWND hwnd)
 {
 	// 获取主显示器高度(以像素为单位)
 	int pixelsInHeight = GetSystemMetrics(SM_CYSCREEN);
-	int pixels = static_cast<int>(pixelsInHeight * 0.9f);
+	pixelsInHeight = static_cast<int>(pixelsInHeight * 0.9f); // 留一点边距
+
 	// 获取窗口尺寸(以显示器设备像素为单位)
 	RECT rc;
 	GetClientRect(hwnd, &rc);
 
 	// 绘制在不可见的内存缓冲区
 	HDC hdc = m_hdcMem;
-	// 设定坐标系统
-	SetMapMode(hdc, MM_ISOTROPIC);
-	SetWindowExtEx(hdc, 100000, 100000, NULL); // 标准世界有多大
-	SetViewportExtEx(hdc, pixels, -pixels, NULL); // 用显示器设备上的多少像素展示标准世界
-	SetViewportOrgEx(hdc, rc.right / 2, rc.bottom / 2, NULL); // 标准世界的(0,0)相对窗口左上角在什么位置(以显示器设备像素为单位)
+	ChangeMapMode(hdc, pixelsInHeight, rc); // 设定坐标系统
+	RECT rcWorld = rc;
+	ToWorld(hdc, rcWorld);
+	Render(hdc, rcWorld);
+
+	// FPS
+	DrawFPS(hdc, rcWorld);
+
+	// 利用BitBlt的硬件加速能力
+	PAINTSTRUCT ps;
+	HDC hdcDev = BeginPaint(hwnd, &ps);
+	ChangeMapMode(hdcDev, pixelsInHeight, rc);
+	BitBlt(hdcDev, rcWorld.left, rcWorld.bottom, rcWorld.right-rcWorld.left, rcWorld.top-rcWorld.bottom, hdc, rcWorld.left, rcWorld.bottom, SRCCOPY);
+	EndPaint(hwnd, &ps);
+
+	// keep moving
+	PostMessage(hwnd, WM_CAR_MOVING, 0, 0);
+}
+
+void MainWnd::Render(HDC& hdc, RECT& rc)
+{
+	// 填充整个背景区域
+	FillRect(hdc, &rc, GetStockBrush(WHITE_BRUSH));
 
 	// 标准世界边界
-	Rectangle(hdc, -50000, -50000, 50000, 50000);
+	SelectPen(hdc, GetStockBrush(BLACK_PEN));
+	Rectangle(hdc, -c_iWorldWidth / 2, -c_iWorldLength / 2, +c_iWorldWidth / 2, +c_iWorldLength / 2);
 
 	// 坐标轴
 	SelectPen(hdc, m_hDotPen);
-	MoveToEx(hdc, -50000, 0, NULL);
-	LineTo(hdc, +50000, 0);
-	MoveToEx(hdc, 0, -50000, NULL);
-	LineTo(hdc, 0, +50000);
+	MoveToEx(hdc, -c_iWorldWidth / 2, 0, NULL);
+	LineTo(hdc, c_iWorldWidth / 2, 0);
+	MoveToEx(hdc, 0, -c_iWorldLength / 2, NULL);
+	LineTo(hdc, 0, c_iWorldLength / 2);
 
 	// 车辆
 	RECT rcCar;
@@ -135,27 +159,40 @@ void MainWnd::OnPaint(HWND hwnd)
 	rcCar.top = static_cast<int>(1000.0f * (pos.y + size.y / 2.0f));
 	rcCar.bottom = static_cast<int>(1000.0f * (pos.y - size.y / 2.0f));
 	FillRect(hdc, &rcCar, m_hbrCar);
+}
 
-	// 使用硬件加速
-	PAINTSTRUCT ps;
-	HDC hdcDev = BeginPaint(hwnd, &ps);
-	SetMapMode(hdcDev, MM_ISOTROPIC);
-	SetWindowExtEx(hdcDev, 100000, 100000, NULL);
-	SetViewportExtEx(hdcDev, pixels, -pixels, NULL);
-	SetViewportOrgEx(hdcDev, rc.right / 2, rc.bottom / 2, NULL);
-	BitBlt(hdcDev, -50000, -50000, 100000, 100000, hdc, -50000, -50000, SRCCOPY);
-	EndPaint(hwnd, &ps);
+void MainWnd::DrawFPS(const HDC& hdc, RECT& rcWorld)
+{
+	static LARGE_INTEGER i64Last;
+	LARGE_INTEGER i64Now;
+	QueryPerformanceCounter(&i64Now);
+	float fps = 1.0f * m_i64Freq.QuadPart / (i64Now.QuadPart - i64Last.QuadPart);
+	wchar_t buf[64];
+	swprintf_s(buf, L"FPS: %5.2f", fps);
+	DrawText(hdc, buf, -1, &rcWorld, DT_TOP | DT_CENTER);
+	i64Last = i64Now;
+}
 
-	// 继续移动
-	PostMessage(hwnd, WM_CAR_MOVING, 0, 0);
+void MainWnd::ChangeMapMode(const HDC& hdc, int pixels, RECT& rc)
+{
+	SetMapMode(hdc, MM_ISOTROPIC);
+	SetWindowExtEx(hdc, c_iWorldWidth, c_iWorldLength, NULL); // 标准世界有多大
+	SetViewportExtEx(hdc, pixels, -pixels, NULL); // 用显示器设备上的多少像素展示标准世界
+	SetViewportOrgEx(hdc, rc.right / 2, rc.bottom / 2, NULL); // 标准世界的(0,0)相对窗口左上角在什么位置(以显示器设备像素为单位)
+}
+
+void MainWnd::ToWorld(const HDC& hdc, RECT& rc)
+{
+	DPtoLP(hdc, (LPPOINT)&rc, 2);
 }
 
 BOOL MainWnd::OnEraseBkgnd(HWND hwnd, HDC hdc)
 {
+	// BitBlt会覆盖整个区域,因此不用擦除背景
 	return TRUE;
 }
 
-void MainWnd::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+void MainWnd::OnKeyUpDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
 	switch (vk)
 	{
@@ -172,20 +209,20 @@ void MainWnd::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 
 LRESULT MainWnd::OnCarMoving(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	// 速率
-	float fSpeed = 0.05f;
+	// 移动步长(单位:米)
+	const float c_fStep = 0.05f;
 	// 方向
 	int iX = (GetKeyState(VK_RIGHT) >> 8 & 0x01) - (GetKeyState(VK_LEFT) >> 8 & 0x01);
 	int iY = (GetKeyState(VK_UP) >> 8 & 0x01) - (GetKeyState(VK_DOWN) >> 8 & 0x01);
 
 	// 计算位移
-	float fDeltaX = fSpeed * iX;
-	float fDeltaY = fSpeed * iY;
+	float fDeltaX = c_fStep * iX;
+	float fDeltaY = c_fStep * iY;
 
 	// 如果需要移动车辆
 	if (iX != 0 || iY != 0) {
 		m_car.Move(fDeltaX, fDeltaY);
-		InvalidateRect(hwnd, NULL, TRUE);
+		InvalidateRect(hwnd, NULL, FALSE);
 	}
 
 	return 0L;
