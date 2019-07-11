@@ -21,6 +21,7 @@ protected:
 private:
 	const int c_iWorldWidth  = 1000 * 100; // 单位:毫米
 	const int c_iWorldLength = 1000 * 100; // 单位:毫米
+	const float c_fMaxFPS = 100.0f;
 	Car m_car;
 	HPEN m_hDotPen;
 	HBRUSH m_hbrCar;
@@ -30,7 +31,6 @@ private:
 
 	// 渲染
 	void Render(HDC& hdc, RECT& rc);
-	void DrawFPS(const HDC& hdc, RECT& rcWorld);
 	// 设定坐标系
 	void ChangeMapMode(const HDC& hdc, int pixels, RECT& rc);
 	// 转换到逻辑坐标系

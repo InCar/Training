@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XWndLib", "XWndLib\XWndLib.vcxproj", "{F4EFBCAF-984E-4CF4-B868-EA22DC1CA8D7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Move", "Move\Move.vcxproj", "{85B52B8F-1DFE-4C04-BE60-542EB2B66957}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F4EFBCAF-984E-4CF4-B868-EA22DC1CA8D7} = {F4EFBCAF-984E-4CF4-B868-EA22DC1CA8D7}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

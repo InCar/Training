@@ -105,33 +105,50 @@ void MainWnd::OnDestroy(HWND hwnd)
 
 void MainWnd::OnPaint(HWND hwnd)
 {
-	// 获取主显示器高度(以像素为单位)
-	int pixelsInHeight = GetSystemMetrics(SM_CYSCREEN);
-	pixelsInHeight = static_cast<int>(pixelsInHeight * 0.9f); // 留一点边距
-
-	// 获取窗口尺寸(以显示器设备像素为单位)
-	RECT rc;
-	GetClientRect(hwnd, &rc);
-
-	// 绘制在不可见的内存缓冲区
-	HDC hdc = m_hdcMem;
-	ChangeMapMode(hdc, pixelsInHeight, rc); // 设定坐标系统
-	RECT rcWorld = rc;
-	ToWorld(hdc, rcWorld);
-	Render(hdc, rcWorld);
-
-	// FPS
-	DrawFPS(hdc, rcWorld);
-
-	// 利用BitBlt的硬件加速能力
 	PAINTSTRUCT ps;
 	HDC hdcDev = BeginPaint(hwnd, &ps);
-	ChangeMapMode(hdcDev, pixelsInHeight, rc);
-	BitBlt(hdcDev, rcWorld.left, rcWorld.bottom, rcWorld.right-rcWorld.left, rcWorld.top-rcWorld.bottom, hdc, rcWorld.left, rcWorld.bottom, SRCCOPY);
-	EndPaint(hwnd, &ps);
 
-	// keep moving
-	PostMessage(hwnd, WM_CAR_MOVING, 0, 0);
+	// FPS
+	static LARGE_INTEGER i64Last;
+	LARGE_INTEGER i64Now;
+	QueryPerformanceCounter(&i64Now);
+	float fps = 1.0f * m_i64Freq.QuadPart / (i64Now.QuadPart - i64Last.QuadPart);
+
+	if (fps < c_fMaxFPS) {
+		i64Last = i64Now;
+
+		// 获取主显示器高度(以像素为单位)
+		int pixelsInHeight = GetSystemMetrics(SM_CYSCREEN);
+		pixelsInHeight = static_cast<int>(pixelsInHeight * 0.9f); // 留一点边距
+
+		// 获取窗口尺寸(以显示器设备像素为单位)
+		RECT rc;
+		GetClientRect(hwnd, &rc);
+
+		// 绘制在不可见的内存缓冲区
+		HDC hdc = m_hdcMem;
+		ChangeMapMode(hdc, pixelsInHeight, rc); // 设定坐标系统
+		RECT rcWorld = rc;
+		ToWorld(hdc, rcWorld);
+		Render(hdc, rcWorld);
+
+		// FPS
+		wchar_t buf[64];
+		swprintf_s(buf, L"FPS: %5.2f", fps);
+		DrawText(hdc, buf, -1, &rcWorld, DT_TOP | DT_CENTER);
+
+		// 利用BitBlt的硬件加速能力
+		ChangeMapMode(hdcDev, pixelsInHeight, rc);
+		BitBlt(hdcDev, rcWorld.left, rcWorld.bottom, rcWorld.right - rcWorld.left, rcWorld.top - rcWorld.bottom, hdc, rcWorld.left, rcWorld.bottom, SRCCOPY);
+
+		// keep moving
+		PostMessage(hwnd, WM_CAR_MOVING, 0, 0);
+	}
+	else {
+		InvalidateRect(hwnd, NULL, NULL);
+	}
+
+	EndPaint(hwnd, &ps);
 }
 
 void MainWnd::Render(HDC& hdc, RECT& rc)
@@ -159,18 +176,6 @@ void MainWnd::Render(HDC& hdc, RECT& rc)
 	rcCar.top = static_cast<int>(1000.0f * (pos.y + size.y / 2.0f));
 	rcCar.bottom = static_cast<int>(1000.0f * (pos.y - size.y / 2.0f));
 	FillRect(hdc, &rcCar, m_hbrCar);
-}
-
-void MainWnd::DrawFPS(const HDC& hdc, RECT& rcWorld)
-{
-	static LARGE_INTEGER i64Last;
-	LARGE_INTEGER i64Now;
-	QueryPerformanceCounter(&i64Now);
-	float fps = 1.0f * m_i64Freq.QuadPart / (i64Now.QuadPart - i64Last.QuadPart);
-	wchar_t buf[64];
-	swprintf_s(buf, L"FPS: %5.2f", fps);
-	DrawText(hdc, buf, -1, &rcWorld, DT_TOP | DT_CENTER);
-	i64Last = i64Now;
 }
 
 void MainWnd::ChangeMapMode(const HDC& hdc, int pixels, RECT& rc)
@@ -210,7 +215,7 @@ void MainWnd::OnKeyUpDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flag
 LRESULT MainWnd::OnCarMoving(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	// 移动步长(单位:米)
-	const float c_fStep = 0.05f;
+	const float c_fStep = 20.0f / c_fMaxFPS;
 	// 方向
 	int iX = (GetKeyState(VK_RIGHT) >> 8 & 0x01) - (GetKeyState(VK_LEFT) >> 8 & 0x01);
 	int iY = (GetKeyState(VK_UP) >> 8 & 0x01) - (GetKeyState(VK_DOWN) >> 8 & 0x01);
