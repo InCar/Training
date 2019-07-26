@@ -37,5 +37,6 @@ protected:
 	virtual void OnPaint(HWND hwnd);
 	virtual void OnSize(HWND hwnd, UINT state, int cx, int cy);
 	virtual void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
+	virtual void OnClose(HWND hwnd);
 };
 

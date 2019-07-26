@@ -34,7 +34,7 @@ BOOL XWnd::Create(wstring& wstrTitle, const RECT& rect, const XWnd& xwndParent, 
 	WNDCLASS cls;
 	if (!GetClassInfo(m_hInst, m_wstrClsName.c_str(), &cls)) Register();
 
-	m_hwnd = CreateWindow(m_wstrClsName.c_str(), wstrTitle.c_str(),
+	CreateWindow(m_wstrClsName.c_str(), wstrTitle.c_str(),
 		dwStyle | WS_CHILD | WS_VISIBLE | WS_BORDER,
 		rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
 		xwndParent, NULL, m_hInst, this);
@@ -54,18 +54,19 @@ void XWnd::Destroy()
 	m_hwnd = NULL;
 }
 
-LRESULT XWnd::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT XWnd::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	// 消息处理
 	switch (uMsg) {
-		HANDLE_MSG(hWnd, WM_CREATE, OnCreate);
-		HANDLE_MSG(hWnd, WM_DESTROY, OnDestroy);
-		HANDLE_MSG(hWnd, WM_PAINT, OnPaint);
-		HANDLE_MSG(hWnd, WM_COMMAND, OnCommand);
-		HANDLE_MSG(hWnd, WM_SIZE, OnSize);
+		HANDLE_MSG(hwnd, WM_CREATE, OnCreate);
+		HANDLE_MSG(hwnd, WM_SIZE, OnSize);
+		HANDLE_MSG(hwnd, WM_PAINT, OnPaint);
+		HANDLE_MSG(hwnd, WM_COMMAND, OnCommand);
+		HANDLE_MSG(hwnd, WM_CLOSE, OnClose);
+		HANDLE_MSG(hwnd, WM_DESTROY, OnDestroy);
 		break;
 	default:
-		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 }
 
@@ -88,6 +89,7 @@ LRESULT XWnd::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 BOOL XWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 {
+	m_hwnd = hwnd;
 	// 创建字体"宋体"
 	LOGFONT lf;
 	ZeroMemory(&lf, sizeof(LOGFONT));
@@ -103,7 +105,11 @@ void XWnd::OnDestroy(HWND hwnd)
 {
 	// 销毁字体
 	DeleteFont(m_hfontSong);
-	PostQuitMessage(0);
+}
+
+void XWnd::OnClose(HWND hwnd)
+{
+	Destroy();
 }
 
 void XWnd::OnPaint(HWND hwnd)

@@ -77,12 +77,12 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
         pd.lStructSize = sizeof(PRINTDLG);
         pd.hwndOwner = hwnd;
         pd.Flags = PD_RETURNDC;
-        if (PrintDlg(&pd)) {
+        if (PrintDlgEx(&pd)) {
 
             DOCINFO info;
             ZeroMemory(&info, sizeof(DOCINFO));
             info.cbSize = sizeof(DOCINFO);
-            info.lpszDocName = "打印示例";
+            info.lpszDocName = L"打印示例";
             StartDoc(pd.hDC, &info);
             StartPage(pd.hDC);
             // TextOut(pd.hDC, 0, 0, L"打印示例", 4);

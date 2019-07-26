@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3D11", "3D11\3D11.vcxproj", "{9C81A81E-054F-42F5-A644-CB802BC3EB01}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3D12", "3D12\3D12.vcxproj", "{8A7A7167-B6E5-4D03-B33E-08C3AB2323AA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3DS", "3DS\3DS.vcxitems", "{DFCDBB8F-DF92-4ED2-ABFE-CF1D6CE86BF1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XWndLib", "..\E02Smooth\XWndLib\XWndLib.vcxproj", "{F4EFBCAF-984E-4CF4-B868-EA22DC1CA8D7}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		3DS\3DS.vcxitems*{8a7a7167-b6e5-4d03-b33e-08c3ab2323aa}*SharedItemsImports = 4
+		3DS\3DS.vcxitems*{9c81a81e-054f-42f5-a644-cb802bc3eb01}*SharedItemsImports = 4
+		3DS\3DS.vcxitems*{dfcdbb8f-df92-4ed2-abfe-cf1d6ce86bf1}*SharedItemsImports = 9
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9C81A81E-054F-42F5-A644-CB802BC3EB01}.Debug|x64.ActiveCfg = Debug|x64
+		{9C81A81E-054F-42F5-A644-CB802BC3EB01}.Debug|x64.Build.0 = Debug|x64
+		{9C81A81E-054F-42F5-A644-CB802BC3EB01}.Release|x64.ActiveCfg = Release|x64
+		{9C81A81E-054F-42F5-A644-CB802BC3EB01}.Release|x64.Build.0 = Release|x64
+		{8A7A7167-B6E5-4D03-B33E-08C3AB2323AA}.Debug|x64.ActiveCfg = Debug|x64
+		{8A7A7167-B6E5-4D03-B33E-08C3AB2323AA}.Debug|x64.Build.0 = Debug|x64
+		{8A7A7167-B6E5-4D03-B33E-08C3AB2323AA}.Release|x64.ActiveCfg = Release|x64
+		{8A7A7167-B6E5-4D03-B33E-08C3AB2323AA}.Release|x64.Build.0 = Release|x64
+		{F4EFBCAF-984E-4CF4-B868-EA22DC1CA8D7}.Debug|x64.ActiveCfg = Debug|x64
+		{F4EFBCAF-984E-4CF4-B868-EA22DC1CA8D7}.Debug|x64.Build.0 = Debug|x64
+		{F4EFBCAF-984E-4CF4-B868-EA22DC1CA8D7}.Release|x64.ActiveCfg = Release|x64
+		{F4EFBCAF-984E-4CF4-B868-EA22DC1CA8D7}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {585484ED-885A-4EB0-88B7-4362F2749B5D}
+	EndGlobalSection
+EndGlobal

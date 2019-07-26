@@ -89,9 +89,6 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     BOOL bRet = CXWnd::OnCreate(hwnd, lpCreateStruct);
     if (!bRet) return bRet;
 
-    RECT rc;
-    GetClientRect(hwnd, &rc);
-
     ComPtr<IDXGIFactory1> spFactory;
     ComPtr<IDXGIFactory3> spFactory3;
     HRESULT hr = CreateDXGIFactory1(IID_PPV_ARGS(&spFactory));
@@ -130,48 +127,6 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
         return FALSE;
     }
 
-    // 设定渲染目标
-    ComPtr<ID3D11Texture2D> spBackBuffer;
-    hr = m_spSwapChain->GetBuffer(0, IID_PPV_ARGS(&spBackBuffer));
-    hr = m_spD3D11->CreateRenderTargetView(spBackBuffer.Get(), NULL, &m_spRTV);
-
-    // Z-Buffer
-    D3D11_TEXTURE2D_DESC descZ;
-    ZeroMemory(&descZ, sizeof(D3D11_TEXTURE2D_DESC));
-    descZ.Width = rc.right - rc.left;
-    descZ.Height = rc.bottom - rc.top;
-    descZ.MipLevels = 1;
-    descZ.ArraySize = 1;
-    descZ.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    descZ.SampleDesc.Count = 4;
-    descZ.SampleDesc.Quality = D3D11_STANDARD_MULTISAMPLE_PATTERN;
-    descZ.Usage = D3D11_USAGE_DEFAULT;
-    descZ.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    hr = m_spD3D11->CreateTexture2D(&descZ, NULL, &m_spZ);
-
-    D3D11_DEPTH_STENCIL_VIEW_DESC descZView;
-    ZeroMemory(&descZView, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
-    descZView.Format = descZ.Format;
-    descZView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
-    hr = m_spD3D11->CreateDepthStencilView(m_spZ.Get(), &descZView, &m_spZView);
-
-    ID3D11RenderTargetView *pRTV = m_spRTV.Get();
-    m_spImCtx->OMSetRenderTargets(1, &pRTV, m_spZView.Get());
-    if (FAILED(hr)) {
-        MessageBox(hwnd, L"Create Render Target View Failed!", L"D3D11", MB_OK);
-        return FALSE;
-    }
-
-    // 设定可见区域
-    D3D11_VIEWPORT viewPort;
-    viewPort.TopLeftX = 0.0f;
-    viewPort.TopLeftY = 0.0f;
-    viewPort.Width = static_cast<float>(rc.right - rc.left);
-    viewPort.Height = static_cast<float>(rc.bottom - rc.top);
-    viewPort.MinDepth = 0.0f;
-    viewPort.MaxDepth = 1.0f;
-    m_spImCtx->RSSetViewports(1, &viewPort);
-
     // 光栅参数
     D3D11_RASTERIZER_DESC descRS;
     ZeroMemory(&descRS, sizeof(D3D11_RASTERIZER_DESC));
@@ -182,7 +137,7 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 
     ComPtr<ID3D11RasterizerState> spRS;
     hr = m_spD3D11->CreateRasterizerState(&descRS, &spRS);
-    //m_spImCtx->RSSetState(spRS.Get());
+    m_spImCtx->RSSetState(spRS.Get());
 
     // GPU
     hr = LoadShader();
@@ -226,17 +181,16 @@ BOOL CMainWnd::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
     m_cb.mWorld = ::XMMatrixIdentity();
 
     // 摄像机位
-    XMVECTOR Eye = XMVectorSet(0.0f, 3.0f, -5.0f, 0.0f);
+    XMVECTOR Eye = XMVectorSet(3.0f, 8.0f, -15.0f, 0.0f);
     XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
     XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
     m_cb.mView = ::XMMatrixLookAtLH(Eye, At, Up);
 
-    // 镜头
-    m_cb.mProjection = ::XMMatrixPerspectiveFovLH(XM_2PI/3.0f, (rc.right-rc.left) / (FLOAT)(rc.bottom-rc.top), 0.01f, 100.0f);
-
     // 灯光
     m_cb.vLightDir = XMFLOAT4(-0.577f, 0.577f, -0.577f, 1.0f);
     m_cb.vLightColor = XMFLOAT4(0.5f, 0.5f, 0.3f, 1.0f);
+
+	OnSize(hwnd, 0, lpCreateStruct->cx, lpCreateStruct->cy);
 
     // 开始时间标定
     m_u64Begin = GetTickCount64();
@@ -265,6 +219,56 @@ void CMainWnd::OnSize(HWND hwnd, UINT state, int cx, int cy)
     desc.Scaling = DXGI_MODE_SCALING_STRETCHED;
 
     HRESULT hr = m_spSwapChain->ResizeTarget(&desc);
+
+	// 尺寸不能是0
+	if (cx == 0) cx = 1;
+	if (cy == 0) cy = 1;
+
+	// 释放先前的
+	m_spRTV = nullptr;
+	m_spZView = nullptr;
+	m_spZ = nullptr;
+
+	// 设定渲染目标
+	ComPtr<ID3D11Texture2D> spBackBuffer;
+	hr = m_spSwapChain->GetBuffer(0, IID_PPV_ARGS(&spBackBuffer));
+	hr = m_spD3D11->CreateRenderTargetView(spBackBuffer.Get(), NULL, &m_spRTV);
+
+	// Z-Buffer
+	D3D11_TEXTURE2D_DESC descZ;
+	ZeroMemory(&descZ, sizeof(D3D11_TEXTURE2D_DESC));
+	descZ.Width = cx;
+	descZ.Height = cy;
+	descZ.MipLevels = 1;
+	descZ.ArraySize = 1;
+	descZ.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descZ.SampleDesc.Count = 4;
+	descZ.SampleDesc.Quality = D3D11_STANDARD_MULTISAMPLE_PATTERN;
+	descZ.Usage = D3D11_USAGE_DEFAULT;
+	descZ.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	hr = m_spD3D11->CreateTexture2D(&descZ, NULL, &m_spZ);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC descZView;
+	ZeroMemory(&descZView, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+	descZView.Format = descZ.Format;
+	descZView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	hr = m_spD3D11->CreateDepthStencilView(m_spZ.Get(), &descZView, &m_spZView);
+
+	ID3D11RenderTargetView* pRTV = m_spRTV.Get();
+	m_spImCtx->OMSetRenderTargets(1, &pRTV, m_spZView.Get());
+
+	// 设定可见区域
+	D3D11_VIEWPORT viewPort;
+	viewPort.TopLeftX = 0.0f;
+	viewPort.TopLeftY = 0.0f;
+	viewPort.Width = static_cast<float>(cx);
+	viewPort.Height = static_cast<float>(cy);
+	viewPort.MinDepth = 0.0f;
+	viewPort.MaxDepth = 1.0f;
+	m_spImCtx->RSSetViewports(1, &viewPort);
+
+	// 镜头
+	m_cb.mProjection = ::XMMatrixPerspectiveFovLH(XM_PI / 6.0f, (cx) / (FLOAT)(cy), 0.01f, 100.0f);
 }
 
 BOOL CMainWnd::OnEraseBkgnd(HWND hwnd, HDC hdc)
@@ -297,14 +301,13 @@ void CMainWnd::OnPaint(HWND hwnd)
         * XMMatrixScaling(0.3f, 0.3f, 0.3f)
         * XMMatrixRotationX((GetTickCount64() - m_u64Begin) / 1000.0f)
         * XMMatrixTranslation(+4.0f, 0.0f, 0.0f)
-        * XMMatrixRotationY((GetTickCount64() - m_u64Begin) / -1100.0f));
+        * XMMatrixRotationY((GetTickCount64() - m_u64Begin) / -600.0f));
     cb2.mView = XMMatrixTranspose(m_cb.mView);
     cb2.mProjection = XMMatrixTranspose(m_cb.mProjection);
     cb2.vLightDir = m_cb.vLightDir;
-    cb2.vLightColor = m_cb.vLightColor;
+	cb2.vLightColor = m_cb.vLightColor;
     m_spImCtx->UpdateSubresource(m_spConstant.Get(), 0, nullptr, &cb2, 0, 0);
     m_spImCtx->DrawIndexed(m_pCube->GetVertexesCount(), 0, 0);
-
 
     HRESULT hr = m_spSwapChain->Present(1, 0);
 }

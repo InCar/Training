@@ -39,13 +39,10 @@ BOOL MainWnd::Create()
 
 	// 创建窗口
 	wstring wstrTitle(L"Move");
-	m_hwnd = CreateWindow(m_wstrClsName.c_str(), wstrTitle.c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+	CreateWindow(m_wstrClsName.c_str(), wstrTitle.c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		(cxScreen - width) / 2, (cyScreen - height) / 2, width, height,
 		NULL, NULL, m_hInst, this);
-	if (!m_hwnd) {
-		MessageBox(NULL, L"Create window failed", L"Error", MB_OK);
-		return FALSE;
-	}
+	if (!m_hwnd) return FALSE;
 
 	// 第一次刷新窗口
 	UpdateWindow(m_hwnd);
@@ -101,6 +98,8 @@ void MainWnd::OnDestroy(HWND hwnd)
 	DeleteBitmap(m_hBmp);
 
 	__super::OnDestroy(hwnd);
+
+	PostQuitMessage(0);
 }
 
 void MainWnd::OnPaint(HWND hwnd)
