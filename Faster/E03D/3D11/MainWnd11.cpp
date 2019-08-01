@@ -105,7 +105,7 @@ BOOL MainWnd11::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	if (FAILED(hr)) return FALSE;
 
 	// Resize
-	// Resize(rc.right, rc.bottom);
+	Resize(rc.right, rc.bottom);
 
 	return TRUE;
 }
