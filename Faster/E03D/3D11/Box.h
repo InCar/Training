@@ -10,7 +10,7 @@ struct BoxVertex
 	XMFLOAT4 color;
 };
 
-// 一个长方体
+// 一个立方体
 class Box
 {
 public:

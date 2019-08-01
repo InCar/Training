@@ -8,7 +8,9 @@ AdvCalc::AdvCalc()
 	m_pV = (float*)_aligned_malloc(sizeof(float) * c_len, 64);
 	// 随机产生数据
 	for (int i = 0;i < c_len;i++) {
-		m_pV[i] = 1.0f * rand() / RAND_MAX;
+		unsigned int val;
+		while (!_rdrand32_step(&val));
+		m_pV[i] = 1.0f * val / 0xffffffff;
 	}
 }
 

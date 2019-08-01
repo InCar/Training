@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <string>
+#include <vector>
 
 #include "targetver.h"
 
@@ -14,6 +15,7 @@
 #pragma comment(lib, "dxgi.lib")
 #include <d3d12.h>
 #pragma comment(lib, "d3d12.lib")
+#include <DirectXColors.h>
 
 // $(Configuration)
 #ifdef _DEBUG

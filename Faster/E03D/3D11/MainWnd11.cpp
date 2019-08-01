@@ -39,6 +39,10 @@ BOOL MainWnd11::Create()
 	WNDCLASS cls;
 	if (!GetClassInfo(m_hInst, m_wstrClsName.c_str(), &cls)) Register();
 
+	// 时间
+	QueryPerformanceFrequency(&_i64Freq);
+	QueryPerformanceCounter(&_i64Begin);
+
 	// 创建窗口
 	wstring wstrTitle(L"3D11");
 	CreateWindow(m_wstrClsName.c_str(), wstrTitle.c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE,
@@ -68,6 +72,9 @@ BOOL MainWnd11::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 {
 	__super::OnCreate(hwnd, lpCreateStruct);
 
+	RECT rc;
+	GetClientRect(hwnd, &rc);
+
 	// DXGI
 	ComPtr<IDXGIFactory5> ptrDXGIFactory5;
 	HRESULT hr = CreateDXGIFactory1(IID_PPV_ARGS(&ptrDXGIFactory5));
@@ -96,6 +103,9 @@ BOOL MainWnd11::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	// 创建被绘制对象的资源
 	hr = m_box.CreateD3DRes(m_ptrDevice, m_pVS, m_dwVS);
 	if (FAILED(hr)) return FALSE;
+
+	// Resize
+	// Resize(rc.right, rc.bottom);
 
 	return TRUE;
 }
@@ -223,19 +233,8 @@ HRESULT MainWnd11::Set3DSpace()
 	return hr;
 }
 
-void MainWnd11::OnSize(HWND hwnd, UINT state, int cx, int cy)
+HRESULT MainWnd11::Resize(int cx, int cy)
 {
-	// 重设目标尺寸
-	DXGI_MODE_DESC desc{
-		(UINT)cx,
-		(UINT)cy,
-		{60, 1},
-		DXGI_FORMAT_R8G8B8A8_UNORM,
-		DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED,
-		DXGI_MODE_SCALING_STRETCHED
-	};
-	HRESULT hr = m_ptrDXGISwapChain->ResizeTarget(&desc);
-
 	// 尺寸不能是0
 	int cx3D = cx == 0 ? 1 : cx;
 	int cy3D = cy == 0 ? 1 : cy;
@@ -244,7 +243,7 @@ void MainWnd11::OnSize(HWND hwnd, UINT state, int cx, int cy)
 	m_ptrRTV = nullptr;
 	m_ptrDSV = nullptr;
 	m_ptrZBuf = nullptr;
-	hr = m_ptrDXGISwapChain->ResizeBuffers(1, cx3D, cy3D, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	HRESULT hr = m_ptrDXGISwapChain->ResizeBuffers(1, cx3D, cy3D, DXGI_FORMAT_UNKNOWN, 0);
 
 	// 创建渲染视图
 	ComPtr<ID3D11Texture2D> ptrBackBuf;
@@ -267,6 +266,13 @@ void MainWnd11::OnSize(HWND hwnd, UINT state, int cx, int cy)
 
 	// 设置投影
 	m_cb.mProjection = ::XMMatrixPerspectiveFovLH(XM_PI / 6.0f, cx3D / (FLOAT)(cy3D), 0.01f, 100.0f);
+
+	return hr;
+}
+
+void MainWnd11::OnSize(HWND hwnd, UINT state, int cx, int cy)
+{
+	Resize(cx, cy);
 }
 
 void MainWnd11::OnDestroy(HWND hwnd)
@@ -278,6 +284,9 @@ void MainWnd11::OnDestroy(HWND hwnd)
 
 void MainWnd11::OnPaint(HWND hwnd)
 {
+	RECT rc;
+	GetClientRect(hwnd, &rc);
+
 	PAINTSTRUCT ps;
 	HDC hdc = BeginPaint(hwnd, &ps);
 	EndPaint(hwnd, &ps);
@@ -285,6 +294,17 @@ void MainWnd11::OnPaint(HWND hwnd)
 	// Clear
 	m_ptrDevCtx->ClearRenderTargetView(m_ptrRTV.Get(), Colors::Black);
 	m_ptrDevCtx->ClearDepthStencilView(m_ptrDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	// time
+	static LARGE_INTEGER i64Last = _i64Begin;
+	LARGE_INTEGER i64Now;
+	QueryPerformanceCounter(&i64Now);
+	float fAngle = static_cast<float>(XM_PI * (i64Now.QuadPart - _i64Begin.QuadPart) / _i64Freq.QuadPart);
+
+	wchar_t buf[128];
+	swprintf_s(buf, 128, L"3D11 - FPS: %7.2f\n", 1.0f * _i64Freq.QuadPart/ (i64Now.QuadPart - i64Last.QuadPart));
+	SetWindowText(m_hwnd, buf);
+	i64Last = i64Now;
 
 	// 设定D3D流水线IA(Input Assembler)
 	m_ptrDevCtx->IASetInputLayout(m_box.GetLayout());
@@ -300,9 +320,9 @@ void MainWnd11::OnPaint(HWND hwnd)
 
 	// 设定shaders
 	ConstantBuffer cb1;
-	cb1.mWorld = XMMatrixTranspose(m_cb.mWorld);
-	cb1.mView = XMMatrixTranspose(m_cb.mView);
-	cb1.mProjection = XMMatrixTranspose(m_cb.mProjection);
+	cb1.mWorld = ::XMMatrixTranspose(m_cb.mWorld * ::XMMatrixRotationY(fAngle));
+	cb1.mView = ::XMMatrixTranspose(m_cb.mView);
+	cb1.mProjection = ::XMMatrixTranspose(m_cb.mProjection);
 	m_ptrDevCtx->UpdateSubresource(m_ptrConstant.Get(), 0, nullptr, &cb1, 0, 0);
 	ID3D11Buffer* pConstant = m_ptrConstant.Get();
 	m_ptrDevCtx->VSSetConstantBuffers(0, 1, &pConstant);
@@ -315,6 +335,10 @@ void MainWnd11::OnPaint(HWND hwnd)
 
 	// 交换前后缓冲区
 	HRESULT hr = m_ptrDXGISwapChain->Present(1, 0);
+
+	// 如果尺寸不是0,就不停的绘制
+	if(rc.right > 0 && rc.bottom > 0)
+		InvalidateRect(m_hwnd, NULL, FALSE);
 }
 
 BOOL MainWnd11::OnEraseBkgnd(HWND hwnd, HDC hdc)

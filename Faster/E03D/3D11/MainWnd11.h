@@ -54,6 +54,8 @@ private:
 	DWORD LoadShader(const wchar_t *shaderFileName, BYTE **ppBuf);
 	// 设定坐标
 	HRESULT Set3DSpace();
+	// 调整尺寸
+	HRESULT Resize(int cx, int cy);
 private:
 	// 全局坐标定义
 	ConstantBuffer m_cb;
@@ -63,4 +65,8 @@ private:
 	ComPtr<ID3D11Buffer> m_ptrBoxVB;
 	// 索引缓冲区
 	ComPtr<ID3D11Buffer> m_ptrBoxIB;
+	// 频率
+	LARGE_INTEGER _i64Freq;
+	// 开始时间戳
+	LARGE_INTEGER _i64Begin;
 };
