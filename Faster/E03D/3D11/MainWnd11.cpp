@@ -183,11 +183,11 @@ HRESULT MainWnd11::CreateRSState()
 
 HRESULT MainWnd11::LoadShaders()
 {
-	m_dwVS = LoadShader(L"VS.cso", &m_pVS);
+	m_dwVS = LoadShader(L"VS11.cso", &m_pVS);
 	HRESULT hr = m_ptrDevice->CreateVertexShader(m_pVS, m_dwVS, NULL, &m_ptrVS);
 	if (FAILED(hr)) return hr;
 
-	m_dwPS = LoadShader(L"PS.cso", &m_pPS);
+	m_dwPS = LoadShader(L"PS11.cso", &m_pPS);
 	hr = m_ptrDevice->CreatePixelShader(m_pPS, m_dwPS, NULL, &m_ptrPS);
 	return hr;
 }

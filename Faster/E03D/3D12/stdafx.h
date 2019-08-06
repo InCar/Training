@@ -15,6 +15,8 @@
 #pragma comment(lib, "dxgi.lib")
 #include <d3d12.h>
 #pragma comment(lib, "d3d12.lib")
+#include <d3dcompiler.h>
+#pragma comment(lib, "d3dcompiler.lib")
 #include <DirectXColors.h>
 
 // $(Configuration)

@@ -41,10 +41,37 @@ Box::Box()
 
 Box::~Box()
 {
+	// 越早释放越好,析构时作为最后的保险手段
+	for (int i = 0; i < m_vPtrs.size(); i++) {
+		delete m_vPtrs[i];
+	}
+
+	m_vPtrs.clear();
 }
 
 
-HRESULT Box::CreateD3DRes(ComPtr<ID3D12Device6> &ptrDev, ComPtr<ID3D12GraphicsCommandList5> &ptrCmdList)
+HRESULT Box::CreateD3DRes(ComPtr<ID3D12GraphicsCommandList> &ptrCmdList)
+{
+	HRESULT hr;
+
+	// 顶点缓冲区
+	hr = CreateGPUBuffer(ptrCmdList, m_ptrVBuf, m_vertices, sizeof(m_vertices));
+	if (FAILED(hr)) return hr;
+
+	m_viewVB.BufferLocation = m_ptrVBuf->GetGPUVirtualAddress();
+	m_viewVB.SizeInBytes = sizeof(m_vertices);
+	m_viewVB.StrideInBytes = sizeof(m_vertices) / _countof(m_vertices);
+	
+	// 顶点索引缓冲区
+	hr = CreateGPUBuffer(ptrCmdList, m_ptrIBuf, m_indicies, sizeof(m_indicies));
+	m_viewIB.BufferLocation = m_ptrIBuf->GetGPUVirtualAddress();
+	m_viewIB.SizeInBytes = sizeof(m_indicies);
+	m_viewIB.Format = DXGI_FORMAT_R32_UINT;
+	
+	return hr;
+}
+
+HRESULT Box::CreateGPUBuffer(ComPtr<ID3D12GraphicsCommandList>& ptrCmdList, ComPtr<ID3D12Resource1>& ptrResDst, void* pSrc, rsize_t size)
 {
 	D3D12_HEAP_PROPERTIES heap{
 		D3D12_HEAP_TYPE_DEFAULT,
@@ -57,32 +84,43 @@ HRESULT Box::CreateD3DRes(ComPtr<ID3D12Device6> &ptrDev, ComPtr<ID3D12GraphicsCo
 	D3D12_RESOURCE_DESC desc{
 		D3D12_RESOURCE_DIMENSION_BUFFER,
 		0, // alignment
-		sizeof(m_vertices),
+		size,
 		1,
 		1,
 		1,
 		DXGI_FORMAT_UNKNOWN,
-		{ 1, 0 }, // MSAA
+		{ 1, 0 },
 		D3D12_TEXTURE_LAYOUT_ROW_MAJOR,
 		D3D12_RESOURCE_FLAG_NONE
 	};
 
-	HRESULT hr = ptrDev->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_COMMON, nullptr, IID_PPV_ARGS(&m_ptrVBuf));
+	ComPtr<ID3D12Device> ptrDev;
+	HRESULT hr = ptrCmdList->GetDevice(IID_PPV_ARGS(&ptrDev));
+
+	// 创建目标缓冲区
+	hr = ptrDev->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_COMMON, nullptr, IID_PPV_ARGS(&ptrResDst));
+	if (FAILED(hr)) return hr;
 
 	// D3D12_HEAP_TYPE_DEFAULT类型的缓冲区只能被GPU访问,因此,需要通过另一个D3D12_HEAP_TYPE_UPLOAD来拷贝数据
-	heap.Type = D3D12_HEAP_TYPE_UPLOAD;
-	hr = ptrDev->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_ptrUploadBuf));
+	ComPtr<ID3D12Resource1>* pPtrUploadBuf = new ComPtr<ID3D12Resource1>();
+	m_vPtrs.push_back(pPtrUploadBuf);
 
+	heap.Type = D3D12_HEAP_TYPE_UPLOAD;
+	ComPtr<ID3D12Resource1>& ptrUploadBuf = *pPtrUploadBuf;
+	hr = ptrDev->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&ptrUploadBuf));
+
+	// 拷贝数据 pSrc -> ptrUploadBuf
 	void* pData;
-	hr = m_ptrUploadBuf->Map(0, nullptr, &pData);
-	memcpy_s(pData, sizeof(m_vertices), m_vertices, sizeof(m_vertices));
-	m_ptrUploadBuf->Unmap(0, nullptr);
-	
+	hr = ptrUploadBuf->Map(0, nullptr, &pData);
+	memcpy_s(pData, size, pSrc, size);
+	ptrUploadBuf->Unmap(0, nullptr);
+
+	// 拷贝数据 ptrUploadBuf -> ptrResDst
 	D3D12_RESOURCE_BARRIER barrier{
 		D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 		D3D12_RESOURCE_BARRIER_FLAG_NONE,
 		{
-			m_ptrVBuf.Get(),
+			ptrResDst.Get(),
 			D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
 			D3D12_RESOURCE_STATE_COMMON,
 			D3D12_RESOURCE_STATE_COPY_DEST
@@ -90,12 +128,22 @@ HRESULT Box::CreateD3DRes(ComPtr<ID3D12Device6> &ptrDev, ComPtr<ID3D12GraphicsCo
 	};
 	ptrCmdList->ResourceBarrier(1, &barrier);
 
-	// copy verties data
-	ptrCmdList->CopyBufferRegion(m_ptrVBuf.Get(), 0, m_ptrUploadBuf.Get(), 0, sizeof(m_vertices));
+	// TRANSITION : STATE_COPY_DEST -> STATE_GENERIC_READ
+	// 这里只是创建一个拷贝命令,GPU会在稍后实际执行这个命令
+	// 在拷贝实际完成前不可以释放掉ptrUploadBuf
+	ptrCmdList->CopyBufferRegion(ptrResDst.Get(), 0, ptrUploadBuf.Get(), 0, size);
 
-	barrier.Transition.StateBefore = barrier.Transition.StateAfter;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
-	ptrCmdList->ResourceBarrier(1, &barrier);
-
+	D3D12_RESOURCE_BARRIER barrier2{
+		D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
+		D3D12_RESOURCE_BARRIER_FLAG_NONE,
+		{
+			ptrResDst.Get(),
+			D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
+			D3D12_RESOURCE_STATE_COPY_DEST,
+			D3D12_RESOURCE_STATE_GENERIC_READ
+		}
+	};
+	ptrCmdList->ResourceBarrier(1, &barrier2);
+	
 	return hr;
 }

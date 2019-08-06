@@ -2,6 +2,8 @@
 #include "resource.h"
 #include "MainWnd12.h"
 
+const DXGI_SAMPLE_DESC MainWnd12::c_mass = { 1, 0 };
+
 MainWnd12::MainWnd12()
 {
 }
@@ -18,7 +20,7 @@ ATOM MainWnd12::Register()
 	wcls.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 	wcls.lpfnWndProc = XWnd::WindowProc;
 	wcls.hInstance = m_hInst;
-	wcls.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	wcls.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 	wcls.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wcls.hIcon = LoadIcon(m_hInst, MAKEINTRESOURCE(IDI_ICON_APP)); // 图标
 	wcls.lpszClassName = m_wstrClsName.c_str();
@@ -72,31 +74,47 @@ BOOL MainWnd12::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	// 启用调试信息
 	UINT uFlags = 0;
 #ifdef _DEBUG
-	ComPtr<ID3D12Debug3> ptrDebug;
+	ComPtr<ID3D12Debug> ptrDebug;
 	D3D12GetDebugInterface(IID_PPV_ARGS(&ptrDebug));
 	ptrDebug->EnableDebugLayer();
 
 	uFlags = DXGI_CREATE_FACTORY_DEBUG;
 #endif
 	// DXGI
-	ComPtr<IDXGIFactory7> ptrDXGIFactory;
+	ComPtr<IDXGIFactory4> ptrDXGIFactory;
 	HRESULT hr = CreateDXGIFactory2(uFlags, IID_PPV_ARGS(&ptrDXGIFactory));
 	if (FAILED(hr)) return FALSE;
 	
-	// 创建D3D设备对象
+	// 创建D3D设备对象 以及 相关联的命令队列
 	hr = CreateDevice(ptrDXGIFactory);
 	if (FAILED(hr)) return FALSE;
 
-	// 创建双缓冲交换链
-	hr = CreateSwapChain(ptrDXGIFactory, rc.right, rc.bottom);
+	// 初始化几何对象
+	hr = m_box.CreateD3DRes(m_ptrCmdList);
 	if (FAILED(hr)) return FALSE;
 
-	// 创建资源堆
+	// 创建资源描述符堆
 	hr = CreateD3D12Heaps();
 	if (FAILED(hr)) return FALSE;
+	
+	// 3D空间
+	hr = Set3DSpace();
+	if (FAILED(hr)) return FALSE;
 
-	// Init Box
-	hr = m_box.CreateD3DRes(m_ptrDev, m_ptrCmdList);
+	// RootSignature
+	hr = CreateRootSignature();
+	if (FAILED(hr)) return FALSE;
+	
+	// GPU代码
+	hr = LoadShaders();
+	if (FAILED(hr)) return FALSE;
+
+	// 流水线
+	hr = BuildPSO();
+	if (FAILED(hr)) return FALSE;
+
+	// 创建后备缓冲交换链
+	hr = CreateSwapChain(ptrDXGIFactory, rc.right, rc.bottom);
 	if (FAILED(hr)) return FALSE;
 
 	// 执行
@@ -109,10 +127,50 @@ BOOL MainWnd12::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	hr = Resize(rc.right, rc.bottom);
 	if (FAILED(hr)) return FALSE;
 
+	// 记录时间戳
+	QueryPerformanceFrequency(reinterpret_cast<PLARGE_INTEGER>(&m_i64Freq));
+	QueryPerformanceCounter(reinterpret_cast<PLARGE_INTEGER>(&m_i64Start));
+
 	return TRUE;
 }
 
-HRESULT MainWnd12::CreateDevice(ComPtr<IDXGIFactory7> &ptrDXGIFactory)
+void MainWnd12::OnDestroy(HWND hwnd)
+{
+	__super::OnDestroy(hwnd);
+
+	PostQuitMessage(0);
+}
+
+void MainWnd12::OnSize(HWND hwnd, UINT state, int cx, int cy)
+{
+	Resize(cx, cy);
+}
+
+void MainWnd12::OnPaint(HWND hwnd)
+{
+	// 更新ConstantBuffer
+	Update();
+
+	PAINTSTRUCT ps;
+	HDC hdc = BeginPaint(hwnd, &ps);
+	EndPaint(hwnd, &ps);
+
+	// 渲染
+	Render();
+
+	// 如果窗口尺寸不为0,不停绘制
+	RECT rc;
+	GetClientRect(hwnd, &rc);
+	if (rc.right > 0 && rc.bottom > 0) 
+		InvalidateRect(hwnd, nullptr, false);
+}
+
+BOOL MainWnd12::OnEraseBkgnd(HWND hwnd, HDC hdc)
+{
+	return TRUE;
+}
+
+HRESULT MainWnd12::CreateDevice(ComPtr<IDXGIFactory4> &ptrDXGIFactory)
 {
 	HRESULT hr = D3D12CreateDevice(NULL, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_ptrDev));
 	if (FAILED(hr)) {
@@ -124,6 +182,7 @@ HRESULT MainWnd12::CreateDevice(ComPtr<IDXGIFactory7> &ptrDXGIFactory)
 		hr = D3D12CreateDevice(spAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_ptrDev));
 		if (FAILED(hr)) return hr;
 		else {
+			m_bWARP = true;
 			OutputDebugString(L"The WARP device has been created.\n");
 		}
 	}
@@ -152,14 +211,14 @@ HRESULT MainWnd12::CreateDevice(ComPtr<IDXGIFactory7> &ptrDXGIFactory)
 	return hr;
 }
 
-HRESULT MainWnd12::CreateSwapChain(ComPtr<IDXGIFactory7> &ptrDXGIFactory, int cx, int cy)
+HRESULT MainWnd12::CreateSwapChain(ComPtr<IDXGIFactory4> &ptrDXGIFactory, int cx, int cy)
 {
 	DXGI_SWAP_CHAIN_DESC1 desc{
 		(UINT)cx, // width
 		(UINT)cy, // height
-		c_fmt,
+		c_fmtBack,
 		false, //stereo
-		{1, 0}, // MSAA
+		c_mass, // MSAA
 		DXGI_USAGE_RENDER_TARGET_OUTPUT,
 		c_uBufferCount, // buffer count
 		DXGI_SCALING_NONE,
@@ -205,13 +264,186 @@ HRESULT MainWnd12::CreateD3D12Heaps()
 	return hr;
 }
 
+HRESULT MainWnd12::Set3DSpace()
+{
+	// 必须是256的整数倍
+	unsigned int uLeft = sizeof(WorldViewProj) & 0x00ff;
+	unsigned int uPadding = 0x0100 - uLeft;
+	unsigned int szCBV = sizeof(WorldViewProj) + uPadding;
+
+	D3D12_HEAP_PROPERTIES heap{
+		D3D12_HEAP_TYPE_UPLOAD,
+		D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
+		D3D12_MEMORY_POOL_UNKNOWN,
+		0,
+		0
+	};
+
+	D3D12_RESOURCE_DESC desc{
+		D3D12_RESOURCE_DIMENSION_BUFFER,
+		0, // alignment
+		szCBV,
+		1,
+		1,
+		1,
+		DXGI_FORMAT_UNKNOWN,
+		{ 1, 0 },
+		D3D12_TEXTURE_LAYOUT_ROW_MAJOR,
+		D3D12_RESOURCE_FLAG_NONE
+	};
+	// m_ptrCB
+	HRESULT hr = m_ptrDev->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_ptrCB));
+
+	// CBView
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+	cbvDesc.BufferLocation = m_ptrCB->GetGPUVirtualAddress();
+	cbvDesc.SizeInBytes = szCBV;
+	D3D12_CPU_DESCRIPTOR_HANDLE hHeapCPU = m_ptrCBVHeap->GetCPUDescriptorHandleForHeapStart();
+	m_ptrDev->CreateConstantBufferView(&cbvDesc, hHeapCPU);
+
+	// 标准空间
+	m_wvProj.mWorld = ::XMMatrixIdentity();
+
+	// 摄像机位
+	XMVECTOR Eye = XMVectorSet(2.0f, 3.0f, -8.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	m_wvProj.mView = ::XMMatrixLookAtLH(Eye, At, Up);
+
+	return hr;
+}
+
+HRESULT MainWnd12::CreateRootSignature()
+{
+	HRESULT hr;
+
+	// register(b0)
+	D3D12_DESCRIPTOR_RANGE range{
+		D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+		1,
+		0,
+		0,
+		D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+	};
+
+	D3D12_ROOT_PARAMETER param{
+		D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
+		{
+			1,
+			&range
+		},
+		D3D12_SHADER_VISIBILITY_ALL
+	};
+
+	D3D12_VERSIONED_ROOT_SIGNATURE_DESC desc{
+		D3D_ROOT_SIGNATURE_VERSION_1,
+		{
+			1,
+			&param,
+			0,
+			nullptr,
+			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
+		}
+	};
+
+	ComPtr<ID3DBlob> ptrBlob, ptrError;
+	hr = D3D12SerializeVersionedRootSignature(&desc, &ptrBlob, &ptrError);
+	hr = m_ptrDev->CreateRootSignature(0, ptrBlob->GetBufferPointer(), ptrBlob->GetBufferSize(), IID_PPV_ARGS(&m_ptrRootSig));
+	return hr;
+}
+
+HRESULT MainWnd12::LoadShaders()
+{
+	HRESULT hr = LoadShader(L"VS12.cso", m_ptrVSBlob);
+	if (FAILED(hr)) return hr;
+
+	hr = LoadShader(L"PS12.cso", m_ptrPSBlob);
+	return hr;
+}
+
+HRESULT MainWnd12::LoadShader(const wchar_t* shaderFileName, ComPtr<ID3DBlob>& ptrBlob)
+{
+	// 相对路径
+	wchar_t buf[512];
+	GetModuleFileName(NULL, buf, 512);
+	wchar_t* pLast = wcsrchr(buf, L'\\');
+	if (pLast == NULL) return 0;
+
+	// read from file
+	wcscpy_s(pLast + 1, 512 - ((pLast + 1) - buf), shaderFileName);
+	HANDLE hCSO = CreateFile(buf, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+	if (hCSO == INVALID_HANDLE_VALUE) return E_HANDLE;
+	DWORD dwSize = GetFileSize(hCSO, NULL);
+
+	HRESULT hr = D3DCreateBlob(dwSize, ptrBlob.GetAddressOf());
+	ReadFile(hCSO, ptrBlob->GetBufferPointer(), dwSize, &dwSize, NULL);
+	CloseHandle(hCSO);
+
+	return hr;
+}
+
+HRESULT MainWnd12::BuildPSO()
+{
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc;
+	memset(&desc, 0, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	// root signature
+	desc.pRootSignature = m_ptrRootSig.Get();
+	// shaders
+	desc.VS = { m_ptrVSBlob->GetBufferPointer(), m_ptrVSBlob->GetBufferSize() };
+	desc.PS = { m_ptrPSBlob->GetBufferPointer(), m_ptrPSBlob->GetBufferSize() };
+	// blend state
+	for (int i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++) {
+		auto &target = desc.BlendState.RenderTarget[i];
+		target.SrcBlend      = D3D12_BLEND_ONE,      target.DestBlend = D3D12_BLEND_ZERO,      target.BlendOp = D3D12_BLEND_OP_ADD;
+		target.SrcBlendAlpha = D3D12_BLEND_ONE, target.DestBlendAlpha = D3D12_BLEND_ZERO, target.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		target.LogicOp = D3D12_LOGIC_OP_NOOP;
+		target.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	}
+	desc.SampleMask = 0xFFFFFFFF;
+	// rasterizer state
+	desc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+	desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	desc.RasterizerState.DepthClipEnable = true;
+	// depth stencil
+	desc.DepthStencilState.DepthEnable = true;
+	desc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	desc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	desc.DepthStencilState.StencilEnable = false;
+	desc.DepthStencilState.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+	desc.DepthStencilState.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+	desc.DepthStencilState.FrontFace = { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
+	desc.DepthStencilState.BackFace = desc.DepthStencilState.FrontFace;
+	// input layout
+	auto &vInputs = m_box.GetInputDesc();
+	desc.InputLayout = { vInputs.data(), static_cast<UINT>(vInputs.size()) };
+	desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	// render target
+	desc.NumRenderTargets = 1;
+	desc.RTVFormats[0] = c_fmtBack;
+	desc.DSVFormat = c_fmtDepthStencil;
+	desc.SampleDesc = c_mass; // MSAA
+
+#ifdef _DEBUG
+	// WARP device only
+	if(m_bWARP) desc.Flags = D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
+#endif
+
+	HRESULT hr = m_ptrDev->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(&m_ptrPSO));
+	return hr;
+}
+
 HRESULT MainWnd12::Resize(int cx, int cy)
 {
+	// 尺寸不能是0
+	if (cx == 0) cx = 1;
+	if (cy == 0) cy = 1;
+
 	// 让先前命令队列中的命令都执行完
 	FlushCmdQueue();
 
 	// 重置命令链表
 	HRESULT hr = m_ptrCmdList->Reset(m_ptrCmdAllocator.Get(), nullptr);
+	if (FAILED(hr)) return hr;
 
 	// 释放先前创建的资源
 	for (int i = 0; i < c_uBufferCount; i++) {
@@ -219,9 +451,41 @@ HRESULT MainWnd12::Resize(int cx, int cy)
 	}
 	m_ptrDepthBuf = nullptr;
 
-	// 重设双缓冲尺寸
-	hr = m_ptrDXGISwapChain->ResizeBuffers(c_uBufferCount, cx, cy, c_fmt, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
-	m_uBackBufIdx = 0;
+	// 重设后备缓冲区尺寸
+	hr = ResizeBackBuffer(cx, cy);
+	if (FAILED(hr)) return hr;
+
+	// 创建深度缓冲区
+	hr = CreateDepthBuffer(cx, cy);
+	if (FAILED(hr)) return hr;
+
+	// 计算视口&裁剪尺寸
+	m_viewPort = {
+		0.0f, 0.0f,
+		static_cast<float>(cx), static_cast<float>(cy),
+		0.0f, 1.0f
+	};
+	m_rectScissor = {
+		0, 0,
+		cx, cy
+	};
+
+	// 根据新的纵横比重设投影
+	m_wvProj.mProj = ::XMMatrixPerspectiveFovLH(XM_PI / 6.0f, cx / (FLOAT)(cy), 0.01f, 100.0f);
+
+	// Execute
+	hr = m_ptrCmdList->Close();
+	ID3D12CommandList *pCmdList =  m_ptrCmdList.Get();
+	m_ptrCmdQueue->ExecuteCommandLists(1, &pCmdList);
+	FlushCmdQueue();
+
+	return hr;
+}
+
+HRESULT MainWnd12::ResizeBackBuffer(int cx, int cy)
+{
+	// 重设后备缓冲尺寸
+	HRESULT hr = m_ptrDXGISwapChain->ResizeBuffers(c_uBufferCount, cx, cy, c_fmtBack, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE hHeapCPU = m_ptrRTVHeap->GetCPUDescriptorHandleForHeapStart();
 	UINT szRTV = m_ptrDev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -232,17 +496,8 @@ HRESULT MainWnd12::Resize(int cx, int cy)
 		hHeapCPU.ptr += szRTV;
 	}
 
-	// 创建深度缓冲区
-	hr = CreateDepthBuffer(cx, cy);
-
-	// SetViewPort
-	SetViewPort(cx, cy);
-
-	// Execute
-	hr = m_ptrCmdList->Close();
-	ID3D12CommandList *pCmdList =  m_ptrCmdList.Get();
-	m_ptrCmdQueue->ExecuteCommandLists(1, &pCmdList);
-	FlushCmdQueue();
+	// 重置当前缓冲区索引序号
+	m_uBackBufIdx = 0;
 
 	return hr;
 }
@@ -264,21 +519,21 @@ HRESULT MainWnd12::CreateDepthBuffer(int cx, int cy)
 		static_cast<UINT>(cy),
 		1,
 		1, // mip
-		DXGI_FORMAT_D24_UNORM_S8_UINT,
-		{1, 0}, // MSAA
+		c_fmtDepthStencil,
+		c_mass, // MSAA
 		D3D12_TEXTURE_LAYOUT_UNKNOWN,
 		D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL
 	};
 
 	D3D12_CLEAR_VALUE clear{
-		DXGI_FORMAT_D24_UNORM_S8_UINT,
+		c_fmtDepthStencil,
 		{1.0f, 0}
 	};
 
 	HRESULT hr = m_ptrDev->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_NONE, &descBuf, D3D12_RESOURCE_STATE_COMMON, &clear, IID_PPV_ARGS(&m_ptrDepthBuf));
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC descDSV{
-		DXGI_FORMAT_D24_UNORM_S8_UINT,
+		c_fmtDepthStencil,
 		D3D12_DSV_DIMENSION_TEXTURE2D,
 		D3D12_DSV_FLAG_NONE,
 		{ 0 }
@@ -302,39 +557,96 @@ HRESULT MainWnd12::CreateDepthBuffer(int cx, int cy)
 	return hr;
 }
 
-void MainWnd12::SetViewPort(int cx, int cy)
+HRESULT MainWnd12::Update()
 {
-	D3D12_VIEWPORT viewPort{
-		0.0f, 0.0f,
-		static_cast<float>(cx), static_cast<float>(cy),
-		0.0f, 1.0f
+	// time
+	static __int64 s_i64Last = m_i64Start;
+	__int64 i64Now;
+	QueryPerformanceCounter(reinterpret_cast<PLARGE_INTEGER>(&i64Now));
+	float fAngle = XM_PI * (i64Now - m_i64Start) / m_i64Freq;
+
+	// window title
+	wchar_t buf[128];
+	swprintf_s(buf, 128, L"3D12 - FPS: %7.2f\n", 1.0f * m_i64Freq / (i64Now - s_i64Last));
+	SetWindowText(m_hwnd, buf);
+	s_i64Last = i64Now;
+
+
+	// 更新 const buffer
+	WorldViewProj constBuf;
+	constBuf.mWorld = ::XMMatrixTranspose(m_wvProj.mWorld * ::XMMatrixRotationY(fAngle));
+	constBuf.mView = ::XMMatrixTranspose(m_wvProj.mView);
+	constBuf.mProj = ::XMMatrixTranspose(m_wvProj.mProj);
+
+	void* pData;
+	unsigned uSize = sizeof(WorldViewProj);
+	HRESULT hr = m_ptrCB->Map(0, nullptr, &pData);
+	memcpy_s(pData, uSize, &constBuf, uSize);
+	m_ptrCB->Unmap(0, nullptr);
+
+	return hr;
+}
+
+HRESULT MainWnd12::Render()
+{
+	// 重置命令
+	HRESULT hr = m_ptrCmdAllocator->Reset();
+	hr = m_ptrCmdList->Reset(m_ptrCmdAllocator.Get(), m_ptrPSO.Get());
+
+	// set view port & scissor
+	m_ptrCmdList->RSSetViewports(1, &m_viewPort);
+	m_ptrCmdList->RSSetScissorRects(1, &m_rectScissor);
+
+	D3D12_RESOURCE_BARRIER barrierBACK{
+		D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
+		D3D12_RESOURCE_BARRIER_FLAG_NONE,
+		{
+			m_ptrBackBuf[m_uBackBufIdx].Get(),
+			D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
+			D3D12_RESOURCE_STATE_PRESENT,
+			D3D12_RESOURCE_STATE_RENDER_TARGET
+		}
 	};
+	m_ptrCmdList->ResourceBarrier(1, &barrierBACK);
 
-	m_ptrCmdList->RSSetViewports(1, &viewPort);
-}
+	// clear
+	auto hHeapRTV = m_ptrRTVHeap->GetCPUDescriptorHandleForHeapStart();
+	UINT szRTV = m_ptrDev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	hHeapRTV.ptr += szRTV * m_uBackBufIdx;
+	m_ptrCmdList->ClearRenderTargetView(hHeapRTV, Colors::Black, 0, nullptr);
 
-void MainWnd12::OnDestroy(HWND hwnd)
-{
-	__super::OnDestroy(hwnd);
+	auto hHeadDSV = m_ptrDSVHeap->GetCPUDescriptorHandleForHeapStart();
+	m_ptrCmdList->ClearDepthStencilView(hHeadDSV, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
-	PostQuitMessage(0);
-}
+	// Output Merge
+	m_ptrCmdList->OMSetRenderTargets(1, &hHeapRTV, true, &hHeadDSV);
 
-void MainWnd12::OnSize(HWND hwnd, UINT state, int cx, int cy)
-{
-	Resize(cx, cy);
-}
+	auto pCVBHeap = m_ptrCBVHeap.Get();
+	m_ptrCmdList->SetDescriptorHeaps(1, &pCVBHeap);
+	m_ptrCmdList->SetGraphicsRootSignature(m_ptrRootSig.Get());
+	m_ptrCmdList->SetGraphicsRootDescriptorTable(0, m_ptrCBVHeap->GetGPUDescriptorHandleForHeapStart());
 
-void MainWnd12::OnPaint(HWND hwnd)
-{
-	PAINTSTRUCT ps;
-	HDC hdc = BeginPaint(hwnd, &ps);
-	EndPaint(hwnd, &ps);
-}
+	m_ptrCmdList->IASetVertexBuffers(0, 1, &m_box.GetViewOfVB());
+	m_ptrCmdList->IASetIndexBuffer(&m_box.GetViewOfIB());
+	m_ptrCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-BOOL MainWnd12::OnEraseBkgnd(HWND hwnd, HDC hdc)
-{
-	return TRUE;
+	m_ptrCmdList->DrawIndexedInstanced(m_box.GetIBCount(), 1, 0, 0, 0);
+
+	barrierBACK.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrierBACK.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	m_ptrCmdList->ResourceBarrier(1, &barrierBACK);
+
+	// 执行
+	hr = m_ptrCmdList->Close();
+	ID3D12CommandList* pCmd = m_ptrCmdList.Get();
+	m_ptrCmdQueue->ExecuteCommandLists(1, &pCmd);
+
+	hr = m_ptrDXGISwapChain->Present(1, 0);
+	m_uBackBufIdx = (m_uBackBufIdx + 1) % c_uBufferCount;
+
+	FlushCmdQueue();
+
+	return hr;
 }
 
 void MainWnd12::FlushCmdQueue()
