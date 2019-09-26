@@ -1,5 +1,6 @@
 #include <wchar.h>
 #include <stdlib.h>
+#include "x.h"
 
 // function declare
 void HowToRefVar();
@@ -28,6 +29,35 @@ int wmain()
 	*pFn = HowToRefVar;
 	(*pFn)();
 
+	//////////////////////////////////////////////////
+	// C++
+	CBase* pB1 = new CBase();
+	CBase* pB2 = new CBase();
+	int size = sizeof(CBase);
+	pB1->Output();
+
+	CSon* pSon = new CSon();
+	pSon->Output();
+	CBase* pB3 = pSon;
+	pB3->Output();
+
+	delete pB1, pB2, pSon;
+	
+	//////////////////////////////////////////////////
+
+	CBase2* p2B1 = new CBase2();
+	CBase2* p2B2 = new CBase2();
+	int size2 = sizeof(CBase2);
+	p2B1->Output();
+
+	CSon2* p2Son = new CSon2();
+	p2Son->Output();
+	CBase2* p2B3 = p2Son;
+	p2B3->Output();
+
+	delete p2B1, p2B2, p2Son;
+	
+
 	return 0;
 }
 
@@ -36,6 +66,7 @@ void HowToRefVar()
 {
 	// 变量
 	int x = 0x61;
+	
 
 	// 变量的指针
 	int* px = &x;
