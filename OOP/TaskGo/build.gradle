@@ -1,0 +1,67 @@
+buildscript {
+    repositories {
+        if (project.hasProperty("maven") && maven.equals("maven.aliyun.com"))
+            // maven { url = 'http://maven.aliyun.com/nexus/content/groups/public/' }
+            maven { url = 'https://maven.aliyun.com/repository/public'}
+        else
+            mavenCentral()
+
+        dependencies {
+            classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.+")
+        }
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+group = 'com.incarcloud'
+version = '1.0.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    if (project.hasProperty("maven") && maven.equals("maven.aliyun.com"))
+            maven { url = 'http://maven.aliyun.com/nexus/content/groups/public/' }
+    else
+        mavenCentral()
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter:2.1.+"){
+        exclude module: "spring-boot-starter-logging"
+    }
+    compile("org.springframework.boot:spring-boot-starter-log4j2:2.1.+")
+    compile("com.incarcloud:incar-vault:1.1.2")
+    compile("org.apache.httpcomponents:httpclient:4.5.+")
+    compile("org.apache.httpcomponents:httpasyncclient:4.1.+")
+}
+
+compileJava{
+    options.encoding = "utf-8"
+    options.compilerArgs << "-Xlint:unchecked"
+    options.compilerArgs << "-Xdiags:verbose"
+    options.compilerArgs << "-proc:none"
+}
+
+compileTestJava{
+    options.encoding = "utf-8"
+    options.compilerArgs << "-Xlint:unchecked"
+    options.compilerArgs << "-Xdiags:verbose"
+}
+
+bootRun{
+    systemProperties System.getProperties()
+}
+
+test{
+    systemProperties System.getProperties()
+
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+    }
+}
+
+defaultTasks "assemble"

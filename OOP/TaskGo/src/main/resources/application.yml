@@ -1,0 +1,6 @@
+# Log src/main/resources/log4j2.xml
+logging.config:
+
+# Spring settings
+spring:
+    profiles.active: dev
