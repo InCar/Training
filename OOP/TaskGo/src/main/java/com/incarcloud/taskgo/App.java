@@ -27,24 +27,21 @@ public class App implements CommandLineRunner {
         beginMetric(1);
         {
             LimitedTask taskRunner;
+            Action2<LimitedTask, Integer> actionWait = (runner, max)->{
+                runner.setMax(max);
+                _atomicRef.set(runner);
+                runner.stop();
+                print();
+            };
 
             taskRunner = cpu();
-            taskRunner.setMax(2);
-            _atomicRef.set(taskRunner);
-            taskRunner.stop();
-            print();
+            actionWait.run(taskRunner, 2);
 
             taskRunner = io();
-            taskRunner.setMax(4);
-            _atomicRef.set(taskRunner);
-            taskRunner.stop();
-            print();
+            actionWait.run(taskRunner, 4);
 
             taskRunner = asyncIo();
-            taskRunner.setMax(4);
-            _atomicRef.set(taskRunner);
-            taskRunner.stop();
-            print();
+            actionWait.run(taskRunner, 4);
         }
         endMetric();
         _asyncIoTask.shutdown();
