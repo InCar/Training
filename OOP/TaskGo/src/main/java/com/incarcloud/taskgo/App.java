@@ -34,11 +34,11 @@ public class App implements CommandLineRunner {
                 print();
             };
 
-            taskRunner = cpu();
-            actionWait.run(taskRunner, 2);
+            // taskRunner = cpu();
+            // actionWait.run(taskRunner, 2);
 
-            taskRunner = io();
-            actionWait.run(taskRunner, 4);
+            // taskRunner = io();
+            // actionWait.run(taskRunner, 4);
 
             taskRunner = asyncIo();
             actionWait.run(taskRunner, 4);
