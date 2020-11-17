@@ -209,25 +209,17 @@ void CMainWnd::OnDestroy(HWND hwnd)
 
 void CMainWnd::OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
-    DXGI_MODE_DESC desc;
-    ZeroMemory(&desc, sizeof(DXGI_MODE_DESC));
-    desc.Width = cx;
-    desc.Height = cy;
-    desc.RefreshRate.Numerator = 60;
-    desc.RefreshRate.Denominator = 1;
-    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    desc.Scaling = DXGI_MODE_SCALING_STRETCHED;
+    // 尺寸不能是0
+    if (cx == 0) cx = 1;
+    if (cy == 0) cy = 1;
 
-    HRESULT hr = m_spSwapChain->ResizeTarget(&desc);
+    // 释放先前的
+    m_spRTV = nullptr;
+    m_spZView = nullptr;
+    m_spZ = nullptr;
 
-	// 尺寸不能是0
-	if (cx == 0) cx = 1;
-	if (cy == 0) cy = 1;
-
-	// 释放先前的
-	m_spRTV = nullptr;
-	m_spZView = nullptr;
-	m_spZ = nullptr;
+    // resize
+    HRESULT hr = m_spSwapChain->ResizeBuffers(0, cx, cy, DXGI_FORMAT_UNKNOWN, 0);
 
 	// 设定渲染目标
 	ComPtr<ID3D11Texture2D> spBackBuffer;
@@ -273,14 +265,18 @@ void CMainWnd::OnSize(HWND hwnd, UINT state, int cx, int cy)
 
 BOOL CMainWnd::OnEraseBkgnd(HWND hwnd, HDC hdc)
 {
-    m_spImCtx->ClearRenderTargetView(m_spRTV.Get(), Colors::Blue);
-    m_spImCtx->ClearDepthStencilView(m_spZView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     return TRUE;
 }
 
 void CMainWnd::OnPaint(HWND hwnd)
 {
     CXWnd::OnPaint(hwnd);
+
+    m_spImCtx->ClearRenderTargetView(m_spRTV.Get(), Colors::Blue);
+    m_spImCtx->ClearDepthStencilView(m_spZView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    // set render target
+    m_spImCtx->OMSetRenderTargets(1, m_spRTV.GetAddressOf(), m_spZView.Get());
 
     ConstantBuffer cb1;
     cb1.mWorld = XMMatrixTranspose(m_cb.mWorld);
