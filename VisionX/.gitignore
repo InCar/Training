@@ -1,0 +1,14 @@
+*.suo
+*.opensdf
+*.sdf
+*.opendb
+*.VC.db
+*.user
+*.filters
+*.aps
+
+Debug/
+Release/
+*/x64/
+**/.vs/
+ipch/

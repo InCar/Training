@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30517.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01Hello", "01Hello\01Hello.vcxproj", "{2498162B-2263-432F-87C9-7C8CA8F6CE91}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02Adjust", "02Adjust\02Adjust.vcxproj", "{80436BC4-E30F-4056-B536-793BF5704961}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03Stitching", "03Stitching\03Stitching.vcxproj", "{9CD29FCC-1250-4ADE-B3AF-421F2B4E3FFF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04Asymptote", "04Asymptote\04Asymptote.vcxproj", "{9CD29FCC-1250-4ADE-B3AF-421F2B4E4000}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05Hemisphere", "05Hemisphere\05Hemisphere.vcxproj", "{9CD29FCC-1250-4ADE-B3AF-421F2B4E5000}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2498162B-2263-432F-87C9-7C8CA8F6CE91}.Debug|x64.ActiveCfg = Debug|x64
+		{2498162B-2263-432F-87C9-7C8CA8F6CE91}.Debug|x64.Build.0 = Debug|x64
+		{2498162B-2263-432F-87C9-7C8CA8F6CE91}.Release|x64.ActiveCfg = Release|x64
+		{2498162B-2263-432F-87C9-7C8CA8F6CE91}.Release|x64.Build.0 = Release|x64
+		{80436BC4-E30F-4056-B536-793BF5704961}.Debug|x64.ActiveCfg = Debug|x64
+		{80436BC4-E30F-4056-B536-793BF5704961}.Debug|x64.Build.0 = Debug|x64
+		{80436BC4-E30F-4056-B536-793BF5704961}.Release|x64.ActiveCfg = Release|x64
+		{80436BC4-E30F-4056-B536-793BF5704961}.Release|x64.Build.0 = Release|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E3FFF}.Debug|x64.ActiveCfg = Debug|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E3FFF}.Debug|x64.Build.0 = Debug|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E3FFF}.Release|x64.ActiveCfg = Release|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E3FFF}.Release|x64.Build.0 = Release|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E4000}.Debug|x64.ActiveCfg = Debug|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E4000}.Debug|x64.Build.0 = Debug|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E4000}.Release|x64.ActiveCfg = Release|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E4000}.Release|x64.Build.0 = Release|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E5000}.Debug|x64.ActiveCfg = Debug|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E5000}.Debug|x64.Build.0 = Debug|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E5000}.Release|x64.ActiveCfg = Release|x64
+		{9CD29FCC-1250-4ADE-B3AF-421F2B4E5000}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {02310A75-E96D-4CE0-AEA4-41A9E1893401}
+	EndGlobalSection
+EndGlobal
