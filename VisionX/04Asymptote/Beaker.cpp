@@ -31,7 +31,7 @@ void Beaker::CopyImage(const Beaker& src)
 
 void Beaker::OpticalTransfer(const Beaker& src, const RECT& rc)
 {
-	// Öğµã¼ÆËã
+	// é€ç‚¹è®¡ç®—
 	for (int y = 0; y < m_image.rows; y++)
 	{
 		for (int x = 0; x < m_image.cols; x++)
@@ -42,15 +42,15 @@ void Beaker::OpticalTransfer(const Beaker& src, const RECT& rc)
 				int x2, y2;
 				tie(x2, y2) = SpatialTransfer(x, y, src);
 				
-				// ÌİĞÎĞ£Õı 
+				// æ¢¯å½¢æ ¡æ­£ 
 				trapezoidAdjust(x2, y2, m_image.cols, m_image.rows, src.GetPitch());
 
 				float fTheta = m_uptrOptica->CalcTheta(x2, y2, m_image.cols, m_image.rows);
 
-				// ¸ù¾İfTheta,x,y²éÕÒ¶ÔÓ¦µÄÏñËØ
+				// æ ¹æ®fTheta,x,yæŸ¥æ‰¾å¯¹åº”çš„åƒç´ 
 				auto uptrColor = src.LookupPixel(fTheta, x2, y2);
 
-				// ÕÒ²»µ½µÄ±£ÁôÔ­À´µÄÉ«²Ê
+				// æ‰¾ä¸åˆ°çš„ä¿ç•™åŸæ¥çš„è‰²å½©
 				if (uptrColor)
 					m_image.at<cv::Vec3b>(y, x) = *uptrColor;
 			}
@@ -66,10 +66,10 @@ std::tuple<int, int> Beaker::SpatialTransfer(int x, int y, const Beaker& src)
 
 void Beaker::trapezoidAdjust(int& x, int y, int width, int height, float fPitch)
 {
-	// ÌİĞÎĞŞÕıÁ¿ºÍ¸©Ñö½ÇÏà¹Ø
+	// æ¢¯å½¢ä¿®æ­£é‡å’Œä¿¯ä»°è§’ç›¸å…³
 	float fk = 1.0f + 3.0f * tanf(-fPitch);
 
-	// ÖĞĞÄµã(ÒÔÏñËØÎªµ¥Î»)
+	// ä¸­å¿ƒç‚¹(ä»¥åƒç´ ä¸ºå•ä½)
 	const float fX0 = m_image.cols / 2.0f;
 	const float fY0 = m_image.rows / 2.0f;
 	float fU = x - fX0;
@@ -93,7 +93,7 @@ void Beaker::Load(const std::string& path)
 
 unique_ptr<cv::Vec3b> Beaker::LookupPixel(float fTheta, int x, int y) const
 {
-	// ÖĞĞÄµã(ÒÔÏñËØÎªµ¥Î»)
+	// ä¸­å¿ƒç‚¹(ä»¥åƒç´ ä¸ºå•ä½)
 	const float fX0 = m_image.cols / 2.0f;
 	const float fY0 = m_image.rows / 2.0f;
 
@@ -102,11 +102,11 @@ unique_ptr<cv::Vec3b> Beaker::LookupPixel(float fTheta, int x, int y) const
 	float fU = fR * cosf(fAngle);
 	float fV = fR * sinf(fAngle);
 
-	// ÕâÀïÈ¡×î½üµÄÒ»¸öµã,¸üºÃµÄËã·¨ÊÇ²ÉÑùÆ½¾ù
+	// è¿™é‡Œå–æœ€è¿‘çš„ä¸€ä¸ªç‚¹,æ›´å¥½çš„ç®—æ³•æ˜¯é‡‡æ ·å¹³å‡
 	int nU = static_cast<int>(roundf(fX0 + fU));
 	int nV = static_cast<int>(roundf(fY0 + fV));
 
-	// Èç¹ûÕÒ²»µ½¶ÔÓ¦µÄµãÔò·µ»Ønullptr
+	// å¦‚æœæ‰¾ä¸åˆ°å¯¹åº”çš„ç‚¹åˆ™è¿”å›nullptr
 	if (nU < 0 || nU >= m_image.cols || nV < 0 || nV >= m_image.rows)
 		return nullptr;
 	else {
@@ -115,7 +115,7 @@ unique_ptr<cv::Vec3b> Beaker::LookupPixel(float fTheta, int x, int y) const
 	}
 }
 
-void Beaker::SetOptica(unique_ptr<Optica>&& uptrOptica)
+void Beaker::SetOptica(unique_ptr<Optica> uptrOptica)
 {
 	m_uptrOptica = move(uptrOptica);
 }
