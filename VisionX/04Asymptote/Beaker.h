@@ -2,7 +2,7 @@
 #include "Optica.h"
 #include "Spatial.h"
 
-// °üº¬´ÓÒ»¸öÌØ¶¨×ø±êÎ»ÖÃÓÃÒ»¸öÌØ¶¨¾µÍ·ÅÄÉãµÄÆ½ÃæÍ¼Ïñ
+// åŒ…å«ä»ä¸€ä¸ªç‰¹å®šåæ ‡ä½ç½®ç”¨ä¸€ä¸ªç‰¹å®šé•œå¤´æ‹æ‘„çš„å¹³é¢å›¾åƒ
 class Beaker
 {
 public:
@@ -12,44 +12,44 @@ public:
 	const cv::Mat& GetImage()const { return m_image; };
 	
 public:
-	// ÓÃcolorÖ¸¶¨µÄÑÕÉ«³õÊ¼»¯Í¼Ïñ
+	// ç”¨coloræŒ‡å®šçš„é¢œè‰²åˆå§‹åŒ–å›¾åƒ
 	void Load(int width, int height, const cv::Vec3b& color);
-	// Ê¹ÓÃÖ¸¶¨µÄÎÄ¼ş×÷ÎªÍ¼Ïñ
+	// ä½¿ç”¨æŒ‡å®šçš„æ–‡ä»¶ä½œä¸ºå›¾åƒ
 	void Load(const std::string& path);
 
-	// ²éÕÒÖ¸¶¨Î»ÖÃµÄÏñËØÑÕÉ«Öµ
+	// æŸ¥æ‰¾æŒ‡å®šä½ç½®çš„åƒç´ é¢œè‰²å€¼
 	std::unique_ptr<cv::Vec3b> LookupPixel(float fTheta, int x, int y) const;
 
-	// Éè¶¨·½Î»½Ç(»¡¶È,N=0 E=Pi/2)
+	// è®¾å®šæ–¹ä½è§’(å¼§åº¦,N=0 E=Pi/2)
 	void SetAzimuth(float fAzimuth) { m_spatial.SetAzimuth(fAzimuth); }
 	void SetYaw(float fYaw) { m_spatial.SetYaw(fYaw); }
-	// Éè¶¨¸©Ñö½Ç(»¡¶È,ÉÏÕıÏÂ¸º)
+	// è®¾å®šä¿¯ä»°è§’(å¼§åº¦,ä¸Šæ­£ä¸‹è´Ÿ)
 	void SetPitch(float fPitch) { m_spatial.SetPitch(fPitch); }
 	float GetPitch() const { return m_spatial.GetPitch(); }
-	// Éè¶¨¹âÑ§¾µÍ·
-	void SetOptica(std::unique_ptr<Optica>&& uptrOptica);
-	// Éè¶¨½¹¾à
+	// è®¾å®šå…‰å­¦é•œå¤´
+	void SetOptica(std::unique_ptr<Optica> uptrOptica);
+	// è®¾å®šç„¦è·
 	void SetFocus135(float f135);
-	// Éè¶¨ÓãÑÛ¾µÍ·²ÎÊı
+	// è®¾å®šé±¼çœ¼é•œå¤´å‚æ•°
 	void SetFisheyeK(const std::vector<float>& vk);
 
 public:
-	// ÏñËØÖ±¿½
+	// åƒç´ ç›´æ‹·
 	void CopyImage(const Beaker& src);
-	// ¹âÑ§´«ËÍ
+	// å…‰å­¦ä¼ é€
 	void OpticalTransfer(const Beaker& src, const RECT& rc);
-	// °Ñ±¾µØ×øÖµ×ª»»ÎªÔ´×ø±êÖµ
+	// æŠŠæœ¬åœ°åå€¼è½¬æ¢ä¸ºæºåæ ‡å€¼
 	std::tuple<int, int> SpatialTransfer(int x, int y, const Beaker& src);
 private:
-	// ¿Õ¼ä¹ØÏµ
+	// ç©ºé—´å…³ç³»
 	Spatial m_spatial;
-	// ¹âÑ§¾µÍ·
+	// å…‰å­¦é•œå¤´
 	std::unique_ptr<Optica> m_uptrOptica;
 
-	std::string m_strPath; // Í¼ÏñÂ·¾¶
-	cv::Mat m_image; // Í¼Ïñ
+	std::string m_strPath; // å›¾åƒè·¯å¾„
+	cv::Mat m_image; // å›¾åƒ
 
-	// ÌİĞÎĞ£Õı
+	// æ¢¯å½¢æ ¡æ­£
 	void trapezoidAdjust(int&x, int y, int width, int height, float fPitch);
 };
 
