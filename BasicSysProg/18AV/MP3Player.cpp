@@ -260,6 +260,9 @@ void CMP3Player::OnTimer(HWND hwnd, UINT id)
             UINT msTotal = static_cast<UINT>((double)uFramesPadding * 1000 / m_pwfex->nSamplesPerSec);
             StringCchPrintf(buf, 256, L"+%d[%dms]->%dms %s", uFrameRead, msAdd, msTotal, (c++) % 4 == 3 ? L"\n" : L"");
             OutputDebugString(buf);
+
+            // Fix VBR
+            SetTimer(hwnd, id, static_cast<UINT>(msTotal*0.8), 0);
         }
 
         
